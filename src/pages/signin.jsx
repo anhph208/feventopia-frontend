@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios"; // Import axios
+// import axios from "axios"; // Import axios
 import { loginAPI } from "../components/services/userServices";
 import { jwtDecode } from "jwt-decode";
 
@@ -34,9 +34,9 @@ const SignIn = () => {
             "SPONSOR",
           ].includes(role)
         ) {
-          navigate("/");
+          navigate(window.location.replace("/"));
         } else {
-          window.location.href = "/";
+          window.location.replace("/");
         }
         const userName =
           decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
@@ -76,8 +76,9 @@ const SignIn = () => {
     <div className="form-wrapper">
       <div className="app-form">
         <div className="app-form-sidebar">
-          <div className="sidebar-sign-logo" href="/home">
-            <img src="./assets/images/logo.svg" alt="logo" />
+          
+          <div className="sidebar-sign-logo">
+          <a href="/home"><img src="./assets/images/logo.svg" alt="logo" /></a>
           </div>
           <div className="sign_sidebar_text">
             <h1>BÙNG NỔ SỰ KIỆN CÙNG FEVENTOPIA</h1>
@@ -89,7 +90,7 @@ const SignIn = () => {
               <div className="col-lg-10 col-md-10">
                 <div className="app-top-items">
                   <a href="/home">
-                    <div className="sign-logo" id="logo">
+                    <div className="sign-logo" id="logo" >
                       <img src="./assets/images/logo.svg" alt="logo" />
                       <img
                         className="logo-inverse"

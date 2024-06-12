@@ -62,7 +62,7 @@ export const caculateTimeAgo = (datetime) => {
 };
 
 export const handleLogout = (navigate) => {
-  navigate("/signin");
+  navigate(window.location.replace("/signin"));;
   localStorage.removeItem("isLogged");
   localStorage.removeItem("username");
   localStorage.removeItem("phoneNumber");

@@ -1407,7 +1407,7 @@ function home() {
             </div>
             <div className="col-lg-12">
               <div className="organisations-area">
-                <Slider deviceType="desktop" />
+                <Slider />
               </div>
             </div>
           </div>

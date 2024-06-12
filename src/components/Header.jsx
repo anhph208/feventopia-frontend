@@ -254,8 +254,8 @@ const Header = () => {
                   </li>
                 ) : (
                   <li>
-                    <Link to="/signin" className="btn btn-primary">
-                      Đăng nhập
+                    <Link to="/signin" className="create-btn btn-hover">
+                      <strong>Đăng nhập</strong>
                     </Link>
                   </li>
                 )}
