@@ -1,17 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios"; // Import axios
+import { loginAPI } from "../components/services/userServices";
+import { jwtDecode } from "jwt-decode";
 
-function signin() {
+const SignIn = () => {
+  const [emailOrUsername, setEmailOrUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLogged, setIsLogged] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await loginAPI(emailOrUsername, password);
+      const jwtToken = response.headers["json-web-token"]; // Access headers directly
+      if (jwtToken) {
+        localStorage.setItem("token", jwtToken);
+        const decoded = jwtDecode(jwtToken);
+        const role =
+          decoded[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+        if (
+          [
+            "ADMIN",
+            "VISITOR",
+            "CHECKINGSTAFF",
+            "EVENTOPERATOR",
+            "SPONSOR",
+          ].includes(role)
+        ) {
+          navigate("/");
+        } else {
+          window.location.href = "/";
+        }
+        const userName =
+          decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+        setIsLogged(true);
+        localStorage.setItem("isLogged", isLogged);
+        localStorage.setItem("username", userName);
+        localStorage.setItem("role", role);
+        toast.success("Sign in successful!");
+      }
+    } catch (err) {
+      if (err.response) {
+        // Request was made and server responded with a non-2xx status code
+        const status = err.response.status;
+        if (status === 401) {
+          toast.error("Please check your email and password.");
+        } else if (status === 500) {
+          toast.error("Server Error: Please try again later.");
+        } else {
+          toast.error("Unexpected Error: Please try again.");
+        }
+      } else if (err.request) {
+        // Request was made but no response was received
+        toast.error("Network Error: Please check your connection.");
+      } else {
+        // Something happened in setting up the request that triggered an error
+        console.error("Error signing in:", err.message);
+      }
+      localStorage.removeItem("token");
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <div className="form-wrapper">
       <div className="app-form">
         <div className="app-form-sidebar">
-          <div className="sidebar-sign-logo">
-            <img src="./assets/images/logo.svg" alt />
+          <div className="sidebar-sign-logo" href="/home">
+            <img src="./assets/images/logo.svg" alt="logo" />
           </div>
           <div className="sign_sidebar_text">
-            <h1>
-              BÙNG NỔ SỰ KIỆN CÙNG FEVENTOPIA
-            </h1>
+            <h1>BÙNG NỔ SỰ KIỆN CÙNG FEVENTOPIA</h1>
           </div>
         </div>
         <div className="app-form-content">
@@ -21,11 +90,11 @@ function signin() {
                 <div className="app-top-items">
                   <a href="/home">
                     <div className="sign-logo" id="logo">
-                      <img src="./assets/images/logo.svg" alt />
+                      <img src="./assets/images/logo.svg" alt="logo" />
                       <img
                         className="logo-inverse"
                         src="./assets/images/dark-logo.svg"
-                        alt
+                        alt="dark-logo"
                       />
                     </div>
                   </a>
@@ -39,14 +108,21 @@ function signin() {
               </div>
               <div className="col-xl-5 col-lg-6 col-md-7">
                 <div className="registration">
-                  <form>
-                    <h2 className="registration-title"><strong>ĐĂNG NHẬP VÀO FEVENTOPIA</strong></h2>
+                  <form onSubmit={handleSubmit}>
+                    <h2 className="registration-title">
+                      <strong>ĐĂNG NHẬP VÀO FEVENTOPIA</strong>
+                    </h2>
                     <div className="form-group mt-5">
-                      <label className="form-label">Email hoặc Tên đăng nhập*</label>
+                      <label className="form-label">
+                        Email hoặc Tên đăng nhập*
+                      </label>
                       <input
                         className="form-control h_50"
-                        type="email"
+                        type="text"
+                        value={emailOrUsername}
+                        onChange={(e) => setEmailOrUsername(e.target.value)}
                         placeholder="Nhập Email hoặc Tên đăng nhập"
+                        required
                       />
                     </div>
                     <div className="form-group mt-4">
@@ -62,18 +138,29 @@ function signin() {
                       <div className="loc-group position-relative">
                         <input
                           className="form-control h_50"
-                          type="password"
+                          type={passwordVisible ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           placeholder="Nhập mật khẩu"
+                          required
                         />
-                        <span className="pass-show-eye">
-                          <i className="fas fa-eye-slash" />
+                        <span
+                          className="pass-show-eye"
+                          onClick={togglePasswordVisibility}
+                        >
+                          <i
+                            className={
+                              passwordVisible
+                                ? "fas fa-eye"
+                                : "fas fa-eye-slash"
+                            }
+                          ></i>
                         </span>
                       </div>
                     </div>
                     <button
                       className="main-btn btn-hover w-100 mt-4"
-                      type="button"
-                      onclick="window.location.href='/home'"
+                      type="submit"
                     >
                       ĐĂNG NHẬP <i className="fas fa-sign-in-alt ms-2" />
                     </button>
@@ -95,5 +182,5 @@ function signin() {
       </div>
     </div>
   );
-}
-export default signin;
+};
+export default SignIn;
