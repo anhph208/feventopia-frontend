@@ -44,22 +44,22 @@ const SignIn = () => {
         localStorage.setItem("isLogged", isLogged);
         localStorage.setItem("username", userName);
         localStorage.setItem("role", role);
-        toast.success("Sign in successful!");
+        toast.success("Đăng nhập thành công!!!");
       }
     } catch (err) {
       if (err.response) {
         // Request was made and server responded with a non-2xx status code
         const status = err.response.status;
         if (status === 401) {
-          toast.error("Please check your email and password.");
+          toast.error("Email/Tên tài khoản hoặc Mật khẩu không đúng");
         } else if (status === 500) {
-          toast.error("Server Error: Please try again later.");
+          toast.error("Lỗi hệ thống. Vui lòng thử lại.");
         } else {
-          toast.error("Unexpected Error: Please try again.");
+          toast.error("Lỗi. Vui lòng thử lại");
         }
       } else if (err.request) {
         // Request was made but no response was received
-        toast.error("Network Error: Please check your connection.");
+        toast.error("Sự cố kết nối. Vui lòng kiểm tra kết nối mạng!");
       } else {
         // Something happened in setting up the request that triggered an error
         console.error("Error signing in:", err.message);
@@ -76,9 +76,10 @@ const SignIn = () => {
     <div className="form-wrapper">
       <div className="app-form">
         <div className="app-form-sidebar">
-          
           <div className="sidebar-sign-logo">
-          <a href="/home"><img src="./assets/images/logo.svg" alt="logo" /></a>
+            <a href="/home">
+              <img src="./assets/images/logo.svg" alt="logo" />
+            </a>
           </div>
           <div className="sign_sidebar_text">
             <h1>BÙNG NỔ SỰ KIỆN CÙNG FEVENTOPIA</h1>
@@ -90,7 +91,7 @@ const SignIn = () => {
               <div className="col-lg-10 col-md-10">
                 <div className="app-top-items">
                   <a href="/home">
-                    <div className="sign-logo" id="logo" >
+                    <div className="sign-logo" id="logo">
                       <img src="./assets/images/logo.svg" alt="logo" />
                       <img
                         className="logo-inverse"

@@ -1,17 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { signupAPI } from "../components/services/userServices";
+import { useNavigate } from "react-router-dom";
 
-function signup() {
+function Signup() {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Mật khẩu xác nhận không giống nhau!!!");
+      return;
+    }
+
+    const fullName = `${formData.firstName} ${formData.lastName}`;
+    const signupData = {
+      name: fullName,
+      phoneNumber: formData.phone,
+      email: formData.email,
+      username: formData.username,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+    };
+
+    try {
+      const response = await signupAPI(signupData);
+      if (response.status >= 200 && response.status < 300) {
+        toast.success("Đăng kí thành công");
+        setTimeout(() => {
+          navigate(window.location.replace("/signin"));
+        }, 2000);
+      } else {
+        toast.error(response.message || "Lỗi hệ thống. Đăng kí thất bại!");
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <div className="form-wrapper">
       <div className="app-form">
         <div className="app-form-sidebar">
           <div className="sidebar-sign-logo">
-            <img src="./assets/images/logo.svg" alt />
+            <img src="./assets/images/logo.svg" alt="Logo" />
           </div>
           <div className="sign_sidebar_text">
-            <h1>
-              The Easiest Way to Create Events and Sell More Tickets Online
-            </h1>
+            <h1>BÙNG NỔ SỰ KIỆN CÙNG FEVENTOPIA</h1>
           </div>
         </div>
         <div className="app-form-content">
@@ -21,11 +81,11 @@ function signup() {
                 <div className="app-top-items">
                   <a href="/home">
                     <div className="sign-logo" id="logo">
-                      <img src="images/logo.svg" alt />
+                      <img src="./assets/images/logo.svg" alt="Logo" />
                       <img
                         className="logo-inverse"
                         src="images/dark-logo.svg"
-                        alt
+                        alt="Logo Inverse"
                       />
                     </div>
                   </a>
@@ -39,7 +99,7 @@ function signup() {
               </div>
               <div className="col-xl-5 col-lg-6 col-md-7">
                 <div className="registration">
-                  <form>
+                  <form onSubmit={handleSubmit}>
                     <h2 className="registration-title">
                       <strong>ĐĂNG KÍ VÀO FEVENTOPIA</strong>
                     </h2>
@@ -50,7 +110,10 @@ function signup() {
                           <input
                             className="form-control h_50"
                             type="text"
+                            name="firstName"
                             placeholder="Nhập Họ"
+                            value={formData.firstName}
+                            onChange={handleChange}
                           />
                         </div>
                       </div>
@@ -60,7 +123,10 @@ function signup() {
                           <input
                             className="form-control h_50"
                             type="text"
+                            name="lastName"
                             placeholder="Nhập Tên"
+                            value={formData.lastName}
+                            onChange={handleChange}
                           />
                         </div>
                       </div>
@@ -70,7 +136,10 @@ function signup() {
                           <input
                             className="form-control h_50"
                             type="email"
+                            name="email"
                             placeholder="Nhập Email"
+                            value={formData.email}
+                            onChange={handleChange}
                           />
                         </div>
                         <div className="form-group mt-4">
@@ -78,7 +147,10 @@ function signup() {
                           <input
                             className="form-control h_50"
                             type="text"
+                            name="phone"
                             placeholder="Nhập Số điện thoại"
+                            value={formData.phone}
+                            onChange={handleChange}
                           />
                         </div>
                         <div className="form-group mt-4">
@@ -86,7 +158,10 @@ function signup() {
                           <input
                             className="form-control h_50"
                             type="text"
+                            name="username"
                             placeholder="Nhập Tên đăng nhập"
+                            value={formData.username}
+                            onChange={handleChange}
                           />
                         </div>
                       </div>
@@ -98,13 +173,40 @@ function signup() {
                           <div className="loc-group position-relative">
                             <input
                               className="form-control h_50"
-                              type="password"
+                              type={passwordVisible ? "text" : "password"}
+                              name="password"
                               placeholder="Nhập Mật khẩu"
+                              value={formData.password}
+                              onChange={handleChange}
                             />
-                            <span className="pass-show-eye">
-                              <i className="fas fa-eye-slash" />
+                            <span
+                              className="pass-show-eye"
+                              onClick={togglePasswordVisibility}
+                            >
+                              <i
+                                className={
+                                  passwordVisible
+                                    ? "fas fa-eye"
+                                    : "fas fa-eye-slash"
+                                }
+                              ></i>
                             </span>
                           </div>
+                        </div>
+                      </div>
+                      <div className="col-lg-12 col-md-12">
+                        <div className="form-group mt-4">
+                          <label className="form-label">
+                            Xác nhận mật khẩu*
+                          </label>
+                          <input
+                            className="form-control h_50"
+                            type={passwordVisible ? "text" : "password"}
+                            name="confirmPassword"
+                            placeholder="Xác nhận Mật khẩu"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                          />
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
@@ -112,11 +214,12 @@ function signup() {
                           className="main-btn btn-hover w-100 mt-4"
                           type="submit"
                         >
-                          Sign Up
+                          <strong>ĐĂNG KÍ</strong>
                         </button>
                       </div>
                     </div>
                   </form>
+                  <ToastContainer />
                   <div className="agree-text">
                     Bằng việc "Đăng kí", bạn đồng ý với FEvetopia{" "}
                     <a href="#">Điều khoản &amp; Dịch vụ</a> và{" "}
@@ -140,4 +243,5 @@ function signup() {
     </div>
   );
 }
-export default signup;
+
+export default Signup;

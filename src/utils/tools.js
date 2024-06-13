@@ -71,5 +71,5 @@ export const handleLogout = (navigate) => {
   localStorage.removeItem("avatar");
   localStorage.removeItem("role");
   localStorage.removeItem("token");
-  toast.success("Đăng xuất thành công");
+  toast.success("Đăng xuất thành công!");
 };
