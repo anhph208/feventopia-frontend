@@ -21,6 +21,8 @@ const SignIn = () => {
       if (jwtToken) {
         localStorage.setItem("token", jwtToken);
         const decoded = jwtDecode(jwtToken);
+        const username = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+        const userEmail = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
         const role =
           decoded[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
@@ -38,11 +40,10 @@ const SignIn = () => {
         } else {
           window.location.replace("/");
         }
-        const userName =
-          decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
         setIsLogged(true);
         localStorage.setItem("isLogged", isLogged);
-        localStorage.setItem("username", userName);
+        localStorage.setItem("username", username);
+        localStorage.setItem("email", userEmail);
         localStorage.setItem("role", role);
         toast.success("Đăng nhập thành công!!!");
       }

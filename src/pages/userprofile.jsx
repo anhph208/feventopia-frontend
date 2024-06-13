@@ -1,27 +1,99 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  getProfileAPI,
+  changePasswordAPI,
+} from "../components/services/userServices";
+import { useNavigate } from "react-router-dom";
 
-function userprofile() {
+const UserProfile = () => {
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const fetchUserProfile = async () => {
+      try {
+        const profileData = await getProfileAPI(token);
+        setProfile(profileData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        toast.error("Failed to fetch user profile.");
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      toast.error("Không được để trống các trường Mật khẩu.");
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      toast.error("Mật khẩu mới đã nhập không khớp!");
+      return;
+    }
+
+    try {
+      await changePasswordAPI(currentPassword, newPassword);
+      toast.success("Mật khẩu đã thay đổi thành công!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setTimeout(() => {
+        navigate(window.location.reload());
+      }, 2000);
+    
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error("Mật khẩu hiện tại không đúng");
+      } else {
+        console.error("Error changing password:", error);
+        toast.error("Failed to change password.");
+      }
+    }
+  };
+
+  const togglePasswordVisibility = (field) => {
+    setPasswordVisible((prevState) => ({
+      ...prevState,
+      [field]: !prevState[field],
+    }));
+  };
+
+  if (loading) {
+    return <p>Loading...</p>; // Add loading indicator if needed
+  }
+
+  if (!profile) {
+    return <p>Error fetching profile.</p>; // Handle error case
+  }
+
   return (
     <div>
       <div className="wrapper">
         <div className="profile-banner">
           <div className="hero-cover-block">
             <div className="hero-cover">
-              <div className="hero-cover-img" />
-            </div>
-            <div className="upload-cover">
-              <div className="container">
-                <div className="row">
-                  <div className="col-12">
-                    <div className="cover-img-btn">
-                      <input type="file" id="cover-img" />
-                      <label htmlFor="cover-img">
-                        <i className="fa-solid fa-panorama me-3" />
-                        Change Image
-                      </label>
-                    </div>
-                  </div>
-                </div>
+              <div className="hero-cover-img">
+                <img src="./assets/images/userBackground.jpg" alt />
               </div>
             </div>
           </div>
@@ -41,35 +113,16 @@ function userprofile() {
                     </div>
                     <div className="user-dts">
                       <h4 className="user-name">
-                        John Doe
+                        {profile.name}
                         <span className="verify-badge">
                           <i className="fa-solid fa-circle-check" />
                         </span>
                       </h4>
-                      <span className="user-email">johndoe@example.com</span>
+                      <span className="user-email">{profile.email}</span>
                     </div>
-                    <div className="ff-block">
-                      <a
-                        href="#"
-                        className
-                        role="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#FFModal"
-                      >
-                        <span>0</span>Followers
-                      </a>
-                      <a
-                        href="#"
-                        className
-                        role="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#FFModal"
-                      >
-                        <span>2</span>Following
-                      </a>
-                    </div>
+
                     <div className="user-description">
-                      <p>Hey I am a John Doe</p>
+                      <p>Tớ là {profile.name}</p>
                     </div>
                     <div className="user-btns">
                       <a
@@ -79,65 +132,6 @@ function userprofile() {
                         My Organisation
                         <i className="fa-solid fa-right-left ms-3" />
                       </a>
-                    </div>
-                    <div className="profile-social-link">
-                      <h6>Find me on</h6>
-                      <div className="social-links">
-                        <a
-                          href="#"
-                          className="social-link"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Facebook"
-                        >
-                          <i className="fab fa-facebook-square" />
-                        </a>
-                        <a
-                          href="#"
-                          className="social-link"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Instagram"
-                        >
-                          <i className="fab fa-instagram" />
-                        </a>
-                        <a
-                          href="#"
-                          className="social-link"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Twitter"
-                        >
-                          <i className="fab fa-twitter" />
-                        </a>
-                        <a
-                          href="#"
-                          className="social-link"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="LinkedIn"
-                        >
-                          <i className="fab fa-linkedin-in" />
-                        </a>
-                        <a
-                          href="#"
-                          className="social-link"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Youtube"
-                        >
-                          <i className="fab fa-youtube" />
-                        </a>
-                        <a
-                          href="#"
-                          className="social-link"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Website"
-                        >
-                          <i className="fa-solid fa-globe" />
-                        </a>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -743,72 +737,145 @@ function userprofile() {
                                     role="tabpanel"
                                   >
                                     <div className="bp-title">
-                                      <h4>Password Settings</h4>
+                                      <h4>Cài đặt Mật khẩu</h4>
                                     </div>
                                     <div className="password-setting p-4">
                                       <div className="password-des">
-                                        <h4>Change password</h4>
+                                        <h4>Đổi Mật khẩu</h4>
                                         <p>
-                                          You can update your password from
-                                          here. If you can't remember your
-                                          current password, just log out and
-                                          click on Forgot password.
+                                          Bạn có thể đổi mật khẩu của mình
+                                          từ đây. Nếu bạn không nhớ được mật
+                                          khẩu hiện tại, chỉ cần Đăng xuất và
+                                          bấm vào Quên mật khẩu.
                                         </p>
                                       </div>
                                       <div className="change-password-form">
-                                        <div className="form-group mt-4">
-                                          <label className="form-label">
-                                            Current password*
-                                          </label>
-                                          <div className="loc-group position-relative">
-                                            <input
-                                              className="form-control h_50"
-                                              type="password"
-                                              placeholder="Enter your password"
-                                            />
-                                            <span className="pass-show-eye">
-                                              <i className="fas fa-eye-slash" />
-                                            </span>
+                                        <form onSubmit={handleChangePassword}>
+                                          <div className="form-group mt-4">
+                                            <label className="form-label">
+                                              Mật khẩu hiện tại*
+                                            </label>
+                                            <div className="loc-group position-relative">
+                                              <input
+                                                className="form-control h_50"
+                                                type={
+                                                  passwordVisible.current
+                                                    ? "text"
+                                                    : "password"
+                                                }
+                                                placeholder="Nhập Mật khẩu hiện tại"
+                                                value={currentPassword}
+                                                onChange={(e) =>
+                                                  setCurrentPassword(
+                                                    e.target.value
+                                                  )
+                                                }
+                                                required
+                                              />
+                                              <span
+                                                className="pass-show-eye"
+                                                onClick={() =>
+                                                  togglePasswordVisibility(
+                                                    "current"
+                                                  )
+                                                }
+                                              >
+                                                <i
+                                                  className={
+                                                    passwordVisible.current
+                                                      ? "fas fa-eye"
+                                                      : "fas fa-eye-slash"
+                                                  }
+                                                />
+                                              </span>
+                                            </div>
                                           </div>
-                                        </div>
-                                        <div className="form-group mt-4">
-                                          <label className="form-label">
-                                            New password*
-                                          </label>
-                                          <div className="loc-group position-relative">
-                                            <input
-                                              className="form-control h_50"
-                                              type="password"
-                                              placeholder="Enter your password"
-                                            />
-                                            <span className="pass-show-eye">
-                                              <i className="fas fa-eye-slash" />
-                                            </span>
+                                          <div className="form-group mt-4">
+                                            <label className="form-label">
+                                              Mật khẩu mới*
+                                            </label>
+                                            <div className="loc-group position-relative">
+                                              <input
+                                                className="form-control h_50"
+                                                type={
+                                                  passwordVisible.new
+                                                    ? "text"
+                                                    : "password"
+                                                }
+                                                placeholder="Nhập Mật khẩu mới"
+                                                value={newPassword}
+                                                onChange={(e) =>
+                                                  setNewPassword(e.target.value)
+                                                }
+                                                required
+                                              />
+                                              <span
+                                                className="pass-show-eye"
+                                                onClick={() =>
+                                                  togglePasswordVisibility(
+                                                    "new"
+                                                  )
+                                                }
+                                              >
+                                                <i
+                                                  className={
+                                                    passwordVisible.new
+                                                      ? "fas fa-eye"
+                                                      : "fas fa-eye-slash"
+                                                  }
+                                                />
+                                              </span>
+                                            </div>
                                           </div>
-                                        </div>
-                                        <div className="form-group mt-4">
-                                          <label className="form-label">
-                                            Confirm new password*
-                                          </label>
-                                          <div className="loc-group position-relative">
-                                            <input
-                                              className="form-control h_50"
-                                              type="password"
-                                              placeholder="Enter your password"
-                                            />
-                                            <span className="pass-show-eye">
-                                              <i className="fas fa-eye-slash" />
-                                            </span>
+                                          <div className="form-group mt-4">
+                                            <label className="form-label">
+                                              Xác nhận Mật khẩu mới*
+                                            </label>
+                                            <div className="loc-group position-relative">
+                                              <input
+                                                className="form-control h_50"
+                                                type={
+                                                  passwordVisible.confirm
+                                                    ? "text"
+                                                    : "password"
+                                                }
+                                                placeholder="Nhập lại Mật khẩu mới"
+                                                value={confirmNewPassword}
+                                                onChange={(e) =>
+                                                  setConfirmNewPassword(
+                                                    e.target.value
+                                                  )
+                                                }
+                                                required
+                                              />
+                                              <span
+                                                className="pass-show-eye"
+                                                onClick={() =>
+                                                  togglePasswordVisibility(
+                                                    "confirm"
+                                                  )
+                                                }
+                                              >
+                                                <i
+                                                  className={
+                                                    passwordVisible.confirm
+                                                      ? "fas fa-eye"
+                                                      : "fas fa-eye-slash"
+                                                  }
+                                                />
+                                              </span>
+                                            </div>
                                           </div>
-                                        </div>
-                                        <button
-                                          className="main-btn btn-hover w-100 mt-5"
-                                          type="submit"
-                                        >
-                                          Update Password
-                                        </button>
+                                          <button
+                                            className="main-btn btn-hover w-100 mt-5"
+                                            type="submit"
+                                          >
+                                            <strong>ĐỔI MẬT KHẨU</strong>
+                                          </button>
+                                        </form>
                                       </div>
                                     </div>
+                                    <ToastContainer />
                                   </div>
                                   <div
                                     className="tab-pane fade"
@@ -996,7 +1063,10 @@ function userprofile() {
                           <div className="main-card mt-4">
                             <div className="card-top p-4">
                               <div className="card-event-img">
-                                <img src="./assets/images/event-imgs/img-7.jpg" alt />
+                                <img
+                                  src="./assets/images/event-imgs/img-7.jpg"
+                                  alt
+                                />
                               </div>
                               <div className="card-event-dt">
                                 <h5>
@@ -1058,6 +1128,6 @@ function userprofile() {
       </div>
     </div>
   );
-}
+};
 
-export default userprofile;
+export default UserProfile;
