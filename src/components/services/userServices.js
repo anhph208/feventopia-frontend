@@ -55,21 +55,21 @@ export const getProfileAPI = async (token) => {
   }
 };
 
-export const putUpdateProfileAPI = async (token) => {
+export const putUpdateProfileAPI = async (token, profileData) => {
   try {
-    const response = await config.get(`/user/management/UpdateAccountProfile`, {
+    const response = await config.put(`/user/management/UpdateAccountProfile`, profileData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     if (response.status >= 200 && response.status < 300) {
-      return response.data; // Return profile data
+      return response.data; // Return updated profile data
     } else {
       throw new Error(`Request failed with status ${response.status}`);
     }
   } catch (error) {
-    console.error("Error fetching profile:", error);
+    console.error("Error updating profile:", error);
     throw error;
   }
 };

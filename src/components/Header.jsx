@@ -1,12 +1,39 @@
 import React, { useState, useEffect } from "react";
-import config from "../utils/cus-axios";
 import { Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "../utils/tools";
+import { getProfileAPI } from "../components/services/userServices";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
-  const logged = localStorage.getItem("isLogged");
+  const logged = localStorage.getItem("isLogged") === "true";
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (logged) {
+      const token = localStorage.getItem("token");
+
+      const fetchUserProfile = async () => {
+        try {
+          const profileData = await getProfileAPI(token);
+          setProfile(profileData);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+          toast.error("Failed to fetch user profile.");
+          setLoading(false);
+        }
+      };
+
+      fetchUserProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [logged]);
 
   const handleLogoutClick = () => {
     handleLogout(navigate);
@@ -15,6 +42,10 @@ const Header = () => {
   const handleClickLogo = () => {
     navigate("/");
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <header className="header">
@@ -34,7 +65,7 @@ const Header = () => {
             </button>
             <a
               className="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 me-auto"
-              href="/home"
+              href="/"
             >
               <div className="res-main-logo">
                 <img src="./assets/images/logo-fav.png" alt="Logo" />
@@ -81,7 +112,7 @@ const Header = () => {
                 </div>
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe_5">
                   <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="/home">
+                    <a className="nav-link" aria-current="page" href="/">
                       <strong>TRANG CHỦ</strong>
                     </a>
                   </li>
@@ -132,12 +163,12 @@ const Header = () => {
                     </a>
                     <ul className="dropdown-menu dropdown-submenu">
                       <li>
-                        <a className="dropdown-item" href="/faq">
+                        <a className="dropdown-item" href="faq.html">
                           FAQ
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="/helpCenter">
+                        <a className="dropdown-item" href="help_center.html">
                           TRUNG TÂM TRỢ GIÚP
                         </a>
                       </li>
@@ -187,14 +218,14 @@ const Header = () => {
             <div className="right-header order-2">
               <ul className="align-self-stretch">
                 <li>
-                  <a href="/createEvent" className="create-btn btn-hover">
+                  <a href="create.html" className="create-btn btn-hover">
                     <i className="fa-solid fa-calendar-days" />
                     <span>
                       <strong>MUA VÉ NGAY</strong>
                     </span>
                   </a>
                 </li>
-                {logged === "true" ? (
+                {logged ? (
                   <li className="dropdown account-dropdown">
                     <a
                       href="#"
@@ -207,7 +238,7 @@ const Header = () => {
                     >
                       <img
                         src={
-                          user?.avatarUrl ||
+                          profile.avatar ||
                           "./assets/images/profile-imgs/img-13.jpg"
                         }
                         alt="User Avatar"
@@ -223,14 +254,12 @@ const Header = () => {
                           <div className="account-holder-avatar">
                             <img
                               src={
-                                user?.avatarUrl ||
+                                profile.avatar ||
                                 "./assets/images/profile-imgs/img-13.jpg"
                               }
                               alt="User Avatar"
                             />
                           </div>
-                          <h5>{user?.name}</h5>
-                          <p>{user?.email}</p>
                         </div>
                       </li>
                       <li className="profile-link">
