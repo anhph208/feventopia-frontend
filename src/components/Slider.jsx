@@ -1,98 +1,82 @@
-import React from "react";
-import Carousel from "react-multi-carousel";
-
+import React from 'react';
+import OwlCarousel from 'react-owl-carousel';
+import 'owl.carousel/dist/assets/owl.carousel.css';
+import 'owl.carousel/dist/assets/owl.theme.default.css';
 
 const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 3,
-    slidesToSlide: 3, // optional, default to 1.
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 2,
-    slidesToSlide: 2, // optional, default to 1.
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
+  0: {
     items: 1,
-    slidesToSlide: 1, // optional, default to 1.
+  },
+  464: {
+    items: 3,
+  },
+  1024: {
+    items: 5,
   },
 };
 
-const Slider = ({ deviceType }) => {
+const Slider = () => {
   return (
     <div>
-      <Carousel
-        swipeable={false}
-        draggable={false}
-        showDots={true}
+      <OwlCarousel
+        className="owl-theme"
+        loop
+        margin={10}
         responsive={responsive}
-        ssr={true} // means to render carousel on server-side.
-        infinite={true}
-        autoPlay={deviceType !== "mobile"}
-        autoPlaySpeed={1000}
-        keyBoardControl={true}
-        customTransition="all .5"
-        transitionDuration={500}
-        containerClass="carousel-container"
-        removeArrowOnDeviceType={["tablet", "mobile"]}
-        deviceType={deviceType}
-        dotListClass="custom-dot-list-style"
-        itemClass="carousel-item-padding-40-px"
+        autoplay
+        autoplayTimeout={3000}
+        smartSpeed={700}
       >
-        <div className="owl-carousel organisations-slider owl-theme">
-          <div className="item">
-            <div className="sponsor">
-              <a href="#">
-                <img src="./assets/images/icons/sponsor-1.png" alt />
-              </a>
-            </div>
-          </div>
-          <div className="item">
-            <div className="sponsor">
-              <a href="#">
-                <img src="./assets/images/icons/sponsor-2.png" alt />
-              </a>
-            </div>
-          </div>
-          <div className="item">
-            <div className="sponsor">
-              <a href="#">
-                <img src="./assets/images/icons/sponsor-3.png" alt />
-              </a>
-            </div>
-          </div>
-          <div className="item">
-            <div className="sponsor">
-              <a href="#">
-                <img src="./assets/images/icons/sponsor-4.png" alt />
-              </a>
-            </div>
-          </div>
-          <div className="item">
-            <div className="sponsor">
-              <a href="#">
-                <img src="./assets/images/icons/sponsor-5.png" alt />
-              </a>
-            </div>
-          </div>
-          <div className="item">
-            <div className="sponsor">
-              <a href="#">
-                <img src="./assets/images/icons/sponsor-6.png" alt />
-              </a>
-            </div>
-          </div>
-          <div className="item">
-            <div className="sponsor">
-              <a href="#">
-                <img src="./assets/images/icons/sponsor-7.png" alt />
-              </a>
-            </div>
+        <div className="item">
+          <div className="sponsor">
+            <a href="#">
+              <img src="./assets/images/icons/sponsor-1.png" alt="Sponsor 1" />
+            </a>
           </div>
         </div>
-      </Carousel>;
+        <div className="item">
+          <div className="sponsor">
+            <a href="#">
+              <img src="./assets/images/icons/sponsor-2.png" alt="Sponsor 2" />
+            </a>
+          </div>
+        </div>
+        <div className="item">
+          <div className="sponsor">
+            <a href="#">
+              <img src="./assets/images/icons/sponsor-3.png" alt="Sponsor 3" />
+            </a>
+          </div>
+        </div>
+        <div className="item">
+          <div className="sponsor">
+            <a href="#">
+              <img src="./assets/images/icons/sponsor-4.png" alt="Sponsor 4" />
+            </a>
+          </div>
+        </div>
+        <div className="item">
+          <div className="sponsor">
+            <a href="#">
+              <img src="./assets/images/icons/sponsor-5.png" alt="Sponsor 5" />
+            </a>
+          </div>
+        </div>
+        <div className="item">
+          <div className="sponsor">
+            <a href="#">
+              <img src="./assets/images/icons/sponsor-6.png" alt="Sponsor 6" />
+            </a>
+          </div>
+        </div>
+        <div className="item">
+          <div className="sponsor">
+            <a href="#">
+              <img src="./assets/images/icons/sponsor-7.png" alt="Sponsor 7" />
+            </a>
+          </div>
+        </div>
+      </OwlCarousel>
     </div>
   );
 }

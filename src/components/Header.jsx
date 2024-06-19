@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import config from "../utils/cus-axios";
+import { Link, useNavigate } from "react-router-dom";
+import { handleLogout } from "../utils/tools";
 
-function Header() {
+const Header = () => {
+  const logged = localStorage.getItem("isLogged");
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    handleLogout(navigate);
+  };
+
+  const handleClickLogo = () => {
+    navigate("/");
+  };
+
   return (
     <header className="header">
       <div className="header-inner">
@@ -22,14 +37,14 @@ function Header() {
               href="/home"
             >
               <div className="res-main-logo">
-                <img src="./assets/images/logo-fav.png" alt />
+                <img src="./assets/images/logo-fav.png" alt="Logo" />
               </div>
               <div className="main-logo" id="logo">
-                <img src="./assets/images/logo.svg" alt />
+                <img src="./assets/images/logo.svg" alt="Logo" />
                 <img
                   className="logo-inverse"
                   src="./assets/images/dark-logo.svg"
-                  alt
+                  alt="Logo"
                 />
               </div>
             </a>
@@ -41,13 +56,14 @@ function Header() {
             >
               <div className="offcanvas-header">
                 <div className="offcanvas-logo" id="offcanvasNavbarLabel">
-                  <img src="./assets/images/logo-icon.svg" alt />
+                  <img src="./assets/images/logo-icon.svg" alt="Logo" />
                 </div>
                 <button
                   type="button"
                   className="close-btn"
                   data-bs-dismiss="offcanvas"
                   aria-label="Close"
+                  onClick={handleClickLogo}
                 >
                   <i className="fa-solid fa-xmark" />
                 </button>
@@ -57,17 +73,15 @@ function Header() {
                   <div className="create-bg">
                     <a href="create.html" className="offcanvas-create-btn">
                       <i className="fa-solid fa-calendar-days" />
-                      <span><strong>MUA VÉ NGAY</strong></span>
+                      <span>
+                        <strong>MUA VÉ NGAY</strong>
+                      </span>
                     </a>
                   </div>
                 </div>
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe_5">
                   <li className="nav-item">
-                    <a
-                      className="nav-link"
-                      aria-current="page"
-                      href="/home"
-                    >
+                    <a className="nav-link" aria-current="page" href="/home">
                       <strong>TRANG CHỦ</strong>
                     </a>
                   </li>
@@ -138,7 +152,9 @@ function Header() {
               </div>
               <div className="offcanvas-footer">
                 <div className="offcanvas-social">
-                  <h5><strong>THEO DÕI MẠNG XÃ HỘI</strong></h5>
+                  <h5>
+                    <strong>THEO DÕI MẠNG XÃ HỘI</strong>
+                  </h5>
                   <ul className="social-links">
                     <li>
                       <a
@@ -173,62 +189,76 @@ function Header() {
                 <li>
                   <a href="/createEvent" className="create-btn btn-hover">
                     <i className="fa-solid fa-calendar-days" />
-                    <span><strong>MUA VÉ NGAY</strong></span>
+                    <span>
+                      <strong>MUA VÉ NGAY</strong>
+                    </span>
                   </a>
                 </li>
-                <li className="dropdown account-dropdown">
-                  <a
-                    href="#"
-                    className="account-link"
-                    role="button"
-                    id="accountClick"
-                    data-bs-auto-close="outside"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <img src="./assets/images/profile-imgs/img-13.jpg" alt />
-                    <i className="fas fa-caret-down arrow-icon" />
-                  </a>
-                  <ul
-                    className="dropdown-menu dropdown-menu-account dropdown-menu-end"
-                    aria-labelledby="accountClick"
-                  >
-                    <li>
-                      <div className="dropdown-account-header">
-                        <div className="account-holder-avatar">
-                          <img
-                            src="./assets/images/profile-imgs/img-13.jpg"
-                            alt
-                          />
+                {logged === "true" ? (
+                  <li className="dropdown account-dropdown">
+                    <a
+                      href="#"
+                      className="account-link"
+                      role="button"
+                      id="accountClick"
+                      data-bs-auto-close="outside"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <img
+                        src={
+                          user?.avatarUrl ||
+                          "./assets/images/profile-imgs/img-13.jpg"
+                        }
+                        alt="User Avatar"
+                      />
+                      <i className="fas fa-caret-down arrow-icon" />
+                    </a>
+                    <ul
+                      className="dropdown-menu dropdown-menu-account dropdown-menu-end"
+                      aria-labelledby="accountClick"
+                    >
+                      <li>
+                        <div className="dropdown-account-header">
+                          <div className="account-holder-avatar">
+                            <img
+                              src={
+                                user?.avatarUrl ||
+                                "./assets/images/profile-imgs/img-13.jpg"
+                              }
+                              alt="User Avatar"
+                            />
+                          </div>
+                          <h5>{user?.name}</h5>
+                          <p>{user?.email}</p>
                         </div>
-                        <h5>John Doe</h5>
-                        <p>johndoe@example.com</p>
-                      </div>
-                    </li>
-                    <li className="profile-link">
-                      <a
-                        href="my_organisation_dashboard.html"
-                        className="link-item"
-                      >
-                        Vé đã mua
-                      </a>
-                      <a
-                        href="/userprofile"
-                        className="link-item"
-                      >
-                        Trang cá nhân
-                      </a>
-                      <a href="/signin" className="link-item">
-                        Đăng xuất
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <div className="night_mode_switch__btn">
-                    <div id="night-mode" className="fas fa-moon fa-sun" />
-                  </div>
-                </li>
+                      </li>
+                      <li className="profile-link">
+                        <Link
+                          to="my_organisation_dashboard.html"
+                          className="link-item"
+                        >
+                          Vé đã mua
+                        </Link>
+                        <Link to="/userprofile" className="link-item">
+                          Trang cá nhân
+                        </Link>
+                        <button
+                          className="link-item"
+                          onClick={handleLogoutClick}
+                        >
+                          Đăng xuất
+                        </button>
+                      </li>
+                    </ul>
+                  </li>
+                ) : (
+                  <li>
+                    <Link to="/signin" className="create-btn btn-hover">
+                      <strong>Đăng nhập</strong>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
@@ -237,6 +267,6 @@ function Header() {
       </div>
     </header>
   );
-}
+};
 
 export default Header;

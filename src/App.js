@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/home";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
@@ -14,13 +14,20 @@ import helpSectionDetailView from "./pages/help_section_detail_view";
 import helpCenter from "./pages/help_center";
 import createEvent from "./pages/createEvent";
 
-function App() {
+
+// Create a new component to handle conditional rendering
+const ConditionalLayout = () => {
+  const location = useLocation();
+
+
   return (
     <div>
-      <Header />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/home" element={<Home />} />
+      {/* Render Header only if not on SignIn or SignUp pages */}
+      {location.pathname !== "/signin" && location.pathname !== "/signup" && <Header />}
+
+      {/* Render content (Routes) */}
+      <Routes>
+        <Route path="/home" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/userprofile" element={<UserProfile />} />
@@ -32,10 +39,20 @@ function App() {
           <Route path="/helpCenterKnowledgeBase" element={<helpCenterKnowledgeBase />} />
           <Route path="/helpArticleDetailView" element={<helpArticleDetailView />} />
           <Route path="/CreateEvent" element={<createEvent />} />
-        </Routes>
-      </BrowserRouter>
-      <Footer />
+      </Routes>
+
+      {/* Render Footer only if not on SignIn or SignUp pages */}
+      {location.pathname !== "/signin" && location.pathname !== "/signup" && <Footer />}
+
     </div>
+  );
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <ConditionalLayout /> 
+    </BrowserRouter>
   );
 }
 
