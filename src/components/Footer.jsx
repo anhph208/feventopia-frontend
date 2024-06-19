@@ -16,12 +16,12 @@ function Footer() {
                     </a>
                   </li>
                   <li>
-                    <a href="help_center.html" className="footer-link">
+                    <a href="/helpCenter" className="footer-link">
                       Trung tâm hỗ trợ
                     </a>
                   </li>
                   <li>
-                    <a href="faq.html" className="footer-link">
+                    <a href="/faq" className="footer-link">
                       FAQ
                     </a>
                   </li>

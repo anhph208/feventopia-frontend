@@ -132,12 +132,12 @@ const Header = () => {
                     </a>
                     <ul className="dropdown-menu dropdown-submenu">
                       <li>
-                        <a className="dropdown-item" href="faq.html">
+                        <a className="dropdown-item" href="/faq">
                           FAQ
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="help_center.html">
+                        <a className="dropdown-item" href="/helpCenter">
                           TRUNG TÂM TRỢ GIÚP
                         </a>
                       </li>
@@ -187,7 +187,7 @@ const Header = () => {
             <div className="right-header order-2">
               <ul className="align-self-stretch">
                 <li>
-                  <a href="create.html" className="create-btn btn-hover">
+                  <a href="/createEvent" className="create-btn btn-hover">
                     <i className="fa-solid fa-calendar-days" />
                     <span>
                       <strong>MUA VÉ NGAY</strong>
