@@ -7,7 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const AboutTab = () => {
@@ -196,7 +196,6 @@ const AboutTab = () => {
           </form>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

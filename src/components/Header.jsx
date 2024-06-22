@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "../utils/tools";
 import { getProfileAPI } from "../components/services/userServices";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
@@ -112,7 +112,7 @@ const Header = () => {
                 </div>
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe_5">
                   <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="/">
+                    <a className="nav-link" aria-current="page" href="/home">
                       <strong>TRANG CHỦ</strong>
                     </a>
                   </li>
@@ -238,7 +238,7 @@ const Header = () => {
                     >
                       <img
                         src={
-                          profile.avatar ||
+                          profile?.avatar ||
                           "./assets/images/profile-imgs/img-13.jpg"
                         }
                         alt="User Avatar"
@@ -254,7 +254,7 @@ const Header = () => {
                           <div className="account-holder-avatar">
                             <img
                               src={
-                                profile.avatar ||
+                                profile?.avatar ||
                                 "./assets/images/profile-imgs/img-13.jpg"
                               }
                               alt="User Avatar"

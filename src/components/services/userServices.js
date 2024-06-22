@@ -102,5 +102,28 @@ export const changePasswordAPI = async (currentPassword, newPassword) => {
     throw error;
   }
 };
+export const rechargeAPI = async (rechargeData, token) => {
+  try {
+    const response = await config.post("/payment/Recharge", null, {
+      params: {
+        amount: rechargeData.amount,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error during recharge:", error);
+    throw error;
+  }
+};
+
+
 
 

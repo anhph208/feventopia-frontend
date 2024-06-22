@@ -3,6 +3,22 @@ import { toast } from "react-toastify";
 // import { Navigate, useNavigate } from "react-router-dom";
 // import { toast } from "react-toastify";
 
+export const convertToGMT7 = (dateTimeString) => {
+  // Parse the VNPay date format
+  const [datePart, timePart] = decodeURIComponent(dateTimeString).split(' ');
+  const [month, day, year] = datePart.split('/');
+  const [hours, minutes, seconds] = timePart.split(':');
+
+  const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+
+  // Add 7 hours to convert from GMT+0 to GMT+7
+  date.setHours(date.getHours() + 7);
+
+  // Format the date to a string
+  const formattedDate = date.toISOString().replace('T', ' ').substring(0, 19);
+  return formattedDate;
+};
+
 export const formatDate = (inputDate) => {
   const date = new Date(inputDate);
   const day = date.getDate();
