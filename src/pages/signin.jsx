@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import axios from "axios"; // Import axios
 import { loginAPI } from "../components/services/userServices";
 import { jwtDecode } from "jwt-decode";
+import AuthContext from "../context/AuthProvider";
+import Cookies from "js-cookie";
 
 const SignIn = () => {
+  const { setAuth } = useContext(AuthContext);
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLogged, setIsLogged] = useState(true);
@@ -25,7 +28,7 @@ const SignIn = () => {
         const userEmail = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
         const role =
           decoded[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ];
         if (
           [
@@ -36,6 +39,14 @@ const SignIn = () => {
             "SPONSOR",
           ].includes(role)
         ) {
+          // Save data to cookies
+          Cookies.set("accessToken", jwtToken);
+          Cookies.set("username", username);
+          Cookies.set("email", userEmail);
+          Cookies.set("role", role);
+
+          // Save data to auth
+          setAuth({ jwtToken, username, userEmail, role });
           navigate(window.location.replace("/"));
         } else {
           window.location.replace("/");
