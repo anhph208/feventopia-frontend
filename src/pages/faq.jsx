@@ -10,7 +10,7 @@ function FAQ() {
                             <div className="barren-breadcrumb">
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb">
-                                        <li className="breadcrumb-item"><a href="index.html">Home</a></li>
+                                        <li className="breadcrumb-item"><a href="/">Home</a></li>
                                         <li className="breadcrumb-item active" aria-current="page">Frequently asked questions</li>
                                     </ol>
                                 </nav>

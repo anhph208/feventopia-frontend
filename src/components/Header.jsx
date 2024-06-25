@@ -102,7 +102,7 @@ const Header = () => {
               <div className="offcanvas-body">
                 <div className="offcanvas-top-area">
                   <div className="create-bg">
-                    <a href="create.html" className="offcanvas-create-btn">
+                    <a href="/exploreEvent" className="offcanvas-create-btn">
                       <i className="fa-solid fa-calendar-days" />
                       <span>
                         <strong>MUA VÉ NGAY</strong>
@@ -112,7 +112,7 @@ const Header = () => {
                 </div>
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe_5">
                   <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="/home">
+                    <a className="nav-link" aria-current="page" href="/">
                       <strong>TRANG CHỦ</strong>
                     </a>
                   </li>
@@ -120,7 +120,7 @@ const Header = () => {
                     <a
                       className="nav-link"
                       aria-current="page"
-                      href="index.html"
+                      href="/exploreEvent"
                     >
                       <strong>KHÁM PHÁ SỰ KIỆN</strong>
                     </a>
@@ -128,7 +128,7 @@ const Header = () => {
                   <li className="nav-item dropdown">
                     <a
                       className="nav-link dropdown-toggle"
-                      href="#"
+                      href="/exploreEvent"
                       role="button"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -163,17 +163,17 @@ const Header = () => {
                     </a>
                     <ul className="dropdown-menu dropdown-submenu">
                       <li>
-                        <a className="dropdown-item" href="faq.html">
+                        <a className="dropdown-item" href="/faq">
                           FAQ
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="help_center.html">
+                        <a className="dropdown-item" href="/helpCenter">
                           TRUNG TÂM TRỢ GIÚP
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="contact_us.html">
+                        <a className="dropdown-item" href="/Contact_us">
                           LIÊN HỆ FEVENTOPIA
                         </a>
                       </li>

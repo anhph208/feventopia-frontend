@@ -11,22 +11,22 @@ function Footer() {
                 <h4><strong>VỀ CHÚNG TÔI</strong></h4>
                 <ul className="footer-link-list">
                   <li>
-                    <a href="about_us.html" className="footer-link">
+                    <a href="/About_us" className="footer-link">
                       Thông tin
                     </a>
                   </li>
                   <li>
-                    <a href="help_center.html" className="footer-link">
+                    <a href="/helpCenter" className="footer-link">
                       Trung tâm hỗ trợ
                     </a>
                   </li>
                   <li>
-                    <a href="faq.html" className="footer-link">
+                    <a href="/faq" className="footer-link">
                       FAQ
                     </a>
                   </li>
                   <li>
-                    <a href="contact_us.html" className="footer-link">
+                    <a href="/Contact_us" className="footer-link">
                       Liên Hệ FEventopia
                     </a>
                   </li>
@@ -48,7 +48,7 @@ function Footer() {
                     </a>
                   </li>
                   <li>
-                    <a href="privacy_policy.html" className="footer-link">
+                    <a href="/privacy" className="footer-link">
                       Chính sách Bảo mật
                     </a>
                   </li>

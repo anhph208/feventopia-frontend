@@ -1,6 +1,6 @@
 import React from "react";
 
-function privacy() {
+function privacy_policy() {
   return (
     <div>
       <div className="wrapper">
@@ -12,7 +12,7 @@ function privacy() {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
+                        <a href="/">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -238,4 +238,4 @@ function privacy() {
   );
 }
 
-export default privacy;
+export default privacy_policy;

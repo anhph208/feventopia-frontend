@@ -528,7 +528,7 @@ function home() {
                   </div>
                   <div className="browse-btn">
                     <a
-                      href="explore_events.html"
+                      href="/exploreEvent"
                       className="main-btn btn-hover "
                     >
                       Browse All
