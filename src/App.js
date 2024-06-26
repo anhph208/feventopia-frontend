@@ -18,6 +18,7 @@ import ExploreEvent from "./components/exploreEvent";
 import Privacy_policy from "./pages/privacy";
 import AboutUs from "./pages/About";
 import Contact_us from "./pages/Contact";
+import Terms_condition from "./pages/terms_condition";
 
 // Create a new component to handle conditional rendering
 const ConditionalLayout = () => {
@@ -46,6 +47,7 @@ const ConditionalLayout = () => {
         <Route path="/privacy" element={<Privacy_policy />} />
         <Route path="/About_us" element={<AboutUs />} />
         <Route path="/Contact_us" element={<Contact_us />} />
+        <Route path="/Term_and_condition" element={<Terms_condition />} />
       </Routes>
 
       {/* Render Footer only if not on specific pages */}
