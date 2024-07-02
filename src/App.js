@@ -14,6 +14,8 @@ import HelpCenterKnowledgeBase from "./pages/help_center_knowledge_base";
 import HelpSectionDetailView from "./pages/help_section_detail_view";
 import HelpCenter from "./pages/help_center";
 import TransactionInfo from "./pages/transaction";
+import LocationPage from "./pages/locationPage";
+import LocationDetailPage from "./pages/locationDetail";
 
 // Create a new component to handle conditional rendering
 const ConditionalLayout = () => {
@@ -38,6 +40,8 @@ const ConditionalLayout = () => {
         <Route path="/helpCenterKnowledgeBase" element={<HelpCenterKnowledgeBase />} />
         <Route path="/helpArticleDetailView" element={<HelpArticleDetailView />} />
         <Route path="/transactioninfo" element={<TransactionInfo />} />
+        <Route path="/locations" element={<LocationPage />}/>
+        <Route path="/locations/:id" element={<LocationDetailPage />}/>
       </Routes>
 
       {/* Render Footer only if not on specific pages */}
