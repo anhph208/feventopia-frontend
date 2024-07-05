@@ -16,17 +16,18 @@ import { toast } from "react-toastify";
 import { CartContext } from "./CartContext";
 
 const Cart = () => {
-  const { cartItems, removeFromCart } = useContext(CartContext);
+  const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
   const [cartOpen, setCartOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleRemove = (index) => {
     removeFromCart(index);
-    toast.success("Item removed from cart");
+    // toast.success("Item removed from cart");
   };
 
   const handleCheckout = () => {
     navigate("/checkout");
+    clearCart();
   };
 
   const cartItemCount = cartItems.reduce(

@@ -38,7 +38,6 @@ const HomeTab = ({ initialProfile }) => {
           const profileData = await getProfileAPI(token);
           setProfile(profileData);
           setLoading(false);
-          toast.success("Profile loaded successfully");
         } catch (error) {
           console.error("Error fetching profile:", error);
           setLoading(false);

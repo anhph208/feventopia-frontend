@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { getEventDetailsAPI } from "../components/services/userServices";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../components/Cart/CartContext";
 import Cart from "../components/Cart/Cart";
 import { toast } from "react-toastify";
@@ -89,6 +89,7 @@ function EventDetails() {
       location: selectedEventDetail.location.locationName,
       ticketCount: ticketCount,
       ticketPrice: selectedEventDetail.ticketPrice,
+      eventBanner: eventDetails.banner,
     };
 
     addToCart(cartItem);
@@ -113,6 +114,12 @@ function EventDetails() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading event details</div>;
   if (!eventDetails) return <div>No event details found</div>;
+
+  const isEventPast = (endDate) => {
+    const currentDateTime = new Date();
+    const eventEndDate = new Date(endDate);
+    return currentDateTime > eventEndDate;
+  };
 
   return (
     <div>
@@ -199,69 +206,77 @@ function EventDetails() {
                           </h5>
                         </div>
                       </div>
-                      <div className="select-tickets-block">
-                        <div className="select-ticket-action">
-                          <div className="ticket-price">
-                            <h5>Giá vé</h5>
-                            <strong>
-                              <PriceFormat price={eventDetail.ticketPrice} />
-                            </strong>
-                            {/* Use PriceFormat component */}
-                          </div>
-                          <div className="quantity">
-                            <div className="counter">
-                              <span
-                                className="down"
-                                onClick={() => decreaseCount(eventDetail.id)}
-                              >
-                                -
-                              </span>
-                              <input
-                                type="text"
-                                value={ticketCounts[eventDetail.id] || 0}
-                                readOnly
-                              />
-                              <span
-                                className="up"
-                                onClick={() => increaseCount(eventDetail.id)}
-                              >
-                                +
-                              </span>
+                      {!isEventPast(eventDetail.endDate) && (
+                        <div className="select-tickets-block">
+                          <div className="select-ticket-action">
+                            <div className="ticket-price">
+                              <h5>Giá vé</h5>
+                              <strong>
+                                <PriceFormat price={eventDetail.ticketPrice} />
+                              </strong>
+                              {/* Use PriceFormat component */}
+                            </div>
+                            <div className="quantity">
+                              <div className="counter">
+                                <span
+                                  className="down"
+                                  onClick={() => decreaseCount(eventDetail.id)}
+                                >
+                                  -
+                                </span>
+                                <input
+                                  type="text"
+                                  value={ticketCounts[eventDetail.id] || 0}
+                                  readOnly
+                                />
+                                <span
+                                  className="up"
+                                  onClick={() => increaseCount(eventDetail.id)}
+                                >
+                                  +
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <p>TỔNG TIỀN TẠM TÍNH</p>
-                        <div className="xtotel-tickets-count">
-                          <div className="x-title">
-                            {ticketCounts[eventDetail.id] || 0}x Ticket(s)
+                          <p>TỔNG TIỀN TẠM TÍNH</p>
+                          <div className="xtotel-tickets-count">
+                            <div className="x-title">
+                              {ticketCounts[eventDetail.id] || 0}x Ticket(s)
+                            </div>
+                            <h4>
+                              <span>
+                                <PriceFormat
+                                  price={
+                                    (ticketCounts[eventDetail.id] || 0) *
+                                    eventDetail.ticketPrice
+                                  }
+                                />
+                              </span>
+                            </h4>
                           </div>
-                          <h4>
-                            <span>
-                              <PriceFormat
-                                price={
-                                  (ticketCounts[eventDetail.id] || 0) *
-                                  eventDetail.ticketPrice
-                                }
-                              />
-                            </span>
-                          </h4>
                         </div>
-                      </div>
+                      )}
                       <div className="booking-btn">
-                        <button
-                          className="main-btn btn-hover w-100"
-                          onClick={() => handleBookNow(eventDetail.id)}
-                        >
-                          <strong>Mua vé ngay!</strong>
-                        </button>
-                      </div>
-                      <div className="booking-btn">
-                        <button
-                          className="main-btn btn-hover w-100"
-                          onClick={() => handleAddToCart(eventDetail.id)}
-                        >
-                          <strong>Thêm vào giỏ hàng</strong>
-                        </button>
+                        {isEventPast(eventDetail.endDate) ? (
+                          <button className="main-end-btn w-100" disabled>
+                            <strong>SỰ KIỆN ĐÃ NGỪNG BÁN VÉ</strong>
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              className="main-btn btn-hover w-100 mt-2"
+                              onClick={() => handleBookNow(eventDetail.id)}
+                            >
+                              <strong>Mua vé ngay!</strong>
+                            </button>
+                            <button
+                              className="main-btn btn-hover w-100 mt-3"
+                              onClick={() => handleAddToCart(eventDetail.id)}
+                            >
+                              <strong>Thêm vào giỏ hàng</strong>
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

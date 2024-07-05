@@ -808,6 +808,20 @@ body {
   border: 1px solid #ff7f50;
 }
 
+.main-end-btn {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 400;
+  text-align: center;
+  background: #262626;
+  height: 50px;
+  display: inline-block;
+  line-height: 49px;
+  padding: 0 30px;
+  border-radius: 3px;
+  border: 1px solid #ff7f50;
+}
+
 .btn-hover:hover {
   color: #fff !important;
   background: #450b00;

@@ -1,16 +1,15 @@
 import React, { createContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
-    // Initialize from sessionStorage
     const storedCart = sessionStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
   useEffect(() => {
-    // Save to sessionStorage on change
     sessionStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
@@ -26,9 +25,12 @@ export const CartProvider = ({ children }) => {
           ...updatedCartItems[existingItemIndex],
           ticketCount:
             updatedCartItems[existingItemIndex].ticketCount + item.ticketCount,
+          eventBanner: item.eventBanner,
         };
+        toast.success("Vé đã được thêm vào Giỏ Hàng!");
         return updatedCartItems;
       }
+
 
       return [...prevItems, item];
     });
@@ -36,10 +38,12 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = (index) => {
     setCartItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    toast.success("Đã xóa vé khỏi Giỏ hàng!");
   };
 
   const clearCart = () => {
     setCartItems([]);
+    // toast.success("Giỏ hàng đang trống!");
   };
 
   return (

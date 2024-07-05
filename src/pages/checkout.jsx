@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getProfileAPI, buyTicketAPI } from "../components/services/userServices";
+import {
+  getProfileAPI,
+  buyTicketAPI,
+} from "../components/services/userServices";
+import { formatDateTime, PriceFormat } from "../utils/tools";
 
 function Checkout() {
   const location = useLocation();
-  const { eventDetail, ticketCount, eventBanner } = location.state || {}; 
+  const { eventDetail, ticketCount, eventBanner } = location.state || {};
 
   const [profile, setProfile] = useState({ name: "", email: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,10 +31,10 @@ function Checkout() {
   }, []);
 
   useEffect(() => {
-    if (!eventDetail) {
-      const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+    const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+    if (cart.length > 0) {
       setCartItems(cart);
-    } else {
+    } else if (eventDetail) {
       setCartItems([
         {
           ...eventDetail,
@@ -51,7 +55,7 @@ function Checkout() {
     setIsSubmitting(true);
 
     const orderDetails = cartItems.map((item) => ({
-      eventDetailId: item.eventId, 
+      eventDetailId: item.eventId,
       quantity: item.ticketCount,
       emailReceive: profile.email,
       ticketPrice: item.ticketPrice,
@@ -59,7 +63,7 @@ function Checkout() {
 
     try {
       await buyTicketAPI(orderDetails);
-      toast.success("Booking confirmed!");
+      toast.success("Thanh toán thành công!");
       setTimeout(() => {
         sessionStorage.removeItem("cart"); // Clear the cart after successful booking
         window.location.href = "/booking_confirmed";
@@ -78,47 +82,20 @@ function Checkout() {
 
   return (
     <div>
-      <ToastContainer />
       <div className="wrapper">
-        <div className="breadcrumb-block">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12 col-md-10">
-                <div className="barren-breadcrumb">
-                  <nav aria-label="breadcrumb">
-                    <ol className="breadcrumb">
-                      <li className="breadcrumb-item">
-                        <a href="/">Home</a>
-                      </li>
-                      <li className="breadcrumb-item">
-                        <a href="/explore_events">Explore Events</a>
-                      </li>
-                      <li
-                        className="breadcrumb-item active"
-                        aria-current="page"
-                      >
-                        Checkout
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="event-dt-block p-80">
           <div className="container">
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="main-title checkout-title">
-                  <h3>Order Confirmation</h3>
+                  <h3>THANH TOÁN</h3>
                 </div>
               </div>
               <div className="col-xl-8 col-lg-12 col-md-12">
                 <div className="checkout-block">
                   <div className="main-card">
                     <div className="bp-title">
-                      <h4>Billing Information</h4>
+                      <h4>Thông tin Thanh toán</h4>
                     </div>
                     <div className="bp-content bp-form">
                       <div className="row">
@@ -158,11 +135,11 @@ function Checkout() {
               <div className="col-xl-4 col-lg-12 col-md-12">
                 <div className="main-card order-summary">
                   <div className="bp-title">
-                    <h4>Order Summary</h4>
+                    <h4>Đơn Mua Vé</h4>
                   </div>
                   <div className="order-summary-content p_30">
                     {cartItems.map((item, index) => (
-                      <div key={index} className="event-order-dt">
+                      <div key={index} className="event-order-dt mt-2">
                         <div className="event-thumbnail-img">
                           <img
                             src={
@@ -175,45 +152,32 @@ function Checkout() {
                         <div className="event-order-dt-content">
                           <h5>{item.eventName || "Event Name"}</h5>
                           <span>
-                            {item.startDate &&
-                              new Date(item.startDate).toLocaleString()}
+                            {item.startDate && formatDateTime(item.startDate)}
                           </span>
                         </div>
                       </div>
                     ))}
                     <div className="order-total-block">
                       <div className="order-total-dt">
-                        <div className="order-text">Total Tickets</div>
+                        <div className="order-text">Tổng số Vé</div>
                         <div className="order-number">
-                          {cartItems.reduce((total, item) => total + item.ticketCount, 0) || 0}
+                          {cartItems.reduce(
+                            (total, item) => total + item.ticketCount,
+                            0
+                          ) || 0}
                         </div>
                       </div>
                       <div className="order-total-dt">
-                        <div className="order-text">Sub Total</div>
+                        <div className="order-text">Tổng Tạm tính</div>
                         <div className="order-number">
-                          {`$${calculateTotalPrice().toFixed(2)}`}
+                          <PriceFormat price={calculateTotalPrice()} />
                         </div>
                       </div>
                       <div className="divider-line" />
                       <div className="order-total-dt">
-                        <div className="order-text">Total</div>
+                        <div className="order-text">Tổng Tiền</div>
                         <div className="order-number ttl-clr">
-                          {`$${calculateTotalPrice().toFixed(2)}`}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="coupon-code-block">
-                      <div className="form-group mt-4">
-                        <label className="form-label">Coupon Code*</label>
-                        <div className="position-relative">
-                          <input
-                            className="form-control h_50"
-                            type="text"
-                            placeholder="Code"
-                          />
-                          <button className="apply-btn btn-hover" type="button">
-                            Apply
-                          </button>
+                          <PriceFormat price={calculateTotalPrice()} />
                         </div>
                       </div>
                     </div>
@@ -224,9 +188,11 @@ function Checkout() {
                         onClick={handleConfirmAndPay}
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? "Processing..." : "Confirm & Pay"}
+                        {isSubmitting
+                          ? "Đang xử lí... Vui lòng không thoát trang!"
+                          : "Xác nhận Thanh toán"}
                       </button>
-                      <span>Price is inclusive of all applicable GST</span>
+                      <span>Giá Vé đã bao gồm VAT.</span>
                     </div>
                   </div>
                 </div>

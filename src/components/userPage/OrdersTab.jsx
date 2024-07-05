@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getAllProfileTicketAPI } from "../../components/services/userServices"; // Import the API service
 import { toast } from "react-toastify";
 import { Pagination, Stack } from "@mui/material";
+import { formatDateTime, PriceFormat } from "../../utils/tools";
 
 const OrdersTab = () => {
   const [tickets, setTickets] = useState([]);
@@ -64,11 +65,7 @@ const OrdersTab = () => {
                   </div>
                   <div className="card-dt-text">
                     <h6>Sự kiện bắt đầu</h6>
-                    <span>
-                      {new Date(
-                        ticket.eventDetail.startDate
-                      ).toLocaleDateString()}
-                    </span>
+                    <span>{formatDateTime(ticket.eventDetail.startDate)}</span>
                   </div>
                 </div>
                 <div className="card-bottom-item">
@@ -86,7 +83,9 @@ const OrdersTab = () => {
                   </div>
                   <div className="card-dt-text">
                     <h6>Số tiền</h6>
-                    <span>{ticket.transaction.amount} VND</span>
+                    <span>
+                      <PriceFormat price={ticket.transaction.amount} />
+                    </span>
                   </div>
                 </div>
               </div>

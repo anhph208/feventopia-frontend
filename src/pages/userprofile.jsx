@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { getProfileAPI } from "../components/services/userServices";
@@ -192,7 +192,6 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };
