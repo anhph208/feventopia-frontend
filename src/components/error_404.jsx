@@ -12,7 +12,7 @@ function error_404() {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
+                        <a href="/">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -38,7 +38,7 @@ function error_404() {
                     Seems you're looking for something that doesn't exist. If
                     you think this is a problem with us, please tell us .
                   </p>
-                  <a href="index.html" className="main-btn btn-hover h_50">
+                  <a href="/" className="main-btn btn-hover h_50">
                     <i className="fa-solid fa-house me-3" />
                     Back to home
                   </a>

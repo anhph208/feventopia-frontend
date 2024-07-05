@@ -137,14 +137,14 @@ const Header = () => {
                     </a>
                     <ul className="dropdown-menu dropdown-submenu">
                       <li>
-                        <a className="dropdown-item" href="our_blog.html">
+                        <a className="dropdown-item" href="/Feedback">
                           SỰ KIỆN THÚ VỊ
                         </a>
                       </li>
                       <li>
                         <a
                           className="dropdown-item"
-                          href="blog_detail_view.html"
+                          href="/FeedbackDetail"
                         >
                           TÌM KIẾM ĐÁNH GIÁ
                         </a>

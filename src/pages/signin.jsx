@@ -27,19 +27,24 @@ const SignIn = () => {
           decoded[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ];
-        if (
-          [
-            "ADMIN",
-            "VISITOR",
-            "CHECKINGSTAFF",
-            "EVENTOPERATOR",
-            "SPONSOR",
-          ].includes(role)
-        ) {
-          navigate(window.location.replace("/"));
-        } else {
-          window.location.replace("/");
-        }
+          switch (role) {
+            case 'ADMIN':
+              navigate('/AdminDashboard');
+              break;
+            case 'CHECKINGSTAFF':
+              navigate('/Staffprofile');
+              break;
+            case 'EVENTOPERATOR':
+              navigate('/OperatorDashboard');
+              break;
+            case 'SPONSOR':
+            case 'VISITOR':
+              navigate('/');
+              break;
+            default:
+              navigate('/');
+              break;
+          }
         setIsLogged(true);
         localStorage.setItem("isLogged", isLogged);
         localStorage.setItem("username", username);

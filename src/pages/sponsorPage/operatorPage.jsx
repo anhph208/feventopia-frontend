@@ -1,9 +1,9 @@
 import React from "react";
 
 function operatorDashboard() {
+  
   return (
-    <div>
-      <nav className="vertical_nav">
+      <div className="vertical_nav">
         <div className="left_section menu_left" id="js-menu">
           <div className="left_section">
             <ul>
@@ -130,8 +130,8 @@ function operatorDashboard() {
             </ul>
           </div>
         </div>
-      </nav>
-    </div>
+      </div>
+
   );
 }
 

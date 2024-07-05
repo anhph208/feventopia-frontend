@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProfileAPI, putUpdateProfileAPI } from "../services/userServices";
+import { getProfileAPI, putUpdateProfileAPI } from "../../components/services/userServices";
 import { storage } from "../../firebase/firebase"; // import storage from your firebaseConfig
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Avatar from "@mui/material/Avatar";

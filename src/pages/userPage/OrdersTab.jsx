@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getProfileAPI } from "../services/userServices"
+import { getProfileAPI } from "../../components/services/userServices"
 
 const OrdersTab = ({ onChangePassword }) => {
 
@@ -56,7 +56,7 @@ const OrdersTab = ({ onChangePassword }) => {
             </div>
             <div className="card-dt-text">
               <h6>Invoice</h6>
-              <a href="invoice.html">Download</a>
+              <a href="/Invoice">Download</a>
             </div>
           </div>
         </div>

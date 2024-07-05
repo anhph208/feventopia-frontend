@@ -12,7 +12,7 @@ function onlineEvent() {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
+                        <a href="/">Home</a>
                       </li>
                       <li className="breadcrumb-item">
                         <a href="create.html">Create</a>

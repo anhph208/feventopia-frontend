@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  changePasswordAPI,
-} from "../services/userServices";
+import { changePasswordAPI } from "../../components/services/userServices";
 import { useNavigate } from "react-router-dom";
 
 const SettingTab= () => {
