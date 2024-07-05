@@ -6,34 +6,29 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
-  const logged = localStorage.getItem("isLogged") === "true";
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-
+  const loggedIn = localStorage.getItem("isLogged") === "true";
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (logged) {
-      const token = localStorage.getItem("token");
-
+    if (loggedIn) {
       const fetchUserProfile = async () => {
         try {
-          const profileData = await getProfileAPI(token);
+          const profileData = await getProfileAPI();
           setProfile(profileData);
-          setLoading(false);
         } catch (error) {
           console.error("Error fetching user profile:", error);
           toast.error("Failed to fetch user profile.");
+        } finally {
           setLoading(false);
         }
       };
-
       fetchUserProfile();
     } else {
       setLoading(false);
     }
-  }, [logged]);
+  }, [loggedIn]);
 
   const handleLogoutClick = () => {
     handleLogout(navigate);
@@ -50,7 +45,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-inner">
-        <nav className="navbar navbar-expand-lg bg-barren barren-head navbar fixed-top justify-content-sm-start pt-0 pb-0">
+        <nav className="navbar navbar-expand-lg bg-barren barren-head navbar fixed-top pt-0 pb-0">
           <div className="container">
             <button
               className="navbar-toggler"
@@ -66,6 +61,7 @@ const Header = () => {
             <a
               className="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 me-auto"
               href="/"
+              onClick={(e) => e.preventDefault() || handleClickLogo()}
             >
               <div className="res-main-logo">
                 <img src="./assets/images/logo-fav.png" alt="Logo" />
@@ -112,16 +108,12 @@ const Header = () => {
                 </div>
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe_5">
                   <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="/home">
+                    <a className="nav-link" aria-current="page" href="/">
                       <strong>TRANG CHỦ</strong>
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a
-                      className="nav-link"
-                      aria-current="page"
-                      href="index.html"
-                    >
+                    <a className="nav-link" aria-current="page" href="/explored">
                       <strong>KHÁM PHÁ SỰ KIỆN</strong>
                     </a>
                   </li>
@@ -142,10 +134,7 @@ const Header = () => {
                         </a>
                       </li>
                       <li>
-                        <a
-                          className="dropdown-item"
-                          href="blog_detail_view.html"
-                        >
+                        <a className="dropdown-item" href="blog_detail_view.html">
                           TÌM KIẾM ĐÁNH GIÁ
                         </a>
                       </li>
@@ -225,7 +214,7 @@ const Header = () => {
                     </span>
                   </a>
                 </li>
-                {logged ? (
+                {loggedIn ? (
                   <li className="dropdown account-dropdown">
                     <a
                       href="#"

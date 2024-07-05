@@ -118,7 +118,7 @@ table {
   padding: 0;
 }
 a {
-  color: #313539 !important;
+  /* color: #313539 !important; */
   text-decoration: none !important;
 }
 a:focus {
@@ -740,6 +740,32 @@ body {
 .wrapper {
   margin-top: 60px;
 }
+/* Define the slider-container class for full-screen display */
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 580px; /* Set height to desired height */
+  overflow: hidden; /* Hide any overflow */
+}
+
+.slider-container .owl-carousel {
+  width: 100%;
+  height: 100%; /* Ensure OwlCarousel takes full height */
+}
+
+.slider-container .owl-carousel .item {
+  width: 100%;
+  height: 100%; /* Ensure each item takes full height */
+}
+
+.slider-container .owl-carousel .item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: none; /* Disable Owl Carousel transitions to prevent blur */
+}
+
 
 .hero-banner {
   background-image: url(../images/banner.jpg);
@@ -2340,7 +2366,7 @@ body {
 .ticket-price {
   font-size: 18px;
   font-weight: 500;
-  color: #717171;
+  color: #000000;
 }
 
 .quantity {
@@ -6624,4 +6650,75 @@ ol {
 .map iframe {
   width: 100%;
   height: 250px;
+}
+
+/* POPUP-CART */
+.popup-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 250px; /* Reduced width */
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  transform: translateY(100%);
+}
+
+.popup-cart.open {
+  transform: translateY(0);
+}
+
+.popup-cart-content {
+  padding: 15px; /* Reduced padding */
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem; /* Reduced font size */
+  cursor: pointer;
+}
+
+.cart-item {
+  margin-bottom: 15px; /* Reduced margin */
+}
+
+.checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 8px; /* Reduced padding */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem; /* Reduced font size */
+}
+
+.floating-cart-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px; /* Reduced width */
+  height: 40px; /* Reduced height */
+  background-color: #ff7f50;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 1.2rem; /* Reduced font size */
+}
+
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

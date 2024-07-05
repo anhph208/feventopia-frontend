@@ -1,13 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProfileAPI, rechargeAPI } from "../../components/services/userServices";
+import {
+  getProfileAPI,
+  rechargeAPI,
+  getAllProfileTransactionAPI,
+} from "../../components/services/userServices";
 import { toast } from "react-toastify";
 import RechargeModal from "./rechargeModal";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Pagination,
+  Stack,
+} from "@mui/material";
+import { formatDateTime, PriceFormat } from "../../utils/tools.js";
 
 const HomeTab = ({ initialProfile }) => {
   const [profile, setProfile] = useState(initialProfile || {});
   const [loading, setLoading] = useState(!initialProfile);
   const [showModal, setShowModal] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -29,6 +49,26 @@ const HomeTab = ({ initialProfile }) => {
       fetchProfile();
     }
   }, [initialProfile, token]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const { transactions, pagination } = await getAllProfileTransactionAPI(
+          page,
+          10
+        ); // Fetch 12 transactions per page
+        setTransactions(transactions);
+        setTotalPages(pagination.TotalPages);
+        setLoadingTransactions(false);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+        setLoadingTransactions(false);
+        toast.error("Error fetching transactions");
+      }
+    };
+
+    fetchTransactions();
+  }, [page]);
 
   const handleWithdraw = () => {
     alert("Withdraw functionality to be implemented");
@@ -62,48 +102,179 @@ const HomeTab = ({ initialProfile }) => {
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="tab-content" id="myTabContent">
-      <div className="tab-pane fade active show" id="feed" role="tabpanel" aria-labelledby="feed-tab">
+      <div
+        className="tab-pane fade active show"
+        id="feed"
+        role="tabpanel"
+        aria-labelledby="feed-tab"
+      >
         <div className="nav my-event-tabs mt-4" role="tablist">
-          <button className="event-link active" data-bs-toggle="tab" data-bs-target="#wallet" type="button" role="tab" aria-controls="wallet" aria-selected="true">
+          <button
+            className="event-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#wallet"
+            type="button"
+            role="tab"
+            aria-controls="wallet"
+            aria-selected="true"
+          >
             <span>Ví của tôi</span>
           </button>
-          <button className="event-link" data-bs-toggle="tab" data-bs-target="#allTransactions" type="button" role="tab" aria-controls="feedback" aria-selected="false">
+          <button
+            className="event-link"
+            data-bs-toggle="tab"
+            data-bs-target="#allTransactions"
+            type="button"
+            role="tab"
+            aria-controls="allTransactions"
+            aria-selected="false"
+          >
             <span>Xem tất cả Giao dịch</span>
           </button>
-          <button className="event-link" data-bs-toggle="tab" data-bs-target="#feedback" type="button" role="tab" aria-controls="feedback" aria-selected="false">
+          <button
+            className="event-link"
+            data-bs-toggle="tab"
+            data-bs-target="#feedback"
+            type="button"
+            role="tab"
+            aria-controls="feedback"
+            aria-selected="false"
+          >
             <span>Xem đánh giá sự kiện đã tham gia</span>
           </button>
         </div>
         <div className="tab-content">
-          <div className="tab-pane fade show active" id="wallet" role="tabpanel">
+          <div
+            className="tab-pane fade show active"
+            id="wallet"
+            role="tabpanel"
+          >
             <div className="row">
               <div className="col-md-12">
                 <div className="main-card mt-4">
                   <div className="card-top p-4">
                     <div className="card-event-img">
-                      <img src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/logo%2Fwallet-logo.png?alt=media&token=4dee7f36-0aff-493b-8fe0-05b43483cb5c" alt="Event" />
+                      <img
+                        src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/logo%2Fwallet-logo.png?alt=media&token=4dee7f36-0aff-493b-8fe0-05b43483cb5c"
+                        alt="Event"
+                      />
                     </div>
                     <div className="card-event-dt">
-                      <h5>My Wallet</h5>
+                      <h5>VÍ CỦA TÔI</h5>
                       <div className="evnt-time">
-                        Credit Amount: ${profile.creditAmount}
+                        SỐ DƯ VÍ: <PriceFormat price={profile.creditAmount} />
                       </div>
                       <div className="event-btn-group">
                         <button className="esv-btn me-2" onClick={handleShow}>
                           <i className="fa-solid fa-wallet me-2" />
-                          Recharge
+                          Nạp Tiền vào Ví
                         </button>
-                        <button className="esv-btn me-2" onClick={handleWithdraw}>
+                        <button
+                          className="esv-btn me-2"
+                          onClick={handleWithdraw}
+                        >
                           <i className="fa-solid fa-arrow-up-from-bracket me-2" />
-                          Withdraw
+                          Xem Lịch sử Giao dịch
                         </button>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="tab-pane fade" id="allTransactions" role="tabpanel">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="main-card mt-4">
+                  <div className="card-top p-4">
+                    <div className="card-event-dt">
+                      <h5>TẤT CẢ GIAO DỊCH</h5>
+                      {loadingTransactions ? (
+                        <div>Loading transactions...</div>
+                      ) : transactions.length > 0 ? (
+                        <TableContainer component={Paper}>
+                          <Table
+                            sx={{ minWidth: 750 }}
+                            aria-label="transactions table"
+                          >
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>MÃ GD</TableCell>
+                                <TableCell>LOẠI GD</TableCell>
+                                <TableCell>SỐ TIỀN</TableCell>
+                                <TableCell>CHI TIẾT</TableCell>
+                                <TableCell>NGÀY THỰC HIỆN</TableCell>
+                                <TableCell>TRẠNG THÁI</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {transactions.map((transaction) => (
+                                <TableRow key={transaction.id}>
+                                  <TableCell>{transaction.id}</TableCell>
+                                  <TableCell>
+                                    {transaction.transactionType}
+                                  </TableCell>
+                                  <TableCell>
+                                    <PriceFormat price={transaction.amount} />
+                                  </TableCell>
+                                  <TableCell>
+                                    {transaction.description}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatDateTime(
+                                      transaction.transactionDate
+                                    )}
+                                  </TableCell>
+                                  <TableCell>
+                                    {transaction.status
+                                      ? "Completed"
+                                      : "Pending"}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          <Stack
+                            spacing={2}
+                            sx={{ mt: 2 }}
+                            className="pagination-controls mt-2 mb-2"
+                          >
+                            <Pagination
+                              count={totalPages}
+                              page={page}
+                              onChange={handleChangePage}
+                              variant="outlined"
+                              shape="rounded"
+                              sx={{
+                                "& .MuiPaginationItem-root": {
+                                  color: "white",
+                                  backgroundColor: "#450b00",
+                                  "&.Mui-selected": {
+                                    backgroundColor: "#ff7f50",
+                                  },
+                                  "&:hover": {
+                                    backgroundColor: "#450b00",
+                                  },
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </TableContainer>
+                      ) : (
+                        <div>Không có giao dịch nào.</div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -117,13 +288,21 @@ const HomeTab = ({ initialProfile }) => {
                 <div className="main-card mt-4">
                   <div className="card-top p-4">
                     <div className="card-event-img">
-                      <img src="./assets/images/event-imgs/img-6.jpg" alt="Event" />
+                      <img
+                        src="./assets/images/event-imgs/img-6.jpg"
+                        alt="Event"
+                      />
                     </div>
                     <div className="card-event-dt">
                       <h5>Step Up Open Mic Show</h5>
                       <div className="evnt-time">Thu, Jun 30, 2022 4:30 AM</div>
                       <div className="event-btn-group">
-                        <button className="esv-btn me-2" onClick={() => (window.location.href = "feedback_detail.html")}>
+                        <button
+                          className="esv-btn me-2"
+                          onClick={() =>
+                            (window.location.href = "feedback_detail.html")
+                          }
+                        >
                           <i className="fa-solid fa-comments me-2" />
                           View Feedback
                         </button>
@@ -136,7 +315,11 @@ const HomeTab = ({ initialProfile }) => {
           </div>
         </div>
       </div>
-      <RechargeModal show={showModal} handleClose={handleClose} handleRecharge={handleRecharge} />
+      <RechargeModal
+        show={showModal}
+        handleClose={handleClose}
+        handleRecharge={handleRecharge}
+      />
     </div>
   );
 };

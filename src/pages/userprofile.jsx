@@ -105,7 +105,7 @@ const UserProfile = () => {
                           aria-selected="true"
                         >
                           <i className="fa-solid fa-house" />
-                          Home
+                          <strong>Trang cá nhân</strong>
                         </a>
                       </li>
                       <li className="nav-item">
@@ -119,7 +119,7 @@ const UserProfile = () => {
                           aria-selected="false"
                         >
                           <i className="fa-solid fa-circle-info" />
-                          About
+                          <strong>Thông tin tài khoản</strong>
                         </a>
                       </li>
                       <li className="nav-item">
@@ -133,7 +133,7 @@ const UserProfile = () => {
                           aria-selected="false"
                         >
                           <i className="fa-solid fa-gear" />
-                          Setting
+                          <strong>Cài đặt mật khẩu</strong>
                         </a>
                       </li>
                       <li className="nav-item">
@@ -147,7 +147,7 @@ const UserProfile = () => {
                           aria-selected="false"
                         >
                           <i className="fa-solid fa-box" />
-                          My Orders
+                          <strong>Vé của tôi</strong>
                         </a>
                       </li>
                     </ul>

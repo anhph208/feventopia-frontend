@@ -3,12 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { getProfileAPI, putUpdateProfileAPI } from "../services/userServices";
 import { storage } from "../../firebase/firebase"; // import storage from your firebaseConfig
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import {
+  Avatar,
+  Stack,
+  Button,
+  TextField,
+  Typography,
+  Container,
+  CircularProgress,
+  Box,
+} from "@mui/material";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 
 const AboutTab = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +33,7 @@ const AboutTab = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [selectedFileName, setSelectedFileName] = useState("Chưa chọn ảnh");
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null); // New state to store the selected file
+  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -102,16 +109,14 @@ const AboutTab = () => {
     try {
       const updatedProfile = {
         ...formData,
-        name: formData.name || placeholders.name,
-        phoneNumber: formData.phoneNumber || placeholders.phoneNumber,
-        email: formData.email || placeholders.email,
         avatar: avatarUrl || placeholders.avatar,
       };
-      await putUpdateProfileAPI(token, updatedProfile);
+
+      await putUpdateProfileAPI(updatedProfile, token);
       toast.success("Profile updated successfully");
       setTimeout(() => {
-        navigate(window.location.replace("/userprofile"));
-      }, 3000);
+        navigate("/userprofile");
+      }, 1000);
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Failed to update profile");
@@ -119,7 +124,16 @@ const AboutTab = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -130,71 +144,106 @@ const AboutTab = () => {
       aria-labelledby="about-tab"
     >
       <div className="main-card mt-4">
-        <div className="bp-title position-relative">
-          <h4>Edit Profile</h4>
-        </div>
-        <div className="about-details">
+        <Container component="main" maxWidth="sm">
+          <Typography component="h1" variant="h5" align="center" marginTop={4}>
+            <strong>THÔNG TIN TÀI KHOẢN</strong>
+          </Typography>
           <form onSubmit={handleUpdateProfile}>
-            <div className="form-group mt-4">
-              <label className="form-label">Name:</label>
-              <TextField
-                className="form-control"
-                name="name"
-                value={formData.name}
-                placeholder={placeholders.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group mt-4">
-              <label className="form-label">Phone Number:</label>
-              <TextField
-                className="form-control"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                placeholder={placeholders.phoneNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group mt-4">
-              <label className="form-label">Email:</label>
-              <TextField
-                className="form-control"
-                name="email"
-                value={formData.email}
-                placeholder={placeholders.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group mt-4">
-              <label className="form-label">Avatar:</label>
-              <input
-                className="form-control"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-              <div className="mt-2">{selectedFileName}</div>
-              <Stack direction="row" spacing={2} mt={2}>
-                <Avatar
-                  alt="Avatar Preview"
-                  src={selectedImage || imageUrl}
-                  sx={{ width: 100, height: 100 }}
-                />
-              </Stack>
-            </div>
-            <Button
-              className="main-btn btn-hover w-100 mt-5"
-              type="submit"
-              variant="contained"
-              color="primary"
+            <TextField
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              label="Họ Tên"
+              name="name"
+              value={formData.name}
+              placeholder={placeholders.name}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              label="Số Điện Thoại"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              placeholder={placeholders.phoneNumber}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              label="Email"
+              name="email"
+              value={formData.email}
+              placeholder={placeholders.email}
+              onChange={handleChange}
+              required
+            />
+            <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="raised-button-file"
+              type="file"
+              onChange={handleImageChange}
+            />
+            <label htmlFor="raised-button-file">
+              <Button
+                variant="contained"
+                component="span"
+                fullWidth
+                style={{ height: "30px" }}
+                sx={{
+                  backgroundColor: "#450b00",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#ff7f50",
+                  },
+                }}
+              >
+                CẬP NHẬT AVATAR
+              </Button>
+            </label>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              align="center"
+              marginTop={2}
             >
-              Update Profile
+              {selectedFileName}
+            </Typography>
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              marginTop={2}
+            >
+              <Avatar
+                alt="Avatar Preview"
+                src={selectedImage || imageUrl}
+                sx={{ width: 100, height: 100 }}
+              />
+            </Stack>
+            <Button
+              fullWidth
+              variant="contained"
+              type="submit"
+              sx={{
+                marginTop: 3,
+                marginBottom: 4, // Corrected marginBottom placement
+                backgroundColor: "#450b00",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#ff7f50",
+                },
+              }}
+            >
+              CẬP NHẬT TÀI KHOẢN
             </Button>
           </form>
-        </div>
+        </Container>
       </div>
     </div>
   );

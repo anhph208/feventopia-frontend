@@ -9,16 +9,16 @@ const responsive = {
     items: 1,
   },
   464: {
-    items: 3,
+    items: 1,
   },
   1024: {
-    items: 5,
+    items: 1,
   },
 };
 
 const Slider = ({ items, autoplayTimeout, loop, margin, smartSpeed }) => {
   return (
-    <div>
+    <div className="slider-container">
       <OwlCarousel
         className="owl-theme"
         loop={loop}
@@ -32,11 +32,11 @@ const Slider = ({ items, autoplayTimeout, loop, margin, smartSpeed }) => {
         mouseDrag={false} // Disable mouse drag
         touchDrag={false} // Disable touch drag
         pullDrag={false} // Disable pull drag
-        freeDrag={false}
+        freeDrag={false} // Disable free drag
       >
         {items.map((item, index) => (
           <div className="item" key={index}>
-            <div className="sponsor">
+            <div className="slider-container">
               <a href={item.link}>
                 <img src={item.image} alt={item.altText} />
               </a>
