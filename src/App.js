@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./pages/home";
 import SignIn from "./pages/signin";
@@ -26,6 +26,11 @@ import Error_404 from "./components/error_404";
 import ScanQR from "./components/ScanQR";
 import Feedback from "./pages/feedback";
 import FeedbackDetail from "./pages/feedbackDetail";
+import PrivateRoute from "./components/PrivateRoute";
+import Loading from "./components/Loading";
+import { AuthProvider } from "./components/AuthContext";
+import NavigateWithDelay from "./components/NavigateWithDelay";
+import EventAnalysis from "./pages/Analysis";
 
 // Create a new component to handle conditional rendering
 const ConditionalLayout = () => {
@@ -56,26 +61,30 @@ const ConditionalLayout = () => {
         <Route path="/Term_and_condition" element={<Terms_condition />} />
         <Route path="/Invoice" element={<Invoice />} />
         <Route path="/Staffprofile" element={<Staffprofile />} />
-        <Route path="/checkin" element={<ScanQR />} />        
-        <Route path="/Feedback" element={<Feedback />} />        
-        <Route path="/FeedbackDetail" element={<FeedbackDetail />} />        
+        <Route path="/checkin" element={<ScanQR />} />
+        <Route path="/Feedback" element={<Feedback />} />
+        <Route path="/FeedbackDetail" element={<FeedbackDetail />} />
         <Route
           path="/AdminDashboard"
-          element={<PrivateRoute element={AdminDashboard} allowedRoles={['ADMIN']} />}
+          element={<PrivateRoute element={AdminDashboard} allowedRoles={'ADMIN'} />}
         />
-          <Route
+        <Route
           path="/OperatorDashboard"
-          element={<PrivateRoute element={Dashboard} allowedRoles={['EVENTOPERATOR']} />}
+          element={<PrivateRoute element={Dashboard} allowedRoles={['EVENTOPERATOR', 'ADMIN']} />}
+        />
+        <Route
+          path="/EventAnalysis"
+          element={<PrivateRoute element={EventAnalysis} allowedRoles={['ADMIN', 'EVENTOPERATOR']} />}
         />
         <Route path="/error_404" element={<Error_404 />} />
+        <Route path="/Loading" element={<Loading />} />
       </Routes>
       {!noHeaderFooterPaths.includes(location.pathname) && <Footer />}
     </div>
   );
 };
 
-// PrivateRoute component
-const PrivateRoute = ({ element: Component, allowedRoles }) => {
+/*const PrivateRoute = ({ element: Component, allowedRoles }) => {
   const location = useLocation();
   const userRole = localStorage.getItem("role");
   const isAuthenticated = localStorage.getItem("token") !== null;
@@ -89,12 +98,14 @@ const PrivateRoute = ({ element: Component, allowedRoles }) => {
   }
 
   return <Component />;
-};
+};*/
 
 function App() {
   return (
     <BrowserRouter>
-      <ConditionalLayout />
+        <AuthProvider>
+          <ConditionalLayout />
+        </AuthProvider>
     </BrowserRouter>
   );
 }

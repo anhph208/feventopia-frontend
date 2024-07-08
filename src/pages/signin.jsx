@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState }  from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import axios from "axios"; // Import axios
 import { loginAPI } from "../components/services/userServices";
 import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../components/AuthContext";
 
 const SignIn = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
@@ -12,7 +13,16 @@ const SignIn = () => {
   const [isLogged, setIsLogged] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth(); // Lấy hàm login từ AuthContext
 
+  const navigateWithDelay = (path, delay) => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        navigate(path);
+        resolve();
+      }, delay);
+    });
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -27,15 +37,16 @@ const SignIn = () => {
           decoded[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ];
+          login(jwtToken, role); // Gọi hàm login từ AuthContext
           switch (role) {
             case 'ADMIN':
-              navigate('/AdminDashboard');
+              await navigateWithDelay('/AdminDashboard', 1000);
               break;
             case 'CHECKINGSTAFF':
-              navigate('/Staffprofile');
+              await navigate('/Staffprofile', 1000);
               break;
             case 'EVENTOPERATOR':
-              navigate('/OperatorDashboard');
+              await navigate('/OperatorDashboard', 1000);
               break;
             case 'SPONSOR':
             case 'VISITOR':

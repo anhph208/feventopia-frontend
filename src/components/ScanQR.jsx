@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { QrReader } from 'react-qr-reader';
-import axios from 'axios';
+import instance from '../utils/cus-axios';
 
 function ScanQR() {
     const [ticketId, setTicketId] = useState('');
     const [checkinStatus, setCheckinStatus] = useState('');
 
+    
     const handleCheckin = async () => {
         setCheckinStatus('Đang kiểm tra...');
         try {
-            const response = await axios.get('/ticket/Checkin', {
+            const response = await instance.get('/ticket/Checkin', {
                 params: {
                     ticketid: ticketId,
                 },
