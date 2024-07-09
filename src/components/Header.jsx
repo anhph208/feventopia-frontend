@@ -169,17 +169,17 @@ const Header = () => {
                     </a>
                     <ul className="dropdown-menu dropdown-submenu">
                       <li>
-                        <a className="dropdown-item" href="faq.html">
+                        <a className="dropdown-item" href="/faq">
                           FAQ
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="help_center.html">
+                        <a className="dropdown-item" href="/helpCenter">
                           TRUNG TÂM TRỢ GIÚP
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="contact_us.html">
+                        <a className="dropdown-item" href="/Contact">
                           LIÊN HỆ FEVENTOPIA
                         </a>
                       </li>
