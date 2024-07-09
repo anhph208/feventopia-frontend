@@ -143,13 +143,13 @@ const LocationPage = () => {
                     </div>
                     <div className='d-flex gap-2'>
                         <button className="ps-3 pe-3 btn btn-danger" type='button' onClick={handleResetSearch}>X</button>
-                        <button type="submit" className='p-2 btn btn-primary'>Tìm kiếm</button>
+                        <button type="submit" className='p-2 btn btn-primary' style={{ backgroundColor: "#ff7f50", borderColor: "#ff7f50" }}>Tìm kiếm</button>
                     </div>
                 </form>
-                <Button variant="primary p-2 mb-3" onClick={handleShow}>
+                <Button variant='primary' type='button' onClick={handleShow} style={{ backgroundColor: "#ff7f50", borderColor: "#ff7f50" }}>
                     Tạo địa điểm mới
                 </Button>
-                <Grid container spacing={4}>
+                <Grid container spacing={4} className='mt-3'>
                     {filteredLocation.map(location => (
                         <Grid item xs={12} sm={6} md={4} key={location.id}>
                             <Card onClick={() => handleGetLocation(location.id)}>
