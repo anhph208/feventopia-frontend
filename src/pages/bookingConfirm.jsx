@@ -1,6 +1,14 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 
-function bookingConfirm() {
+function BookingConfirm() {
+  const location = useLocation();
+  const { eventDetail, ticketCount, profile } = location.state || {};
+
+  if (!eventDetail || !profile) {
+    return <div>No booking details available</div>;
+  }
+
   return (
     <div>
       <div className="wrapper">
@@ -12,7 +20,7 @@ function bookingConfirm() {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
+                        <a href="/">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -35,7 +43,10 @@ function bookingConfirm() {
                   <div className="main-card">
                     <div className="booking-confirmed-top text-center p_30">
                       <div className="booking-confirmed-img mt-4">
-                        <img src="./assets/./assets/images/confirmed.png" alt />
+                        <img
+                          src="/assets/images/confirmed.png"
+                          alt="Booking Confirmed"
+                        />
                       </div>
                       <h4>Booking Confirmed</h4>
                       <p className="ps-lg-4 pe-lg-4">
@@ -62,26 +73,33 @@ function bookingConfirm() {
                       <div className="booking-confirmed-bottom-bg p_30">
                         <div className="event-order-dt">
                           <div className="event-thumbnail-img">
-                            <img src="./assets/./assets/images/event-imgs/img-7.jpg" alt />
+                            <img
+                              src={eventDetail?.eventBanner || "/assets/images/event-imgs/img-7.jpg"}
+                              alt="Event Thumbnail"
+                            />
                           </div>
                           <div className="event-order-dt-content">
-                            <h5>Tutorial on Canvas Painting for Beginners</h5>
-                            <span>Wed, Jun 01, 2022 5:30 AM. Duration 1h</span>
-                            <div className="buyer-name">John Doe</div>
+                            <h5>{eventDetail.eventName}</h5>
+                            <span>
+                              {eventDetail.startDate &&
+                                new Date(eventDetail.startDate).toLocaleString()}.
+                              Duration {eventDetail.duration || "1h"}
+                            </span>
+                            <div className="buyer-name">{profile.name}</div>
                             <div className="booking-total-tickets">
                               <i className="fa-solid fa-ticket rotate-icon" />
                               <span className="booking-count-tickets mx-2">
-                                1
+                                {ticketCount}
                               </span>
                               x Ticket
                             </div>
                             <div className="booking-total-grand">
-                              Total : <span>$75.00</span>
+                              Total : <span>${eventDetail.ticketPrice * ticketCount}</span>
                             </div>
                           </div>
                         </div>
                         <a
-                          href="invoice.html"
+                          href="/invoice"
                           className="main-btn btn-hover h_50 w-100 mt-5"
                         >
                           <i className="fa-solid fa-ticket rotate-icon me-3" />
@@ -100,4 +118,4 @@ function bookingConfirm() {
   );
 }
 
-export default bookingConfirm;
+export default BookingConfirm;

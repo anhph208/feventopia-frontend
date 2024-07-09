@@ -6,37 +6,42 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
-  const logged = localStorage.getItem("isLogged") === "true";
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-
+  const [isLogged, setIsLogged] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (logged) {
-      const token = localStorage.getItem("token");
+    const loggedIn = localStorage.getItem("isLogged") === "true";
+    setIsLogged(loggedIn);
 
+    if (loggedIn) {
       const fetchUserProfile = async () => {
         try {
-          const profileData = await getProfileAPI(token);
+          const profileData = await getProfileAPI();
           setProfile(profileData);
-          setLoading(false);
         } catch (error) {
           console.error("Error fetching user profile:", error);
           toast.error("Failed to fetch user profile.");
+        } finally {
           setLoading(false);
         }
       };
-
       fetchUserProfile();
     } else {
       setLoading(false);
     }
-  }, [logged]);
+  }, []);
 
   const handleLogoutClick = () => {
     handleLogout(navigate);
+    setIsLogged(false);
+    localStorage.setItem("isLogged", "false");
+  };
+
+  const handleLogin = () => {
+    setIsLogged(true);
+    localStorage.setItem("isLogged", "true");
   };
 
   const handleClickLogo = () => {
@@ -50,7 +55,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-inner">
-        <nav className="navbar navbar-expand-lg bg-barren barren-head navbar fixed-top justify-content-sm-start pt-0 pb-0">
+        <nav className="navbar navbar-expand-lg bg-barren barren-head navbar fixed-top pt-0 pb-0">
           <div className="container">
             <button
               className="navbar-toggler"
@@ -66,12 +71,13 @@ const Header = () => {
             <a
               className="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 me-auto"
               href="/"
+              onClick={(e) => e.preventDefault() || handleClickLogo()}
             >
-              <div className="res-main-logo">
-                <img src="./assets/images/logo-fav.png" alt="Logo" />
-              </div>
               <div className="main-logo" id="logo">
-                <img src="./assets/images/logo.svg" alt="Logo" />
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/logo%2Flogo.svg?alt=media&token=6e50aaa8-2c91-4596-9b11-e407bb6694e3"
+                  alt="Logo"
+                />
                 <img
                   className="logo-inverse"
                   src="./assets/images/dark-logo.svg"
@@ -112,7 +118,7 @@ const Header = () => {
                 </div>
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe_5">
                   <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="/home">
+                    <a className="nav-link" aria-current="page" href="/">
                       <strong>TRANG CHỦ</strong>
                     </a>
                   </li>
@@ -120,7 +126,7 @@ const Header = () => {
                     <a
                       className="nav-link"
                       aria-current="page"
-                      href="index.html"
+                      href="/explored"
                     >
                       <strong>KHÁM PHÁ SỰ KIỆN</strong>
                     </a>
@@ -218,14 +224,14 @@ const Header = () => {
             <div className="right-header order-2">
               <ul className="align-self-stretch">
                 <li>
-                  <a href="create.html" className="create-btn btn-hover">
+                  <a href="/explored" className="create-btn btn-hover">
                     <i className="fa-solid fa-calendar-days" />
                     <span>
                       <strong>MUA VÉ NGAY</strong>
                     </span>
                   </a>
                 </li>
-                {logged ? (
+                {isLogged ? (
                   <li className="dropdown account-dropdown">
                     <a
                       href="#"

@@ -1,17 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { AuthProvider } from './context/AuthProvider';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-ReactDOM.render(
+const container = document.getElementById("root");
+const root = createRoot(container);
+
+root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <App />
-      <ToastContainer /> {/* Make sure to include this */}
-    </AuthProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <App />
+    <ToastContainer />
+  </React.StrictMode>
 );
-

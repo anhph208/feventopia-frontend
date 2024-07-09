@@ -1,75 +1,158 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  getProfileAPI,
+  buyTicketAPI,
+} from "../components/services/userServices";
+import { formatDateTime, PriceFormat } from "../utils/tools";
+import RechargeModal from "../components/userPage/rechargeModal"; // Import the RechargeModal component
 
-function checkout() {
+function Checkout() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { eventDetail, ticketCount, eventBanner, checkoutType } =
+    location.state || {};
+
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    creditAmount: 0,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [checkoutMode, setCheckoutMode] = useState(checkoutType || "cart");
+  const [showRechargeModal, setShowRechargeModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profileData = await getProfileAPI();
+        setProfile({
+          name: profileData.name,
+          email: profileData.email,
+          creditAmount: profileData.creditAmount,
+        });
+      } catch (error) {
+        console.error("Error fetching profile data", error);
+        toast.error("Error fetching profile data");
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    if (checkoutMode === "bookNow" && eventDetail) {
+      setCartItems([
+        {
+          ...eventDetail,
+          ticketCount: ticketCount,
+          eventBanner: eventBanner,
+        },
+      ]);
+    } else {
+      const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+      setCartItems(cart);
+    }
+  }, [checkoutMode, eventDetail, ticketCount, eventBanner]);
+
+  const calculateTotalPrice = () => {
+    return cartItems.reduce((total, item) => {
+      return total + (item.ticketCount || 0) * (item.ticketPrice || 0);
+    }, 0);
+  };
+
+  const handleConfirmAndPay = async () => {
+    if (profile.creditAmount < calculateTotalPrice()) {
+      setErrorMessage("Số dư ví không đủ. Vui lòng nạp thêm tiền.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    const orderDetails = cartItems.map((item) => ({
+      eventDetailId: item.eventId,
+      quantity: item.ticketCount,
+    }));
+
+    const totalPrice = calculateTotalPrice();
+
+    const requestBody = {
+      ticketRequests: orderDetails,
+      emailAddress: profile.email,
+      totalPrice: totalPrice,
+    };
+
+    try {
+      await buyTicketAPI(requestBody);
+      const toastId = toast.success("Thanh toán thành công!", {
+        autoClose: 2000, // close after 2 seconds
+      });
+
+      // Navigate after the toast disappears
+      toast.onChange((payload) => {
+        if (payload.status === "removed" && payload.id === toastId) {
+          if (checkoutMode === "cart") {
+            sessionStorage.removeItem("cart"); // Clear the cart after successful booking
+          }
+          navigate("/userprofile", { state: { activeTab: "orders" } });
+        }
+      });
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast.error("Error creating order");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRecharge = (amount) => {
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      creditAmount: prevProfile.creditAmount + parseFloat(amount),
+    }));
+    toast.success("Nạp tiền thành công!");
+    setShowRechargeModal(false);
+  };
+
+  if (cartItems.length === 0) {
+    return <div>No event details available</div>;
+  }
+
+  const totalPrice = calculateTotalPrice();
+  const isInsufficientFunds = profile.creditAmount < totalPrice;
+
   return (
     <div>
       <div className="wrapper">
-        <div className="breadcrumb-block">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12 col-md-10">
-                <div className="barren-breadcrumb">
-                  <nav aria-label="breadcrumb">
-                    <ol className="breadcrumb">
-                      <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
-                      </li>
-                      <li className="breadcrumb-item">
-                        <a href="explore_events.html">Explore Events</a>
-                      </li>
-                      <li className="breadcrumb-item">
-                        <a href="online_event_detail_view.html">
-                          Online Event Detail View
-                        </a>
-                      </li>
-                      <li
-                        className="breadcrumb-item active"
-                        aria-current="page"
-                      >
-                        Checkout
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="event-dt-block p-80">
           <div className="container">
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="main-title checkout-title">
-                  <h3>Order Confirmation</h3>
+                  <h3>THANH TOÁN</h3>
                 </div>
               </div>
               <div className="col-xl-8 col-lg-12 col-md-12">
                 <div className="checkout-block">
                   <div className="main-card">
                     <div className="bp-title">
-                      <h4>Billing information</h4>
+                      <h4>Thông tin Thanh toán</h4>
                     </div>
                     <div className="bp-content bp-form">
                       <div className="row">
                         <div className="col-lg-6 col-md-12">
                           <div className="form-group mt-4">
-                            <label className="form-label">First Name*</label>
+                            <label className="form-label">Họ Tên*</label>
                             <input
                               className="form-control h_50"
                               type="text"
-                              placeholder
-                              defaultValue="John"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">Last Name*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue="Doe"
+                              value={profile.name}
+                              readOnly
                             />
                           </div>
                         </div>
@@ -78,186 +161,23 @@ function checkout() {
                             <label className="form-label">Email*</label>
                             <input
                               className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue="johndoe@example.com"
-                              disabled
+                              type="email"
+                              value={profile.email}
+                              required
+                              onChange={(e) =>
+                                setProfile({
+                                  ...profile,
+                                  email: e.target.value,
+                                })
+                              }
                             />
                           </div>
                         </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">Address*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue
-                            />
+                        {isInsufficientFunds && (
+                          <div className="alert alert-danger mt-3">
+                            Số dư ví của bạn không đủ. Vui lòng nạp thêm tiền.
                           </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group main-form mt-4">
-                            <label className="form-label">Country*</label>
-                            <select
-                              className="selectpicker"
-                              data-size={5}
-                              title="Nothing selected"
-                              data-live-search="true"
-                            >
-                              <option value="Algeria">Algeria</option>
-                              <option value="Argentina">Argentina</option>
-                              <option value="Australia">Australia</option>
-                              <option value="Austria">
-                                Austria (Österreich)
-                              </option>
-                              <option value="Belgium">Belgium (België)</option>
-                              <option value="Bolivia">Bolivia</option>
-                              <option value="Brazil">Brazil</option>
-                              <option value="Canada">Canada</option>
-                              <option value="Chile">Chile</option>
-                              <option value="Colombia">Colombia</option>
-                              <option value="Costa Rica">Costa Rica</option>
-                              <option value="Cyprus">Cyprus</option>
-                              <option value="Czech Republic">
-                                Czech Republic
-                              </option>
-                              <option value="Denmark">Denmark</option>
-                              <option value="Dominican Republic">
-                                Dominican Republic
-                              </option>
-                              <option value="Estonia">Estonia</option>
-                              <option value="Finland">Finland</option>
-                              <option value="France">France</option>
-                              <option value="Germany">Germany</option>
-                              <option value="Greece">Greece</option>
-                              <option value="Hong Kong">Hong Kong</option>
-                              <option value="Iceland">Iceland</option>
-                              <option value="India">India</option>
-                              <option value="Indonesia">Indonesia</option>
-                              <option value="Ireland">Ireland</option>
-                              <option value="Israel">Israel</option>
-                              <option value="Italy">Italy</option>
-                              <option value="Japan">Japan</option>
-                              <option value="Latvia">Latvia</option>
-                              <option value="Lithuania">Lithuania</option>
-                              <option value="Luxembourg">Luxembourg</option>
-                              <option value="Malaysia">Malaysia</option>
-                              <option value="Mexico">Mexico</option>
-                              <option value="Nepal">Nepal</option>
-                              <option value="Netherlands">Netherlands</option>
-                              <option value="New Zealand">New Zealand</option>
-                              <option value="Norway">Norway</option>
-                              <option value="Paraguay">Paraguay</option>
-                              <option value="Peru">Peru</option>
-                              <option value="Philippines">Philippines</option>
-                              <option value="Poland">Poland</option>
-                              <option value="Portugal">Portugal</option>
-                              <option value="Singapore">Singapore</option>
-                              <option value="Slovakia">Slovakia</option>
-                              <option value="Slovenia">Slovenia</option>
-                              <option value="South Africa">South Africa</option>
-                              <option value="South Korea">South Korea</option>
-                              <option value="Spain">Spain</option>
-                              <option value="Sweden">Sweden</option>
-                              <option value="Switzerland">Switzerland</option>
-                              <option value="Tanzania">Tanzania</option>
-                              <option value="Thailand">Thailand</option>
-                              <option value="Turkey">Turkey</option>
-                              <option value="United Kingdom">
-                                United Kingdom
-                              </option>
-                              <option value="United States">
-                                United States
-                              </option>
-                              <option value="Vietnam">Vietnam</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">State*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">City/Suburb*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">Zip/Post Code*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="main-card mt-5">
-                    <div className="bp-title">
-                      <h4>Total Payable Amount : AUD $50.00</h4>
-                    </div>
-                    <div className="bp-content bp-form">
-                      <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">Card number*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">Expiry date*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder="MM/YY"
-                              defaultValue
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                          <div className="form-group mt-4">
-                            <label className="form-label">CVV*</label>
-                            <input
-                              className="form-control h_50"
-                              type="text"
-                              placeholder
-                              defaultValue
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-12 col-md-12">
-                          <button
-                            className="main-btn btn-hover h_50 w-100 mt-5"
-                            type="button"
-                            onclick="window.location.href='booking_confirmed.html'"
-                          >
-                            Confirm &amp; Pay
-                          </button>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -266,47 +186,58 @@ function checkout() {
               <div className="col-xl-4 col-lg-12 col-md-12">
                 <div className="main-card order-summary">
                   <div className="bp-title">
-                    <h4>Billing information</h4>
+                    <h4>Đơn Mua Vé</h4>
                   </div>
                   <div className="order-summary-content p_30">
-                    <div className="event-order-dt">
-                      <div className="event-thumbnail-img">
-                        <img src="./assets/./assets/images/event-imgs/img-7.jpg" alt />
+                    {cartItems.map((item, index) => (
+                      <div key={index} className="event-order-dt mt-2">
+                        <div className="event-thumbnail-img">
+                          <img
+                            src={
+                              item.eventBanner ||
+                              "./assets/images/event-imgs/img-7.jpg"
+                            }
+                            alt="Event Thumbnail"
+                          />
+                        </div>
+                        <div className="event-order-dt-content">
+                          <h5>{item.eventName || "Event Name"}</h5>
+                          <span>
+                            {item.startDate && formatDateTime(item.startDate)}
+                          </span>
+                          <span>
+                            Giá vé: {<PriceFormat price={item.ticketPrice} />}
+                          </span>
+                        </div>
                       </div>
-                      <div className="event-order-dt-content">
-                        <h5>Tutorial on Canvas Painting for Beginners</h5>
-                        <span>Wed, Jun 01, 2022 5:30 AM</span>
-                        <div className="category-type">Online Event</div>
-                      </div>
-                    </div>
+                    ))}
                     <div className="order-total-block">
                       <div className="order-total-dt">
-                        <div className="order-text">Total Ticket</div>
-                        <div className="order-number">1</div>
+                        <div className="order-text">Tổng số Vé</div>
+                        <div className="order-number">
+                          {cartItems.reduce(
+                            (total, item) => total + item.ticketCount,
+                            0
+                          ) || 0}
+                        </div>
                       </div>
                       <div className="order-total-dt">
-                        <div className="order-text">Sub Total</div>
-                        <div className="order-number">$50.00</div>
+                        <div className="order-text">Tổng Tạm tính</div>
+                        <div className="order-number">
+                          <PriceFormat price={totalPrice} />
+                        </div>
                       </div>
                       <div className="divider-line" />
                       <div className="order-total-dt">
-                        <div className="order-text">Total</div>
-                        <div className="order-number ttl-clr">AUD $50.00</div>
+                        <div className="order-text">Tổng Tiền</div>
+                        <div className="order-number ttl-clr">
+                          <PriceFormat price={totalPrice} />
+                        </div>
                       </div>
-                    </div>
-                    <div className="coupon-code-block">
-                      <div className="form-group mt-4">
-                        <label className="form-label">Coupon Code*</label>
-                        <div className="position-relative">
-                          <input
-                            className="form-control h_50"
-                            type="text"
-                            placeholder="Code"
-                            defaultValue
-                          />
-                          <button className="apply-btn btn-hover" type="button">
-                            Apply
-                          </button>
+                      <div className="order-total-dt">
+                        <div className="order-text">Số dư ví</div>
+                        <div className="order-number ttl-clr">
+                          <PriceFormat price={profile.creditAmount} />
                         </div>
                       </div>
                     </div>
@@ -314,11 +245,25 @@ function checkout() {
                       <button
                         className="main-btn btn-hover h_50 w-100 mt-5"
                         type="button"
-                        onclick="window.location.href='booking_confirmed.html'"
+                        onClick={
+                          isInsufficientFunds
+                            ? () => setShowRechargeModal(true)
+                            : handleConfirmAndPay
+                        }
+                        disabled={isSubmitting}
                       >
-                        Confirm &amp; Pay
+                        {isSubmitting
+                          ? "Đang xử lí... Vui lòng không thoát trang!"
+                          : isInsufficientFunds
+                          ? "Nạp tiền"
+                          : "Xác nhận Thanh toán"}
                       </button>
-                      <span>Price is inclusive of all applicable GST</span>
+                      {isInsufficientFunds && (
+                        <div className="text-danger mt-2">
+                          Số dư ví không đủ. Vui lòng nạp thêm tiền.
+                        </div>
+                      )}
+                      <span>Giá Vé đã bao gồm VAT.</span>
                     </div>
                   </div>
                 </div>
@@ -327,8 +272,13 @@ function checkout() {
           </div>
         </div>
       </div>
+      <RechargeModal
+        show={showRechargeModal}
+        handleClose={() => setShowRechargeModal(false)}
+        handleRecharge={handleRecharge}
+      />
     </div>
   );
 }
 
-export default checkout;
+export default Checkout;

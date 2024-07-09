@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+} from "@mui/material";
 
 const RechargeModal = ({ show, handleClose, handleRecharge }) => {
   const [amount, setAmount] = useState("");
@@ -11,35 +18,30 @@ const RechargeModal = ({ show, handleClose, handleRecharge }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton className="modal-header">
-        <Modal.Title className="modal-title">Recharge Wallet</Modal.Title>
-      </Modal.Header>
-      <Modal.Body className="modal-body">
-        <div className="model-content">
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formAmount">
-              <Form.Label>Amount</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="form-control"
-              />
-            </Form.Group>
-            <Button variant="light" type="submit" className="mt-3 btn-light">
-              Recharge
+    <Dialog open={show} onClose={handleClose}>
+      <DialogTitle>Nạp tiền vào ví</DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Số tiền"
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            fullWidth
+            margin="normal"
+            required
+          />
+          <DialogActions>
+            <Button variant="contained" color="primary" type="submit">
+              Nạp tiền
             </Button>
-          </Form>
-        </div>
-      </Modal.Body>
-      <Modal.Footer className="modal-footer">
-        <Button variant="secondary" onClick={handleClose} className="btn-light">
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
+            <Button variant="outlined" onClick={handleClose}>
+              Đóng
+            </Button>
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

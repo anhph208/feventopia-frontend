@@ -1,18 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import axios from "axios"; // Import axios
 import { loginAPI } from "../components/services/userServices";
 import { jwtDecode } from "jwt-decode";
-import AuthContext from "../context/AuthProvider";
-import Cookies from "js-cookie";
 
 const SignIn = () => {
-  const { setAuth } = useContext(AuthContext);
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogged, setIsLogged] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -20,39 +15,21 @@ const SignIn = () => {
     event.preventDefault();
     try {
       const response = await loginAPI(emailOrUsername, password);
-      const jwtToken = response.headers["json-web-token"]; // Access headers directly
+      const jwtToken = response.headers["json-web-token"];
       if (jwtToken) {
         localStorage.setItem("token", jwtToken);
         const decoded = jwtDecode(jwtToken);
         const username = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
         const userEmail = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
-        const role =
-          decoded[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ];
-        if (
-          [
-            "ADMIN",
-            "VISITOR",
-            "CHECKINGSTAFF",
-            "EVENTOPERATOR",
-            "SPONSOR",
-          ].includes(role)
-        ) {
-          // Save data to cookies
-          Cookies.set("accessToken", jwtToken);
-          Cookies.set("username", username);
-          Cookies.set("email", userEmail);
-          Cookies.set("role", role);
+        const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-          // Save data to auth
-          setAuth({ jwtToken, username, userEmail, role });
-          navigate(window.location.replace("/"));
+        if (role === "EVENTOPERATOR") {
+          window.location.replace("/operatorPages");
         } else {
           window.location.replace("/");
         }
-        setIsLogged(true);
-        localStorage.setItem("isLogged", isLogged);
+
+        localStorage.setItem("isLogged", "true");
         localStorage.setItem("username", username);
         localStorage.setItem("email", userEmail);
         localStorage.setItem("role", role);
@@ -60,7 +37,6 @@ const SignIn = () => {
       }
     } catch (err) {
       if (err.response) {
-        // Request was made and server responded with a non-2xx status code
         const status = err.response.status;
         if (status === 401) {
           toast.error("Email/Tên tài khoản hoặc Mật khẩu không đúng");
@@ -70,10 +46,8 @@ const SignIn = () => {
           toast.error("Lỗi. Vui lòng thử lại");
         }
       } else if (err.request) {
-        // Request was made but no response was received
         toast.error("Sự cố kết nối. Vui lòng kiểm tra kết nối mạng!");
       } else {
-        // Something happened in setting up the request that triggered an error
         console.error("Error signing in:", err.message);
       }
       localStorage.removeItem("token");
@@ -102,7 +76,7 @@ const SignIn = () => {
             <div className="row justify-content-center">
               <div className="col-lg-10 col-md-10">
                 <div className="app-top-items">
-                  <a href="/home">
+                  <a href="/">
                     <div className="sign-logo" id="logo">
                       <img src="./assets/images/logo.svg" alt="logo" />
                       <img
@@ -197,4 +171,5 @@ const SignIn = () => {
     </div>
   );
 };
+
 export default SignIn;

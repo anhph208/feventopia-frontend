@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { signupAPI } from "../components/services/userServices";
 import { useNavigate } from "react-router-dom";
@@ -79,7 +79,7 @@ function Signup() {
             <div className="row justify-content-center">
               <div className="col-lg-10 col-md-10">
                 <div className="app-top-items">
-                  <a href="/home">
+                  <a href="/">
                     <div className="sign-logo" id="logo">
                       <img src="./assets/images/logo.svg" alt="Logo" />
                       <img
@@ -219,7 +219,6 @@ function Signup() {
                       </div>
                     </div>
                   </form>
-                  <ToastContainer />
                   <div className="agree-text">
                     Bằng việc "Đăng kí", bạn đồng ý với FEvetopia{" "}
                     <a href="#">Điều khoản &amp; Dịch vụ</a> và{" "}

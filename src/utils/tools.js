@@ -1,20 +1,12 @@
 import React from "react";
 import { toast } from "react-toastify";
-// import { Navigate, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
 
 export const convertToGMT7 = (dateTimeString) => {
-  // Parse the VNPay date format
   const [datePart, timePart] = decodeURIComponent(dateTimeString).split(' ');
   const [month, day, year] = datePart.split('/');
   const [hours, minutes, seconds] = timePart.split(':');
-
   const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
-
-  // Add 7 hours to convert from GMT+0 to GMT+7
   date.setHours(date.getHours() + 7);
-
-  // Format the date to a string
   const formattedDate = date.toISOString().replace('T', ' ').substring(0, 19);
   return formattedDate;
 };
@@ -31,33 +23,36 @@ export const formatDate = (inputDate) => {
 };
 
 export const PriceFormat = ({ price }) => {
+  if (price === undefined || price === null || isNaN(price)) {
+    return <span>N/A</span>; // Display a placeholder or handle as needed
+  }
+
   const formattedPrice = price.toLocaleString("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+
   return <span>{formattedPrice}</span>;
+
 };
 
 export const formatTime = (date) => {
   if (!date) return "";
-
   const formattedTime = new Date(date).toLocaleTimeString();
   return formattedTime;
 };
 
 export const formatDateTime = (date) => {
   const formattedDate = new Date(date);
-
   const day = formattedDate.getDate().toString().padStart(2, "0");
-  const month = (formattedDate.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
-  const year = formattedDate.getFullYear().toString().slice(2, 4);
+  const month = (formattedDate.getMonth() + 1).toString().padStart(2, "0");
+  const year = formattedDate.getFullYear();
   const hours = formattedDate.getHours().toString().padStart(2, "0");
   const minutes = formattedDate.getMinutes().toString().padStart(2, "0");
-
-  return `${day}.${month}.${year} ${hours}:${minutes}`;
+  return `${hours}:${minutes} ${day}/${month}/${year}`;
 };
 
-export const caculateTimeAgo = (datetime) => {
+export const calculateTimeAgo = (datetime) => {
   const currentDate = new Date();
   const pastDate = new Date(datetime);
   const timeDifference = currentDate - pastDate;
@@ -78,7 +73,7 @@ export const caculateTimeAgo = (datetime) => {
 };
 
 export const handleLogout = (navigate) => {
-  navigate(window.location.replace("/signin"));;
+  navigate(window.location.replace("/signin"));
   localStorage.removeItem("isLogged");
   localStorage.removeItem("username");
   localStorage.removeItem("phoneNumber");

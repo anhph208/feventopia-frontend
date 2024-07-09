@@ -24,6 +24,11 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.EnvironmentPlugin(['CI_COMMIT_REF_NAME', 'RELEASE_DIR'])
+        new webpack.EnvironmentPlugin(['CI_COMMIT_REF_NAME', 'RELEASE_DIR']),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery'
+        }),
     ]
 }
