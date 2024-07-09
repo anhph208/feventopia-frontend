@@ -117,12 +117,14 @@ export const rechargeAPI = async (rechargeData) => {
   }
 };
 
-export const getAllEventAPI = async (pageNumber = 1, pageSize = 8) => {
+export const getAllEventForVisitorAPI = async (pageNumber = 1, pageSize = 8, category, status) => {
   try {
-    const response = await config.get("/event/GetAllEvent", {
+    const response = await config.get("/event/GetAllEventForVisitor", {
       params: {
         PageNumber: pageNumber,
         PageSize: pageSize,
+        Category: category,
+        Status: status,
       },
     });
 
@@ -140,6 +142,33 @@ export const getAllEventAPI = async (pageNumber = 1, pageSize = 8) => {
     throw error;
   }
 };
+
+export const getAllEventForOtherAPI = async (pageNumber = 1, pageSize = 8, category, status) => {
+  try {
+    const response = await config.get("/event/GetAllEvent", {
+      params: {
+        PageNumber: pageNumber,
+        PageSize: pageSize,
+        Category: category,
+        Status: status,
+      },
+    });
+
+    if (response.status >= 200 && response.status < 300) {
+      const pagination = JSON.parse(response.headers['x-pagination']);
+      return {
+        events: response.data, // Adjust based on actual response structure
+        pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
+      };
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    throw error;
+  }
+};
+
 export const getEventDetailsAPI = async (eventId) => {
   try {
     const response = await config.get("/event/GetEventById", {
@@ -218,3 +247,38 @@ export const getAllProfileTicketAPI = async (pageNumber = 1, pageSize = 5) => {
   }
 };
 
+export const searchEventAPI = async (query) => {
+  try {
+    const response = await config.get("/event/SearchEventByName", {
+      params: {
+        name: query, // Ensure this matches the backend parameter name
+      },
+    });
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the search results
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error searching for events:", error);
+    throw error;
+  }
+};
+
+export const createEventAPI = async (eventData, category) => {
+  try {
+    const response = await config.post('/event/CreateEvent', eventData, {
+      params: {
+        category: category, // Pass category as a query parameter
+      },
+    });
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the created event data
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error creating event:', error);
+    throw error;
+  }
+};

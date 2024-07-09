@@ -6,12 +6,15 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
-  const loggedIn = localStorage.getItem("isLogged") === "true";
+  const [isLogged, setIsLogged] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const loggedIn = localStorage.getItem("isLogged") === "true";
+    setIsLogged(loggedIn);
+
     if (loggedIn) {
       const fetchUserProfile = async () => {
         try {
@@ -28,10 +31,17 @@ const Header = () => {
     } else {
       setLoading(false);
     }
-  }, [loggedIn]);
+  }, []);
 
   const handleLogoutClick = () => {
     handleLogout(navigate);
+    setIsLogged(false);
+    localStorage.setItem("isLogged", "false");
+  };
+
+  const handleLogin = () => {
+    setIsLogged(true);
+    localStorage.setItem("isLogged", "true");
   };
 
   const handleClickLogo = () => {
@@ -63,11 +73,11 @@ const Header = () => {
               href="/"
               onClick={(e) => e.preventDefault() || handleClickLogo()}
             >
-              <div className="res-main-logo">
-                <img src="./assets/images/logo-fav.png" alt="Logo" />
-              </div>
               <div className="main-logo" id="logo">
-                <img src="./assets/images/logo.svg" alt="Logo" />
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/logo%2Flogo.svg?alt=media&token=6e50aaa8-2c91-4596-9b11-e407bb6694e3"
+                  alt="Logo"
+                />
                 <img
                   className="logo-inverse"
                   src="./assets/images/dark-logo.svg"
@@ -113,7 +123,11 @@ const Header = () => {
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="/explored">
+                    <a
+                      className="nav-link"
+                      aria-current="page"
+                      href="/explored"
+                    >
                       <strong>KHÁM PHÁ SỰ KIỆN</strong>
                     </a>
                   </li>
@@ -134,7 +148,10 @@ const Header = () => {
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="blog_detail_view.html">
+                        <a
+                          className="dropdown-item"
+                          href="blog_detail_view.html"
+                        >
                           TÌM KIẾM ĐÁNH GIÁ
                         </a>
                       </li>
@@ -207,14 +224,14 @@ const Header = () => {
             <div className="right-header order-2">
               <ul className="align-self-stretch">
                 <li>
-                  <a href="create.html" className="create-btn btn-hover">
+                  <a href="/explored" className="create-btn btn-hover">
                     <i className="fa-solid fa-calendar-days" />
                     <span>
                       <strong>MUA VÉ NGAY</strong>
                     </span>
                   </a>
                 </li>
-                {loggedIn ? (
+                {isLogged ? (
                   <li className="dropdown account-dropdown">
                     <a
                       href="#"

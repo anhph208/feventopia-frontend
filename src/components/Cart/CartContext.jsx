@@ -31,7 +31,6 @@ export const CartProvider = ({ children }) => {
         return updatedCartItems;
       }
 
-
       return [...prevItems, item];
     });
   };

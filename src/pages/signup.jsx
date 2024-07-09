@@ -79,7 +79,7 @@ function Signup() {
             <div className="row justify-content-center">
               <div className="col-lg-10 col-md-10">
                 <div className="app-top-items">
-                  <a href="/home">
+                  <a href="/">
                     <div className="sign-logo" id="logo">
                       <img src="./assets/images/logo.svg" alt="Logo" />
                       <img

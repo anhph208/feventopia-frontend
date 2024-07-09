@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getProfileAPI } from "../components/services/userServices";
 import HomeTab from "../components/userPage/HomeTab";
 import AboutTab from "../components/userPage/AboutTab";
 import SettingTab from "../components/userPage/SettingTab";
 import OrdersTab from "../components/userPage/OrdersTab";
+import queryString from "query-string";
 
 const UserProfile = () => {
-  const navigate = useNavigate();
+  const location = useLocation();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("feed");
+
+  useEffect(() => {
+    const queryParams = queryString.parse(location.search);
+    if (queryParams.activeTab) {
+      setActiveTab(queryParams.activeTab);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -95,96 +104,88 @@ const UserProfile = () => {
                       role="tablist"
                     >
                       <li className="nav-item">
-                        <a
-                          className="nav-link active"
+                        <button
+                          className={`nav-link ${activeTab === "feed" ? "active" : ""}`}
                           id="feed-tab"
-                          data-bs-toggle="tab"
-                          href="#feed"
-                          role="tab"
-                          aria-controls="feed"
-                          aria-selected="true"
+                          onClick={() => setActiveTab("feed")}
                         >
                           <i className="fa-solid fa-house" />
                           <strong>Trang cá nhân</strong>
-                        </a>
+                        </button>
                       </li>
                       <li className="nav-item">
-                        <a
-                          className="nav-link"
+                        <button
+                          className={`nav-link ${activeTab === "about" ? "active" : ""}`}
                           id="about-tab"
-                          data-bs-toggle="tab"
-                          href="#about"
-                          role="tab"
-                          aria-controls="about"
-                          aria-selected="false"
+                          onClick={() => setActiveTab("about")}
                         >
                           <i className="fa-solid fa-circle-info" />
                           <strong>Thông tin tài khoản</strong>
-                        </a>
+                        </button>
                       </li>
                       <li className="nav-item">
-                        <a
-                          className="nav-link"
+                        <button
+                          className={`nav-link ${activeTab === "setting" ? "active" : ""}`}
                           id="setting-tab"
-                          data-bs-toggle="tab"
-                          href="#setting"
-                          role="tab"
-                          aria-controls="setting"
-                          aria-selected="false"
+                          onClick={() => setActiveTab("setting")}
                         >
                           <i className="fa-solid fa-gear" />
                           <strong>Cài đặt mật khẩu</strong>
-                        </a>
+                        </button>
                       </li>
                       <li className="nav-item">
-                        <a
-                          className="nav-link"
+                        <button
+                          className={`nav-link ${activeTab === "orders" ? "active" : ""}`}
                           id="orders-tab"
-                          data-bs-toggle="tab"
-                          href="#orders"
-                          role="tab"
-                          aria-controls="orders"
-                          aria-selected="false"
+                          onClick={() => setActiveTab("orders")}
                         >
                           <i className="fa-solid fa-box" />
                           <strong>Vé của tôi</strong>
-                        </a>
+                        </button>
                       </li>
                     </ul>
                   </div>
                   <div className="tab-content">
-                    <div
-                      className="tab-pane fade show active"
-                      id="feed"
-                      role="tabpanel"
-                      aria-labelledby="feed-tab"
-                    >
-                      <HomeTab />
-                    </div>
-                    <div
-                      className="tab-pane fade"
-                      id="about"
-                      role="tabpanel"
-                      aria-labelledby="about-tab"
-                    >
-                      <AboutTab profile={profile} setProfile={setProfile} />
-                    </div>
-                    <div
-                      className="tab-pane fade"
-                      id="setting"
-                      role="tabpanel"
-                      aria-labelledby="setting-tab"
-                    >
-                      <SettingTab />
-                    </div>
-                    <div
-                      className="tab-pane fade"
-                      id="orders"
-                      role="tabpanel"
-                      aria-labelledby="orders-tab"
-                    >
-                      <OrdersTab />
-                    </div>
+                    {activeTab === "feed" && (
+                      <div
+                        className="tab-pane fade show active"
+                        id="feed"
+                        role="tabpanel"
+                        aria-labelledby="feed-tab"
+                      >
+                        <HomeTab />
+                      </div>
+                    )}
+                    {activeTab === "about" && (
+                      <div
+                        className="tab-pane fade show active"
+                        id="about"
+                        role="tabpanel"
+                        aria-labelledby="about-tab"
+                      >
+                        <AboutTab profile={profile} setProfile={setProfile} />
+                      </div>
+                    )}
+                    {activeTab === "setting" && (
+                      <div
+                        className="tab-pane fade show active"
+                        id="setting"
+                        role="tabpanel"
+                        aria-labelledby="setting-tab"
+                      >
+                        <SettingTab />
+                      </div>
+                    )}
+                    {activeTab === "orders" && (
+                      <div
+                        className="tab-pane fade show active"
+                        id="orders"
+                        role="tabpanel"
+                        aria-labelledby="orders-tab"
+                      >
+                        <OrdersTab />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

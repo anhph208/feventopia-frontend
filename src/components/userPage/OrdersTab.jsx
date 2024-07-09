@@ -56,6 +56,12 @@ const OrdersTab = () => {
                   <div className="invoice-id">
                     Mã Hóa đơn : <span>{ticket.transaction.id}</span>
                   </div>
+                  <div className="invoice-id">
+                    Ngày thực hiện:{" "}
+                    <span>
+                      {formatDateTime(ticket.transaction.transactionDate)}
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="card-bottom">
@@ -118,7 +124,7 @@ const OrdersTab = () => {
           </Stack>
         </>
       ) : (
-        <div>No tickets found</div>
+        <div>Không có vé đã mua</div>
       )}
     </div>
   );

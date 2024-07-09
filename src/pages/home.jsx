@@ -1,22 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "../components/Slider";
 import { Link } from "react-router-dom";
 import {
-  getAllEventAPI,
+  getAllEventForVisitorAPI,
+  getAllEventForOtherAPI,
   getEventDetailsAPI,
 } from "../components/services/userServices";
-import mixitup from "mixitup";
 import HomeSlider from "../components/HomeSlider";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { formatDateTime, PriceFormat } from "../utils/tools";
-
-const CATEGORY_ORDER = {
-  TALKSHOW: 1,
-  COMPETITION: 2,
-  FESTIVAL: 3,
-  MUSICSHOW: 4,
-};
 
 const sliderItems = [
   {
@@ -73,35 +66,46 @@ function Home() {
   const [error, setError] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const containerRef = useRef(null);
-  const mixerRef = useRef(null);
+  const [category, setCategory] = useState(null);
+  const role = localStorage.getItem("role");
 
-  const fetchEvents = async (page) => {
+  const fetchEvents = async (page, category) => {
     setLoading(true);
     try {
-      const { events, pagination } = await getAllEventAPI(page, 8);
-      const filteredEvents = events.filter(
-        (event) => event.status === "EXECUTE"
-      );
+      const apiFunction = !role || role === "VISITOR" 
+        ? getAllEventForVisitorAPI 
+        : getAllEventForOtherAPI;
+
+      const response = await apiFunction(page, 8, category);
+      console.log("API Response:", response);
+
+      const { events, pagination } = response;
+      console.log("Events:", events);
+      console.log("Pagination:", pagination);
 
       // Fetch details for each event
-      const eventDetailsPromises = filteredEvents.map((event) =>
+      const eventDetailsPromises = events.map((event) =>
         getEventDetailsAPI(event.id)
       );
       const eventsWithDetails = await Promise.all(eventDetailsPromises);
+      console.log("Events with Details:", eventsWithDetails);
 
       // Process the details to get the earliest start date and smallest price
       const processedEvents = eventsWithDetails.map((eventDetails) => {
-        const earliestStartDate = eventDetails.eventDetail.reduce(
-          (earliest, current) =>
-            new Date(current.startDate) < new Date(earliest.startDate)
-              ? current
-              : earliest
-        ).startDate;
+        const earliestStartDate = eventDetails.eventDetail.length > 0
+          ? eventDetails.eventDetail.reduce(
+              (earliest, current) =>
+                new Date(current.startDate) < new Date(earliest.startDate)
+                  ? current
+                  : earliest
+            ).startDate
+          : null;
 
-        const smallestPrice = Math.min(
-          ...eventDetails.eventDetail.map((detail) => detail.ticketPrice)
-        );
+        const smallestPrice = eventDetails.eventDetail.length > 0
+          ? Math.min(
+              ...eventDetails.eventDetail.map((detail) => detail.ticketPrice)
+            )
+          : null;
 
         return {
           ...eventDetails,
@@ -110,48 +114,30 @@ function Home() {
         };
       });
 
-      // Sort events by category
-      const sortedEvents = processedEvents.sort((a, b) => {
-        const categoryA = a.category.toUpperCase();
-        const categoryB = b.category.toUpperCase();
-        return (
-          (CATEGORY_ORDER[categoryA] || 999) -
-          (CATEGORY_ORDER[categoryB] || 999)
-        );
-      });
+      console.log("Processed Events:", processedEvents);
 
-      setEvents(sortedEvents);
+      // Update state with new pagination values and events
+      setEvents(processedEvents);
       setTotalPages(pagination.TotalPages);
       setLoading(false);
     } catch (error) {
+      console.error("Error fetching events:", error);
       setError(error);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchEvents(pageNumber);
-  }, [pageNumber]);
-
-  useEffect(() => {
-    if (containerRef.current && events.length > 0 && !mixerRef.current) {
-      console.log("Initializing Mixitup");
-      mixerRef.current = mixitup(containerRef.current, {
-        animation: {
-          duration: 250,
-        },
-      });
-    }
-    return () => {
-      if (mixerRef.current) {
-        mixerRef.current.destroy();
-        mixerRef.current = null;
-      }
-    };
-  }, [events]);
+    fetchEvents(pageNumber, category);
+  }, [pageNumber, category]);
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);
+  };
+
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+    setPageNumber(1); // Reset to first page when changing category
   };
 
   return (
@@ -170,51 +156,62 @@ function Home() {
           <div className="row">
             <div className="col-xl-12 col-lg-12 col-md-12">
               <div className="main-title">
-                <h3>SƯ KIỆN MỚI NHẤT</h3>
+                <h3>SỰ KIỆN MỚI NHẤT</h3>
               </div>
             </div>
             <div className="col-xl-12 col-lg-12 col-md-12">
               <div className="event-filter-items">
                 <div className="featured-controls mt-2">
                   <div className="controls">
-                    <button type="button" className="control" data-filter="all">
+                    <button
+                      type="button"
+                      className={`control ${category === null ? "active" : ""}`}
+                      onClick={() => handleCategoryChange(null)}
+                    >
                       TẤT CẢ
                     </button>
                     <button
                       type="button"
-                      className="control"
-                      data-filter=".talkshow"
+                      className={`control ${
+                        category === "TALKSHOW" ? "active" : ""
+                      }`}
+                      onClick={() => handleCategoryChange("TALKSHOW")}
                     >
                       TALKSHOW
                     </button>
                     <button
                       type="button"
-                      className="control"
-                      data-filter=".competition"
+                      className={`control ${
+                        category === "COMPETITION" ? "active" : ""
+                      }`}
+                      onClick={() => handleCategoryChange("COMPETITION")}
                     >
                       CUỘC THI
                     </button>
                     <button
                       type="button"
-                      className="control"
-                      data-filter=".festival"
+                      className={`control ${
+                        category === "FESTIVAL" ? "active" : ""
+                      }`}
+                      onClick={() => handleCategoryChange("FESTIVAL")}
                     >
                       FESTIVAL
                     </button>
                     <button
                       type="button"
-                      className="control"
-                      data-filter=".musicshow"
+                      className={`control ${
+                        category === "MUSICSHOW" ? "active" : ""
+                      }`}
+                      onClick={() => handleCategoryChange("MUSICSHOW")}
                     >
                       ÂM NHẠC
                     </button>
                   </div>
-                  <div className="row" ref={containerRef}>
+                  <div className="row">
                     {events.map((event) => (
                       <div
                         key={event.id}
-                        className={`col-xl-3 col-lg-4 col-md-6 col-sm-12 mix ${event.category.toLowerCase()}`}
-                        data-ref="mixitup-target"
+                        className={`col-xl-3 col-lg-4 col-md-6 col-sm-12`}
                       >
                         <div className="main-card mt-4">
                           <div className="event-thumbnail">
@@ -242,7 +239,10 @@ function Home() {
                             </Link>
                             <div className="duration-price-remaining">
                               <span className="duration-price">
-                                GIÁ VÉ TỪ <strong><PriceFormat price={event.smallestPrice} /></strong>
+                                GIÁ VÉ TỪ{" "}
+                                <strong>
+                                  <PriceFormat price={event.smallestPrice} />
+                                </strong>
                               </span>
                               <span className="remaining" />
                             </div>
@@ -257,14 +257,14 @@ function Home() {
                                 <span className="dot">
                                   <i className="fa-solid fa-circle" />
                                 </span>
-                              </div>                              
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                  {loading && <div>Loading...</div>}
+                  {loading && <div>Đang xử lí...</div>}
                   {events.length === 0 && !loading && (
                     <div>No events found.</div>
                   )}

@@ -23,11 +23,17 @@ export const formatDate = (inputDate) => {
 };
 
 export const PriceFormat = ({ price }) => {
+  if (price === undefined || price === null || isNaN(price)) {
+    return <span>N/A</span>; // Display a placeholder or handle as needed
+  }
+
   const formattedPrice = price.toLocaleString("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+
   return <span>{formattedPrice}</span>;
+
 };
 
 export const formatTime = (date) => {
