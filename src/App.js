@@ -29,7 +29,6 @@ import CreateEventType from "./pages/OperatorPages/EventType/createEventType";
 import CreateEvent from "./pages/OperatorPages/EventType/createEvent";
 import UpdateEvent from "./pages/OperatorPages/EventType/updateEvent";
 import EventDetailsEdit from "./pages/OperatorPages/EventDetail-Editmode";
-import { AuthProvider } from "./components/Route/AuthContext";
 import NotFound from "./components/error_404";
 import CheckinTicket from "./pages/EventCheckin";
 import ContactUs from "./pages/Contact";
@@ -107,7 +106,10 @@ const ConditionalLayout = () => {
         <Route path="/createEventType" element={<CreateEventType />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/update-event/:eventId" element={<UpdateEvent />} />
-        <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
+        <Route
+          path="/edit-eventDetails/:eventId"
+          element={<EventDetailsEdit />}
+        />
         <Route path="/error_404" element={<NotFound />} />
         <Route path="/Checkin" element={<CheckinTicket />} />
         {/* <Route path="/Analysis" element={<EventAnalysis />} /> */}
@@ -125,9 +127,7 @@ function App() {
   return (
     <CartProvider>
       <BrowserRouter>
-        <AuthProvider>
-          <ConditionalLayout />
-        </AuthProvider>
+        <ConditionalLayout />
       </BrowserRouter>
     </CartProvider>
   );
