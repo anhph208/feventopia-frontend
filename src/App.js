@@ -17,6 +17,8 @@ import HelpCenterKnowledgeBase from "./pages/Help-Support/help_center_knowledge_
 import HelpSectionDetailView from "./pages/Help-Support/help_section_detail_view";
 import HelpCenter from "./pages/Help-Support/help_center";
 import TransactionInfo from "./pages/transaction";
+import LocationPage from "./pages/locationPage";
+import LocationDetailPage from "./pages/locationDetail";
 import EventDetails from "./pages/eventDetails";
 import Checkout from "./pages/checkout";
 import CheckoutStall from "./pages/checkoutStall";
@@ -115,6 +117,8 @@ const ConditionalLayout = () => {
         {/* <Route path="/Analysis" element={<EventAnalysis />} /> */}
         <Route path="/Contact" element={<ContactUs />} />
         {/* Add a route for admin pages if needed */}
+        <Route path="/locations" element={<LocationPage />}/>
+        <Route path="/locations/:id" element={<LocationDetailPage />}/>
       </Routes>
       {!matchPath(noHeaderFooterPaths) && !isOperatorOrAdminPath && <Footer />}
       {!matchPath(noCartPaths) && <Cart />}
