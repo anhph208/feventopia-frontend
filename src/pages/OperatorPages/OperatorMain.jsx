@@ -25,7 +25,7 @@ import ContactListTab from "../OperatorPages/ContactListTab";
 import ReportTab from "../OperatorPages/ReportTab";
 import MyTeamTab from "../OperatorPages/MyTeamTab";
 import queryString from "query-string";
-import EvOAdminHeader from "../EvOAdminHeader"; // Import the header
+import EvOAdminHeader from "../../components/EvOAdminHeader"; // Import the header
 
 const drawerWidth = 240;
 

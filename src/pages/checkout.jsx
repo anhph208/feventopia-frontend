@@ -7,7 +7,7 @@ import {
   buyTicketAPI,
 } from "../components/services/userServices";
 import { formatDateTime, PriceFormat } from "../utils/tools";
-import RechargeModal from "../components/userPage/rechargeModal"; // Import the RechargeModal component
+import RechargeModal from "./userPage/rechargeModal"; // Import the RechargeModal component
 
 function Checkout() {
   const location = useLocation();

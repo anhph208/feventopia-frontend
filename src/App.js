@@ -11,21 +11,27 @@ import Footer from "./components/Footer";
 import UserProfile from "./pages/userprofile";
 import StaffProfile from "./pages/staffprofile";
 import ExploreEvent from "./components/searchEvent";
-import FAQ from "./components/Help-Support/faq";
-import HelpArticleDetailView from "./components/Help-Support/help_article_detail_view";
-import HelpCenterKnowledgeBase from "./components/Help-Support/help_center_knowledge_base";
-import HelpSectionDetailView from "./components/Help-Support/help_section_detail_view";
-import HelpCenter from "./components/Help-Support/help_center";
+import FAQ from "./pages/Help-Support/faq";
+import HelpArticleDetailView from "./pages/Help-Support/help_article_detail_view";
+import HelpCenterKnowledgeBase from "./pages/Help-Support/help_center_knowledge_base";
+import HelpSectionDetailView from "./pages/Help-Support/help_section_detail_view";
+import HelpCenter from "./pages/Help-Support/help_center";
 import TransactionInfo from "./pages/transaction";
 import EventDetails from "./pages/eventDetails";
 import Checkout from "./pages/checkout";
 import BookingConfirm from "./pages/bookingConfirm";
 import Cart from "./components/Cart/Cart";
 import { ToastContainer } from "react-toastify";
-import OperatorPages from "./components/OperatorPages/OperatorMain";
+import OperatorPages from "./pages/OperatorPages/OperatorMain";
 import EvOAdminHeader from "./components/EvOAdminHeader"; // Import EvOAdminHeader
-import CreateEvent from "./components/OperatorPages/EventType/createEvent";
-import CreateEventOnl from "./components/OperatorPages/EventType/onlineEvent"
+import CreateEvent from "./pages/OperatorPages/EventType/createEvent";
+import CreateEventOnl from "./pages/OperatorPages/EventType/createEvent"
+import { AuthProvider } from "./components/Route/AuthContext";
+import PrivateRoute from "./components/Route/PrivateRoute";
+import Error_404 from "./components/error_404";
+import CheckinTicket from "./pages/EventCheckin";
+import Contact_us from "./pages/Contact";
+import EventAnalysis from "./pages/OperatorPages/Analysis";
 
 const ConditionalLayout = () => {
   const location = useLocation();
@@ -60,9 +66,17 @@ const ConditionalLayout = () => {
         <Route path="/event/:eventId" element={<EventDetails />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/booking_confirmed" element={<BookingConfirm />} />
-        <Route path="/operatorPages" element={<OperatorPages />} />
-        <Route path="/createEvent" element={<CreateEvent />} />
+        <Route path="/operatorPages"
+         element={<PrivateRoute element={OperatorPages} allowedRoles={['EVENTOPERATOR', 'ADMIN']} />}/>
+        <Route path="/createEvent" element={<CreateEvent />} />        
         <Route path="/create-online-event" element={<CreateEventOnl />} />
+        <Route path="/error_404" element={<Error_404 />} />
+        <Route path="/Checkin"
+         element={<PrivateRoute element={CheckinTicket} allowedRoles={['CHECKINGSTAFF']} />}/>
+         <Route path="/Analysis"
+         element={<PrivateRoute element={EventAnalysis} allowedRoles={['EVENTOPERATOR']} />}/>
+        <Route path="/Contact" element={<Contact_us />} />
+
         {/* Add a route for admin pages if needed */}
       </Routes>
       {!noHeaderFooterPaths.includes(location.pathname) && !isOperatorOrAdminPath && <Footer />}
@@ -76,7 +90,9 @@ function App() {
   return (
     <CartProvider>
       <BrowserRouter>
-        <ConditionalLayout />
+        <AuthProvider>
+          <ConditionalLayout />
+        </AuthProvider>
       </BrowserRouter>
     </CartProvider>
   );
