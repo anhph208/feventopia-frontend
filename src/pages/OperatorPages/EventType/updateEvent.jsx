@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { createEventAPI } from "../../services/userServices";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getEventDetailsAPI, putUpdateEventAPI } from "../../../components/services/userServices";
 import { TextField, Button, MenuItem, Box, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import ReactQuill from "react-quill";
@@ -12,16 +13,95 @@ const Input = styled("input")({
   display: "none",
 });
 
-function OnlineEvent() {
+const modules = {
+  toolbar: {
+    container: [
+      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+      [{size: []}],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, 
+       {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image', 'video'],
+      ['clean']                                         
+    ],
+    handlers: {
+      image: function() {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+          const file = input.files[0];
+          const formData = new FormData();
+          formData.append('image', file);
+
+          // Perform the image upload logic here, for example, uploading to Firebase
+          const storageRef = ref(storage, `event-images/${file.name}`);
+          const snapshot = await uploadBytes(storageRef, file);
+          const imageUrl = await getDownloadURL(snapshot.ref);
+
+          // Insert the image into the editor
+          const quill = this.quill;
+          const range = quill.getSelection();
+          quill.insertEmbed(range.index, 'image', imageUrl);
+        };
+      }
+    }
+  }
+};
+
+function UpdateEvent() {
+  const { eventId } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     eventName: "",
     eventDescription: "",
     banner: "",
     initialCapital: "",
-    category: 0,
+    category: "",
+  });
+
+  const [placeholders, setPlaceholders] = useState({
+    eventName: "",
+    eventDescription: "",
+    banner: "",
+    initialCapital: "",
+    category: "",
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetcheventInfor = async () => {
+      try {
+        setLoading(true);
+        const eventInfor = await getEventDetailsAPI(eventId);
+        setFormData({
+          eventName: eventInfor.eventName,
+          eventDescription: eventInfor.eventDescription,
+          banner: eventInfor.banner,
+          initialCapital: eventInfor.initialCapital,
+          category: eventInfor.category,
+        });
+        setPlaceholders({
+          eventName: eventInfor.eventName,
+          eventDescription: eventInfor.eventDescription,
+          banner: eventInfor.banner,
+          initialCapital: eventInfor.initialCapital,
+          category: eventInfor.category,
+        });
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetcheventInfor();
+  }, [eventId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,14 +149,18 @@ function OnlineEvent() {
         banner: bannerUrl,
       };
 
-      const response = await createEventAPI(eventData, formData.category);
-      console.log("Event created successfully:", response);
-      toast.success("Event created successfully");
+      // Send the updated event data
+      await putUpdateEventAPI(eventData, eventId, formData.category);
+      toast.success("Event updated successfully");
+      navigate(`/event/${eventId}`);
     } catch (error) {
-      console.error("Error creating event:", error);
-      toast.error("Failed to create event");
+      console.error("Error updating event:", error);
+      toast.error("Failed to update event");
     }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading event details</div>;
 
   return (
     <Box className="wrapper">
@@ -85,7 +169,7 @@ function OnlineEvent() {
           <Box className="row justify-content-center">
             <Box className="col-lg-12 col-md-12">
               <Box className="main-title text-center">
-                <Typography variant="h3">Create Online Event</Typography>
+                <Typography variant="h3">CẬP NHẬT SỰ KIỆN</Typography>
               </Box>
             </Box>
             <Box className="col-xl-8 col-lg-9 col-md-12">
@@ -95,7 +179,7 @@ function OnlineEvent() {
                     <Box className="active">
                       <Typography component="a" href="#tab_step1">
                         <span className="number" />
-                        <span className="step-name">Details</span>
+                        <span className="step-name">Chi tiết</span>
                       </Typography>
                     </Box>
                   </Box>
@@ -109,7 +193,7 @@ function OnlineEvent() {
                           <Box className="bp-title">
                             <Typography variant="h4">
                               <i className="fa-solid fa-circle-info step_icon me-3" />
-                              Details
+                              CHI TIẾT
                             </Typography>
                           </Box>
                           <Box className="p-4 bp-form main-form">
@@ -118,19 +202,7 @@ function OnlineEvent() {
                                 <Box className="col-lg-12 col-md-12">
                                   <Box className="form-group border_bottom pb_30">
                                     <Typography className="form-label fs-16">
-                                      Give your event a name.*
-                                    </Typography>
-                                    <Typography className="mt-2 d-block fs-14 mb-3">
-                                      See how your name appears on the event
-                                      page and a list of all places where your
-                                      event name will be used.{" "}
-                                      <Typography
-                                        component="a"
-                                        href="#"
-                                        className="a-link"
-                                      >
-                                        Learn more
-                                      </Typography>
+                                      Tên sự kiện*
                                     </Typography>
                                     <TextField
                                       fullWidth
@@ -138,24 +210,13 @@ function OnlineEvent() {
                                       name="eventName"
                                       value={formData.eventName}
                                       onChange={handleChange}
-                                      placeholder="Enter event name here"
+                                      placeholder={placeholders.eventName}
                                       required
                                     />
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
                                     <Typography className="form-label fs-16">
-                                      Choose a category for your event.*
-                                    </Typography>
-                                    <Typography className="mt-2 d-block fs-14 mb-3">
-                                      Choosing relevant categories helps to
-                                      improve the discoverability of your event.{" "}
-                                      <Typography
-                                        component="a"
-                                        href="#"
-                                        className="a-link"
-                                      >
-                                        Learn more
-                                      </Typography>
+                                      Danh mục*
                                     </Typography>
                                     <TextField
                                       select
@@ -164,21 +225,18 @@ function OnlineEvent() {
                                       name="category"
                                       value={formData.category}
                                       onChange={handleChange}
+                                      placeholder={placeholders.initialCapital}
                                       required
                                     >
-                                      <MenuItem value={0}>TALKSHOW</MenuItem>
-                                      <MenuItem value={1}>ÂM NHẠC</MenuItem>
-                                      <MenuItem value={2}>FESTIVAL</MenuItem>
-                                      <MenuItem value={3}>CUỘC THI</MenuItem>
+                                      <MenuItem value="TALKSHOW">TALKSHOW</MenuItem>
+                                      <MenuItem value="ÂM NHẠC">ÂM NHẠC</MenuItem>
+                                      <MenuItem value="FESTIVAL">FESTIVAL</MenuItem>
+                                      <MenuItem value="CUỘC THI">CUỘC THI</MenuItem>
                                     </TextField>
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
                                     <Typography className="form-label fs-16">
-                                      Initial Capital*
-                                    </Typography>
-                                    <Typography className="mt-2 fs-14 d-block mb-3">
-                                      Enter the initial capital required for
-                                      your event.
+                                      Vốn Sự kiện*
                                     </Typography>
                                     <TextField
                                       fullWidth
@@ -187,25 +245,13 @@ function OnlineEvent() {
                                       name="initialCapital"
                                       value={formData.initialCapital}
                                       onChange={handleChange}
-                                      placeholder="Enter initial capital"
+                                      placeholder={placeholders.initialCapital}
                                       required
                                     />
                                   </Box>
                                   <Box className="form-group pt_30 pb_30">
                                     <Typography className="form-label fs-16">
-                                      Add a few images to your event banner.
-                                    </Typography>
-                                    <Typography className="mt-2 fs-14 d-block mb-3 pe_right">
-                                      Upload colorful and vibrant images as the
-                                      banner for your event! See how beautiful
-                                      images help your event details page.{" "}
-                                      <Typography
-                                        component="a"
-                                        href="#"
-                                        className="a-link"
-                                      >
-                                        Learn more
-                                      </Typography>
+                                      Banner Sự kiện
                                     </Typography>
                                     <Box className="content-holder mt-4">
                                       <Box className="default-event-thumb">
@@ -215,13 +261,12 @@ function OnlineEvent() {
                                             id="banner-upload"
                                             type="file"
                                             onChange={handleFileChange}
-                                            required
                                           />
                                           <Button
                                             variant="contained"
                                             component="span"
                                           >
-                                            Upload Image
+                                            Tải Ảnh lên
                                           </Button>
                                         </label>
                                         {formData.banner && (
@@ -230,7 +275,7 @@ function OnlineEvent() {
                                             alt="Event Banner"
                                             style={{
                                               width: "100%",
-                                              height: "auto",
+                                              height: "100%",
                                             }}
                                           />
                                         )}
@@ -239,38 +284,33 @@ function OnlineEvent() {
                                   </Box>
                                   <Box className="form-group border_bottom pb_30">
                                     <Typography className="form-label fs-16">
-                                      Please describe your event.
-                                    </Typography>
-                                    <Typography className="mt-2 fs-14 d-block mb-3">
-                                      Write a few words below to describe your
-                                      event and provide any extra information
-                                      such as schedules, itinerary or any
-                                      special instructions required to attend
-                                      your event.
+                                      Chi tiết Sự kiện
                                     </Typography>
                                     <ReactQuill
                                       theme="snow"
                                       value={formData.eventDescription}
                                       onChange={handleDescriptionChange}
-                                      placeholder="Enter event description here"
+                                      placeholder={placeholders.eventDescription}
                                       required
+                                      modules={modules}
+                                      style={{ height: "400px" }} // Adjust the height as needed
                                     />
                                   </Box>
                                 </Box>
+                              </Box>
+                              <Box className="step-footer step-tab-pager mt-4">
+                                <Button
+                                  variant="contained"
+                                  color="primary"
+                                  type="submit"
+                                >
+                                  CẬP NHẬT SỰ KIỆN
+                                </Button>
                               </Box>
                             </form>
                           </Box>
                         </Box>
                       </Box>
-                    </Box>
-                    <Box className="step-footer step-tab-pager mt-4">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleSubmit}
-                      >
-                        Create
-                      </Button>
                     </Box>
                   </Box>
                 </Box>
@@ -283,4 +323,4 @@ function OnlineEvent() {
   );
 }
 
-export default OnlineEvent;
+export default UpdateEvent;

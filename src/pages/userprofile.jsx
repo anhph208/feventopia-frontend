@@ -3,10 +3,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 import { getProfileAPI } from "../components/services/userServices";
-import HomeTab from "../components/userPage/HomeTab";
-import AboutTab from "../components/userPage/AboutTab";
-import SettingTab from "../components/userPage/SettingTab";
-import OrdersTab from "../components/userPage/OrdersTab";
+import HomeTab from "../pages/userPage/HomeTab";
+import AboutTab from "../pages/userPage/AboutTab";
+import SettingTab from "../pages/userPage/SettingTab";
+import OrdersTab from "../pages/userPage/OrdersTab";
 import queryString from "query-string";
 
 const UserProfile = () => {

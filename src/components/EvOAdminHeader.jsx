@@ -60,7 +60,7 @@ const EvOAdminHeader = () => {
             </button>
             <a
               className="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 me-auto"
-              href="/"
+              href="/operatorPages"
               onClick={(e) => e.preventDefault() || handleClickLogo()}
             >
               <div className="main-logo" id="logo">
@@ -120,7 +120,7 @@ const EvOAdminHeader = () => {
             <div className="right-header order-2">
               <ul className="align-self-stretch">
                 <li>
-                  <a href="/createEvent" className="create-btn btn-hover">
+                  <a href="/createEventType" className="create-btn btn-hover">
                     <i className="fa-solid fa-calendar-days" />
                     <span><strong>TẠO SỰ KIỆN</strong></span>
                   </a>

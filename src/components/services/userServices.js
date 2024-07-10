@@ -55,15 +55,19 @@ export const putUpdateProfileAPI = async (profileData, token) => {
   };
 
   if (profileData instanceof FormData) {
-    headers['Content-Type'] = 'multipart/form-data';
+    headers["Content-Type"] = "multipart/form-data";
   } else {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
   }
 
   try {
-    const response = await config.put('/user/management/UpdateAccountProfile', profileData, {
-      headers: headers,
-    });
+    const response = await config.put(
+      "/user/management/UpdateAccountProfile",
+      profileData,
+      {
+        headers: headers,
+      }
+    );
 
     if (response.status >= 200 && response.status < 300) {
       return response.data; // Return updated profile data
@@ -78,14 +82,11 @@ export const putUpdateProfileAPI = async (profileData, token) => {
 
 export const changePasswordAPI = async (currentPassword, newPassword) => {
   try {
-    const response = await config.post(
-      "/auth/ChangePassword",
-      {
-        currentPassword,
-        newPassword,
-        confirmNewPassword: newPassword  // Include confirmNewPassword in request body
-      }
-    );
+    const response = await config.post("/auth/ChangePassword", {
+      currentPassword,
+      newPassword,
+      confirmNewPassword: newPassword, // Include confirmNewPassword in request body
+    });
 
     if (response.status >= 200 && response.status < 300) {
       return response.data; // Return success message or updated data if needed
@@ -117,7 +118,12 @@ export const rechargeAPI = async (rechargeData) => {
   }
 };
 
-export const getAllEventForVisitorAPI = async (pageNumber = 1, pageSize = 8, category, status) => {
+export const getAllEventForVisitorAPI = async (
+  pageNumber = 1,
+  pageSize = 8,
+  category,
+  status
+) => {
   try {
     const response = await config.get("/event/GetAllEventForVisitor", {
       params: {
@@ -129,7 +135,7 @@ export const getAllEventForVisitorAPI = async (pageNumber = 1, pageSize = 8, cat
     });
 
     if (response.status >= 200 && response.status < 300) {
-      const pagination = JSON.parse(response.headers['x-pagination']);
+      const pagination = JSON.parse(response.headers["x-pagination"]);
       return {
         events: response.data, // Adjust based on actual response structure
         pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
@@ -143,7 +149,12 @@ export const getAllEventForVisitorAPI = async (pageNumber = 1, pageSize = 8, cat
   }
 };
 
-export const getAllEventForOtherAPI = async (pageNumber = 1, pageSize = 8, category, status) => {
+export const getAllEventForOtherAPI = async (
+  pageNumber = 1,
+  pageSize = 8,
+  category,
+  status
+) => {
   try {
     const response = await config.get("/event/GetAllEvent", {
       params: {
@@ -155,7 +166,7 @@ export const getAllEventForOtherAPI = async (pageNumber = 1, pageSize = 8, categ
     });
 
     if (response.status >= 200 && response.status < 300) {
-      const pagination = JSON.parse(response.headers['x-pagination']);
+      const pagination = JSON.parse(response.headers["x-pagination"]);
       return {
         events: response.data, // Adjust based on actual response structure
         pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
@@ -189,7 +200,7 @@ export const getEventDetailsAPI = async (eventId) => {
 
 export const buyTicketAPI = async (orderDetails) => {
   try {
-    const response = await config.post('/ticket/BuyTicket', orderDetails);
+    const response = await config.post("/ticket/BuyTicket", orderDetails);
     if (response.status >= 200 && response.status < 300) {
       return response.data; // Return the created order details
     } else {
@@ -201,16 +212,19 @@ export const buyTicketAPI = async (orderDetails) => {
   }
 };
 
-export const getAllProfileTransactionAPI = async (pageNumber = 1, pageSize = 10) => {
+export const getAllProfileTransactionAPI = async (
+  pageNumber = 1,
+  pageSize = 10
+) => {
   try {
-    const response = await config.get('/payment/GetAllProfileTransaction', {
+    const response = await config.get("/payment/GetAllProfileTransaction", {
       params: {
         PageNumber: pageNumber,
         PageSize: pageSize,
       },
     });
     if (response.status >= 200 && response.status < 300) {
-      const pagination = JSON.parse(response.headers['x-pagination']);
+      const pagination = JSON.parse(response.headers["x-pagination"]);
       return {
         transactions: response.data, // Adjust based on actual response structure
         pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
@@ -226,14 +240,14 @@ export const getAllProfileTransactionAPI = async (pageNumber = 1, pageSize = 10)
 
 export const getAllProfileTicketAPI = async (pageNumber = 1, pageSize = 5) => {
   try {
-    const response = await config.get('/ticket/GetAllOwnTicketInfo', {
+    const response = await config.get("/ticket/GetAllOwnTicketInfo", {
       params: {
         PageNumber: pageNumber,
         PageSize: pageSize,
       },
     });
     if (response.status >= 200 && response.status < 300) {
-      const pagination = JSON.parse(response.headers['x-pagination']);
+      const pagination = JSON.parse(response.headers["x-pagination"]);
       return {
         tickets: response.data,
         pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
@@ -267,7 +281,7 @@ export const searchEventAPI = async (query) => {
 
 export const createEventAPI = async (eventData, category) => {
   try {
-    const response = await config.post('/event/CreateEvent', eventData, {
+    const response = await config.post("/event/CreateEvent", eventData, {
       params: {
         category: category, // Pass category as a query parameter
       },
@@ -278,7 +292,156 @@ export const createEventAPI = async (eventData, category) => {
       throw new Error(`Request failed with status ${response.status}`);
     }
   } catch (error) {
-    console.error('Error creating event:', error);
+    console.error("Error creating event:", error);
+    throw error;
+  }
+};
+
+export const buyStallAPI = async (eventDetailId, stallnumber) => {
+  try {
+    const url = `/eventstall/AddEventStall?eventDetailId=${encodeURIComponent(
+      eventDetailId
+    )}&stallnumber=${encodeURIComponent(stallnumber)}`;
+
+    console.log("Sending request to URL:", url); // Log the URL for debugging
+
+    const response = await config.post(url);
+
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the created order details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error creating event order:", error);
+    throw error;
+  }
+};
+
+export const getAllProfileStallAPI = async (pageNumber = 1, pageSize = 5) => {
+  try {
+    const response = await config.get("/eventstall/GetEventStallCurrentUser", {
+      params: {
+        PageNumber: pageNumber,
+        PageSize: pageSize,
+      },
+    });
+    if (response.status >= 200 && response.status < 300) {
+      const pagination = JSON.parse(response.headers["x-pagination"]);
+      return {
+        stalls: response.data,
+        pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
+      };
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    throw error;
+  }
+};
+
+export const getEventAnalysisAPI = async (eventId) => {
+  try {
+    const response = await config.get(`/event-analysis/${eventId}`);
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event analysis:", error);
+    throw error;
+  }
+};
+
+export const putEventNextPhaseAPI = async (eventId) => {
+  try {
+    const response = await config.put(
+      `/event/UpdateEventNextPhase?id=${eventId}`
+    );
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error updating event to the next phase:", error);
+    throw error;
+  }
+};
+
+export const putUpdateEventAPI = async (eventData, eventId, category) => {
+  try {
+    const response = await config.put("/event/UpdateEvent", eventData, {
+      params: {
+        id: eventId,
+        category: category, // Pass category as a query parameter
+      },
+    });
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the created event data
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error creating event:", error);
+    throw error;
+  }
+};
+
+export const createEventDetailsAPI = async (eventData) => {
+  try {
+    const response = await config.post(
+      "/event-details/CreateEventDetail",
+      eventData
+    );
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the created event data
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error creating event:", error);
+    throw error;
+  }
+};
+
+export const putUpdateEventDetailsAPI = async (eventDetailsId, eventData) => {
+  try {
+    const response = await config.put(
+      "/event-details/UpdateEventDetail",
+      JSON.stringify(eventData),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: {
+          id: eventDetailsId,
+        },
+      }
+    );
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error updating event:", error);
+    throw error;
+  }
+};
+
+export const getLocationAPI = async () => {
+  try {
+    const response = await config.get(`/location`);
+    if (response.status >= 200 && response.status < 300) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event analysis:", error);
     throw error;
   }
 };

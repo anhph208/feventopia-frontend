@@ -23,7 +23,7 @@ const CreateEvent = () => {
                         </div>
                         <h4>Create an Online Event</h4>
                         <Link
-                          to="/create-online-event" // Use Link for client-side routing
+                          to="/create-event" // Use Link for client-side routing
                           className="main-btn btn-hover h_40 w-100"
                         >
                           Create

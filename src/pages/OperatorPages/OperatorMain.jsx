@@ -25,7 +25,7 @@ import ContactListTab from "../OperatorPages/ContactListTab";
 import ReportTab from "../OperatorPages/ReportTab";
 import MyTeamTab from "../OperatorPages/MyTeamTab";
 import queryString from "query-string";
-import EvOAdminHeader from "../EvOAdminHeader"; // Import the header
+// import EvOAdminHeader from "../../components/EvOAdminHeader";
 
 const drawerWidth = 240;
 
@@ -111,7 +111,7 @@ const OperatorMain = () => {
   return (
     <div className="wrapper">
 
-      <EvOAdminHeader /> 
+
       <nav className="drawer" aria-label="menu items">
         <Drawer
           variant="temporary"

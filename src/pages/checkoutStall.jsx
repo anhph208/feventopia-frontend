@@ -4,15 +4,15 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   getProfileAPI,
-  buyTicketAPI,
+  buyStallAPI,
 } from "../components/services/userServices";
 import { formatDateTime, PriceFormat } from "../utils/tools";
 import RechargeModal from "./userPage/rechargeModal"; // Import the RechargeModal component
 
-function Checkout() {
+function CheckoutStall() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { eventDetail, ticketCount, eventBanner, checkoutType } =
+  const { eventDetail, selectedStall, eventBanner, checkoutType } =
     location.state || {};
 
   const [profile, setProfile] = useState({
@@ -22,7 +22,7 @@ function Checkout() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-  const [checkoutMode, setCheckoutMode] = useState(checkoutType || "cart");
+  const [checkoutMode, setCheckoutMode] = useState(checkoutType || "buyStall");
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -45,11 +45,11 @@ function Checkout() {
   }, []);
 
   useEffect(() => {
-    if (checkoutMode === "bookNow" && eventDetail) {
+    if (checkoutMode === "buyStall" && eventDetail) {
       setCartItems([
         {
           ...eventDetail,
-          ticketCount: ticketCount,
+          selectedStall: selectedStall,
           eventBanner: eventBanner,
         },
       ]);
@@ -57,11 +57,11 @@ function Checkout() {
       const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
       setCartItems(cart);
     }
-  }, [checkoutMode, eventDetail, ticketCount, eventBanner]);
+  }, [checkoutMode, eventDetail, selectedStall, eventBanner]);
 
   const calculateTotalPrice = () => {
     return cartItems.reduce((total, item) => {
-      return total + (item.ticketCount || 0) * (item.ticketPrice || 0);
+      return total + item.stallPrice;
     }, 0);
   };
 
@@ -76,19 +76,18 @@ function Checkout() {
 
     const orderDetails = cartItems.map((item) => ({
       eventDetailId: item.eventId,
-      quantity: item.ticketCount,
+      stallNumber: item.selectedStall,
     }));
 
     const totalPrice = calculateTotalPrice();
 
-    const requestBody = {
-      ticketRequests: orderDetails,
-      emailAddress: profile.email,
-      totalPrice: totalPrice,
-    };
-
     try {
-      await buyTicketAPI(requestBody);
+      await Promise.all(
+        orderDetails.map((order) =>
+          buyStallAPI(order.eventDetailId, order.stallNumber)
+        )
+      );
+
       const toastId = toast.success("Thanh toán thành công!", {
         autoClose: 2000, // close after 2 seconds
       });
@@ -96,9 +95,6 @@ function Checkout() {
       // Navigate after the toast disappears
       toast.onChange((payload) => {
         if (payload.status === "removed" && payload.id === toastId) {
-          if (checkoutMode === "cart") {
-            sessionStorage.removeItem("cart"); // Clear the cart after successful booking
-          }
           navigate("/userprofile", { state: { activeTab: "orders" } });
         }
       });
@@ -120,7 +116,7 @@ function Checkout() {
   };
 
   if (cartItems.length === 0) {
-    return <div>No event details available</div>;
+    return <div>No stall details available</div>;
   }
 
   const totalPrice = calculateTotalPrice();
@@ -134,7 +130,7 @@ function Checkout() {
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="main-title checkout-title">
-                  <h3>THANH TOÁN</h3>
+                  <h3>THANH TOÁN GIAN HÀNG</h3>
                 </div>
               </div>
               <div className="col-xl-8 col-lg-12 col-md-12">
@@ -186,7 +182,7 @@ function Checkout() {
               <div className="col-xl-4 col-lg-12 col-md-12">
                 <div className="main-card order-summary">
                   <div className="bp-title">
-                    <h4>Đơn Mua Vé</h4>
+                    <h4>Đơn Mua Gian Hàng</h4>
                   </div>
                   <div className="order-summary-content p_30">
                     {cartItems.map((item, index) => (
@@ -205,20 +201,19 @@ function Checkout() {
                           <span>
                             {item.startDate && formatDateTime(item.startDate)}
                           </span>
+                          <span>Gian hàng: {item.selectedStall}</span>
                           <span>
-                            Giá vé: {<PriceFormat price={item.ticketPrice} />}
+                            Giá gian hàng:{" "}
+                            {<PriceFormat price={item.stallPrice} />}
                           </span>
                         </div>
                       </div>
                     ))}
                     <div className="order-total-block">
                       <div className="order-total-dt">
-                        <div className="order-text">Tổng số Vé</div>
+                        <div className="order-text">Tổng số Gian Hàng</div>
                         <div className="order-number">
-                          {cartItems.reduce(
-                            (total, item) => total + item.ticketCount,
-                            0
-                          ) || 0}
+                          {cartItems.length || 0}
                         </div>
                       </div>
                       <div className="order-total-dt">
@@ -263,7 +258,7 @@ function Checkout() {
                           Số dư ví không đủ. Vui lòng nạp thêm tiền.
                         </div>
                       )}
-                      <span>Giá Vé đã bao gồm VAT.</span>
+                      <span>Giá gian hàng đã bao gồm VAT.</span>
                     </div>
                   </div>
                 </div>
@@ -281,4 +276,4 @@ function Checkout() {
   );
 }
 
-export default Checkout;
+export default CheckoutStall;

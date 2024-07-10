@@ -5,6 +5,7 @@ import { CartContext } from "../components/Cart/CartContext";
 import Cart from "../components/Cart/Cart";
 import { toast } from "react-toastify";
 import { formatDateTime, PriceFormat } from "../utils/tools";
+import CreatableSelect from "react-select/creatable";
 
 function EventDetails() {
   const { eventId } = useParams();
@@ -15,34 +16,20 @@ function EventDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [ticketCounts, setTicketCounts] = useState({});
-  const [stallCounts, setStallCounts] = useState({});
+  const [selectedStalls, setSelectedStalls] = useState({});
 
-  const decreaseCount = (id, type) => {
-    if (type === "ticket") {
-      setTicketCounts((prevCounts) => ({
-        ...prevCounts,
-        [id]: prevCounts[id] > 0 ? prevCounts[id] - 1 : 0,
-      }));
-    } else if (type === "stall") {
-      setStallCounts((prevCounts) => ({
-        ...prevCounts,
-        [id]: prevCounts[id] > 0 ? prevCounts[id] - 1 : 0,
-      }));
-    }
+  const decreaseCount = (id) => {
+    setTicketCounts((prevCounts) => ({
+      ...prevCounts,
+      [id]: prevCounts[id] > 0 ? prevCounts[id] - 1 : 0,
+    }));
   };
 
-  const increaseCount = (id, type) => {
-    if (type === "ticket") {
-      setTicketCounts((prevCounts) => ({
-        ...prevCounts,
-        [id]: (prevCounts[id] || 0) + 1,
-      }));
-    } else if (type === "stall") {
-      setStallCounts((prevCounts) => ({
-        ...prevCounts,
-        [id]: (prevCounts[id] || 0) + 1,
-      }));
-    }
+  const increaseCount = (id) => {
+    setTicketCounts((prevCounts) => ({
+      ...prevCounts,
+      [id]: (prevCounts[id] || 0) + 1,
+    }));
   };
 
   const handleBookNow = (id) => {
@@ -86,7 +73,7 @@ function EventDetails() {
     });
   };
 
-  const handleAddToCart = (id, type) => {
+  const handleBuyStall = (id) => {
     const selectedEventDetail = eventDetails.eventDetail.find(
       (event) => event.id === id
     );
@@ -96,47 +83,72 @@ function EventDetails() {
       return;
     }
 
-    if (type === "ticket") {
-      const ticketCount = ticketCounts[id] || 0;
-      if (ticketCount === 0) {
-        toast.error("Hãy chọn ít nhất 1 vé!");
-        return;
-      }
-
-      const cartItem = {
-        eventId: selectedEventDetail.id,
-        eventName: eventDetails.eventName,
-        startDate: selectedEventDetail.startDate,
-        endDate: selectedEventDetail.endDate,
-        location: selectedEventDetail.location.locationName,
-        ticketCount: ticketCount,
-        ticketPrice: selectedEventDetail.ticketPrice,
-        eventBanner: eventDetails.banner,
-      };
-
-      addToCart(cartItem);
-      toast.success("Vé đã được thêm vào Giỏ Hàng!");
-    } else if (type === "stall") {
-      const stallCount = stallCounts[id] || 0;
-      if (stallCount === 0) {
-        toast.error("Hãy chọn ít nhất 1 gian hàng!");
-        return;
-      }
-
-      const cartItem = {
-        eventId: selectedEventDetail.id,
-        eventName: eventDetails.eventName,
-        startDate: selectedEventDetail.startDate,
-        endDate: selectedEventDetail.endDate,
-        location: selectedEventDetail.location.locationName,
-        stallCount: stallCount,
-        stallPrice: selectedEventDetail.stallPrice,
-        eventBanner: eventDetails.banner,
-      };
-
-      addToCart(cartItem);
-      toast.success("Gian hàng đã được thêm vào Giỏ Hàng!");
+    const selectedStall = selectedStalls[id];
+    if (!selectedStall) {
+      toast.error("Hãy chọn một gian hàng!");
+      return;
     }
+
+    const selectedEvent = {
+      eventId: selectedEventDetail.id,
+      eventName: eventDetails.eventName,
+      startDate: selectedEventDetail.startDate,
+      endDate: selectedEventDetail.endDate,
+      location: selectedEventDetail.location.locationName,
+      stallNumber: selectedStall.value,
+      stallPrice: selectedEventDetail.stallPrice,
+    };
+    toast.success("Đang chuyển đến trang thanh toán...", {
+      onClose: () => {
+        navigate("/checkoutStall", {
+          state: {
+            eventDetail: selectedEvent,
+            selectedStall: selectedStall.value,
+            eventBanner: eventDetails.banner,
+            checkoutType: "buyStall",
+          },
+        });
+      },
+      autoClose: 2000,
+    });
+  };
+
+  const handleAddToCart = (id) => {
+    const selectedEventDetail = eventDetails.eventDetail.find(
+      (event) => event.id === id
+    );
+
+    if (!selectedEventDetail) {
+      console.error("Không tìm thấy sự kiện.");
+      return;
+    }
+
+    const ticketCount = ticketCounts[id] || 0;
+    if (ticketCount === 0) {
+      toast.error("Hãy chọn ít nhất 1 vé!");
+      return;
+    }
+
+    const cartItem = {
+      eventId: selectedEventDetail.id,
+      eventName: eventDetails.eventName,
+      startDate: selectedEventDetail.startDate,
+      endDate: selectedEventDetail.endDate,
+      location: selectedEventDetail.location.locationName,
+      ticketCount: ticketCount,
+      ticketPrice: selectedEventDetail.ticketPrice,
+      eventBanner: eventDetails.banner,
+    };
+
+    addToCart(cartItem);
+    toast.success("Vé đã được thêm vào Giỏ Hàng!");
+  };
+
+  const handleStallChange = (eventId, value) => {
+    setSelectedStalls((prevStalls) => ({
+      ...prevStalls,
+      [eventId]: value,
+    }));
   };
 
   useEffect(() => {
@@ -245,9 +257,7 @@ function EventDetails() {
                               <div className="counter">
                                 <span
                                   className="down"
-                                  onClick={() =>
-                                    decreaseCount(eventDetail.id, "ticket")
-                                  }
+                                  onClick={() => decreaseCount(eventDetail.id)}
                                 >
                                   -
                                 </span>
@@ -258,9 +268,7 @@ function EventDetails() {
                                 />
                                 <span
                                   className="up"
-                                  onClick={() =>
-                                    increaseCount(eventDetail.id, "ticket")
-                                  }
+                                  onClick={() => increaseCount(eventDetail.id)}
                                 >
                                   +
                                 </span>
@@ -294,9 +302,7 @@ function EventDetails() {
                             <button
                               className="main-btn btn-hover w-50 ms-1"
                               type="button"
-                              onClick={() =>
-                                handleAddToCart(eventDetail.id, "ticket")
-                              }
+                              onClick={() => handleAddToCart(eventDetail.id)}
                             >
                               <strong>Thêm giỏ hàng</strong>
                             </button>
@@ -316,41 +322,28 @@ function EventDetails() {
                               </strong>
                             </div>
                             <div className="quantity">
-                              <div className="counter">
-                                <span
-                                  className="down"
-                                  onClick={() =>
-                                    decreaseCount(eventDetail.id, "stall")
-                                  }
-                                >
-                                  -
-                                </span>
-                                <input
-                                  type="text"
-                                  value={stallCounts[eventDetail.id] || 0}
-                                  readOnly
-                                />
-                                <span
-                                  className="up"
-                                  onClick={() =>
-                                    increaseCount(eventDetail.id, "stall")
-                                  }
-                                >
-                                  +
-                                </span>
-                              </div>
+                              <CreatableSelect
+                                isClearable
+                                onChange={(value) =>
+                                  handleStallChange(eventDetail.id, value)
+                                }
+                                placeholder="Chọn hoặc nhập gian hàng"
+                                value={selectedStalls[eventDetail.id] || null}
+                              />
                             </div>
                           </div>
                           <div className="xtotel-tickets-count">
                             <div className="x-title">
-                              {stallCounts[eventDetail.id] || 0}x Stall(s)
+                              {selectedStalls[eventDetail.id]?.label || "0"}x
+                              Stall
                             </div>
                             <h4>
                               <span>
                                 <PriceFormat
                                   price={
-                                    (stallCounts[eventDetail.id] || 0) *
-                                    eventDetail.stallPrice
+                                    selectedStalls[eventDetail.id]
+                                      ? eventDetail.stallPrice
+                                      : 0
                                   }
                                 />
                               </span>
@@ -361,9 +354,7 @@ function EventDetails() {
                             <button
                               className="main-btn btn-hover w-100 mt-3"
                               type="button"
-                              onClick={() =>
-                                handleAddToCart(eventDetail.id, "stall")
-                              }
+                              onClick={() => handleBuyStall(eventDetail.id)}
                             >
                               <strong>Mua gian hàng</strong>
                             </button>
