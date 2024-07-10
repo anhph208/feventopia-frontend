@@ -24,6 +24,7 @@ import BookingConfirm from "./pages/bookingConfirm";
 import Cart from "./components/Cart/Cart";
 import { ToastContainer } from "react-toastify";
 import OperatorPages from "./pages/OperatorPages/OperatorMain";
+<<<<<<< HEAD
 import EvOAdminHeader from "./components/EvOAdminHeader";
 import CreateEventType from "./pages/OperatorPages/EventType/createEventType";
 import CreateEvent from "./pages/OperatorPages/EventType/createEvent";
@@ -35,6 +36,17 @@ import NotFound from "./components/error_404";
 import CheckinTicket from "./pages/EventCheckin";
 import ContactUs from "./pages/Contact";
 // import EventAnalysis from "./pages/OperatorPages/Analysis";
+=======
+import EvOAdminHeader from "./components/EvOAdminHeader"; // Import EvOAdminHeader
+import CreateEvent from "./pages/OperatorPages/EventType/createEvent";
+import CreateEventOnl from "./pages/OperatorPages/EventType/createEvent"
+import { AuthProvider } from "./components/Route/AuthContext";
+import PrivateRoute from "./components/Route/PrivateRoute";
+import Error_404 from "./components/error_404";
+import CheckinTicket from "./pages/EventCheckin";
+import Contact_us from "./pages/Contact";
+import EventAnalysis from "./pages/OperatorPages/Analysis";
+>>>>>>> 5150c864576aa68fd757bf9d8e2d64a8b1ca23d3
 
 const ConditionalLayout = () => {
   const location = useLocation();
@@ -109,6 +121,7 @@ const ConditionalLayout = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkoutstall" element={<CheckoutStall />} />
         <Route path="/booking_confirmed" element={<BookingConfirm />} />
+<<<<<<< HEAD
         <Route
           path="/operatorPages"
           element={
@@ -138,6 +151,18 @@ const ConditionalLayout = () => {
         {/* <Route path="/Analysis"
          element={<PrivateRoute element={EventAnalysis} allowedRoles={['EVENTOPERATOR']} />}/> */}
         <Route path="/Contact" element={<ContactUs />} />
+=======
+        <Route path="/operatorPages"
+         element={<PrivateRoute element={OperatorPages} allowedRoles={['EVENTOPERATOR', 'ADMIN']} />}/>
+        <Route path="/createEvent" element={<CreateEvent />} />        
+        <Route path="/create-online-event" element={<CreateEventOnl />} />
+        <Route path="/error_404" element={<Error_404 />} />
+        <Route path="/Checkin"
+         element={<PrivateRoute element={CheckinTicket} allowedRoles={['CHECKINGSTAFF']} />}/>
+         <Route path="/Analysis"
+         element={<PrivateRoute element={EventAnalysis} allowedRoles={['EVENTOPERATOR']} />}/>
+        <Route path="/Contact" element={<Contact_us />} />
+>>>>>>> 5150c864576aa68fd757bf9d8e2d64a8b1ca23d3
 
         {/* Add a route for admin pages if needed */}
       </Routes>
