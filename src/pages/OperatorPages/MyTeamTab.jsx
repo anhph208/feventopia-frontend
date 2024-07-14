@@ -38,11 +38,12 @@ import {
   postAddTaskAPI,
   putUpdateTaskAPI,
 } from "../../components/services/userServices";
-import { formatDateTime, PriceFormat } from "../../utils/tools";
+import { formatDateTime, PriceFormat, formatDate } from "../../utils/tools";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TaskIcon from "@mui/icons-material/Task";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import EditNoteIcon from '@mui/icons-material/EditNote';
 
 const AssigneeTab = () => {
   const [events, setEvents] = useState([]);
@@ -202,7 +203,11 @@ const AssigneeTab = () => {
   };
 
   const handleUpdateTask = async () => {
-    if (!taskToUpdate.staffID || !taskToUpdate.description || !taskToUpdate.status) {
+    if (
+      !taskToUpdate.staffID ||
+      !taskToUpdate.description ||
+      !taskToUpdate.status
+    ) {
       toast.warn("Please fill in all required fields.");
       return;
     }
@@ -233,11 +238,16 @@ const AssigneeTab = () => {
     fetchAccounts();
   };
 
-  const handleClickOpenUpdateTask = async (task, eventDetailId) => {
-    const assignees = await fetchAssignees(eventDetailId);
-    setAssignees((prevAssignees) => ({ ...prevAssignees, [eventDetailId]: assignees }));
+  const handleClickOpenUpdateTask = async (task, eventDetail) => {
+    setSelectedEventDetail(eventDetail);
+    const assignees = await fetchAssignees(eventDetail.id);
+    setAssignees((prevAssignees) => ({
+      ...prevAssignees,
+      [eventDetail.id]: assignees,
+    }));
     setTaskToUpdate(task);
     setOpenUpdateTaskDialog(true);
+    fetchAccounts();
   };
 
   const handleCloseAddAssignee = () => {
@@ -504,23 +514,27 @@ const AssigneeTab = () => {
                                   <Typography variant="h6" mb={1}>
                                     Nhân sự
                                   </Typography>
-                                  {["PREPARATION", "INITIAL", "FUNDRAISING"].includes(event.status) && (
-                                  <Button
-                                    variant="contained"
-                                    startIcon={<GroupAddIcon />}
-                                    onClick={() =>
-                                      handleClickOpenAddAssignee(detail)
-                                    }
-                                    sx={{
-                                      color: "white",
-                                      backgroundColor: "#450b00",
-                                      "&:hover": {
-                                        backgroundColor: "#ff7f50",
-                                      },
-                                    }}
-                                  >
-                                    Thêm Nhân sự mới
-                                  </Button>
+                                  {[
+                                    "PREPARATION",
+                                    "INITIAL",
+                                    "FUNDRAISING",
+                                  ].includes(event.status) && (
+                                    <Button
+                                      variant="contained"
+                                      startIcon={<GroupAddIcon />}
+                                      onClick={() =>
+                                        handleClickOpenAddAssignee(detail)
+                                      }
+                                      sx={{
+                                        color: "white",
+                                        backgroundColor: "#450b00",
+                                        "&:hover": {
+                                          backgroundColor: "#ff7f50",
+                                        },
+                                      }}
+                                    >
+                                      Thêm Nhân sự mới
+                                    </Button>
                                   )}
                                 </Box>
                                 <TableContainer
@@ -568,23 +582,27 @@ const AssigneeTab = () => {
                                   <Typography variant="h6" mb={1}>
                                     Nhiệm vụ
                                   </Typography>
-                                  {["PREPARATION", "INITIAL", "FUNDRAISING"].includes(event.status) && (
-                                  <Button
-                                    variant="contained"
-                                    startIcon={<TaskIcon />}
-                                    onClick={() =>
-                                      handleClickOpenAddTask(detail)
-                                    }
-                                    sx={{
-                                      color: "white",
-                                      backgroundColor: "#450b00",
-                                      "&:hover": {
-                                        backgroundColor: "#ff7f50",
-                                      },
-                                    }}
-                                  >
-                                    Thêm Nhiệm vụ mới
-                                  </Button>
+                                  {[
+                                    "PREPARATION",
+                                    "INITIAL",
+                                    "FUNDRAISING",
+                                  ].includes(event.status) && (
+                                    <Button
+                                      variant="contained"
+                                      startIcon={<TaskIcon />}
+                                      onClick={() =>
+                                        handleClickOpenAddTask(detail)
+                                      }
+                                      sx={{
+                                        color: "white",
+                                        backgroundColor: "#450b00",
+                                        "&:hover": {
+                                          backgroundColor: "#ff7f50",
+                                        },
+                                      }}
+                                    >
+                                      Thêm Nhiệm vụ mới
+                                    </Button>
                                   )}
                                 </Box>
                                 <TableContainer
@@ -596,10 +614,12 @@ const AssigneeTab = () => {
                                       <TableRow>
                                         <TableCell>Nhiệm vụ</TableCell>
                                         <TableCell>Họ Tên</TableCell>
-                                        <TableCell>Vai trò</TableCell>
+
                                         <TableCell>
                                           Trạng thái Nhiệm vụ
                                         </TableCell>
+                                        <TableCell>Ngày Giao</TableCell>
+                                        <TableCell>Ngày Cập nhật</TableCell>
                                         <TableCell>Hành động</TableCell>
                                       </TableRow>
                                     </TableHead>
@@ -623,29 +643,53 @@ const AssigneeTab = () => {
                                                       {assignee.name}
                                                     </TableCell>
                                                     <TableCell>
-                                                      {assignee.role}
+                                                      {task.status}
                                                     </TableCell>
                                                     <TableCell>
-                                                      {task.status}
+                                                      {formatDate(
+                                                        task.createdDate
+                                                      )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                      {formatDate(
+                                                        task.updatedDate
+                                                      )}
                                                     </TableCell>
                                                     <TableCell>
                                                       <Button
                                                         variant="contained"
+                                                        startIcon={<EditNoteIcon />}
                                                         onClick={() =>
                                                           handleClickOpenUpdateTask(
                                                             task,
-                                                            detail.id
+                                                            detail
                                                           )
                                                         }
+                                                        disabled={
+                                                          event.status !==
+                                                          "PREPARATION"
+                                                        }
                                                         sx={{
-                                                          color: "white",
-                                                          backgroundColor: "#450b00",
+                                                          color:
+                                                            event.status ===
+                                                            "PREPARATION"
+                                                              ? "white"
+                                                              : "gray",
+                                                          backgroundColor:
+                                                            event.status ===
+                                                            "PREPARATION"
+                                                              ? "#450b00"
+                                                              : "#cccccc",
                                                           "&:hover": {
-                                                            backgroundColor: "#ff7f50",
+                                                            backgroundColor:
+                                                              event.status ===
+                                                              "PREPARATION"
+                                                                ? "#ff7f50"
+                                                                : "#aaaaaa",
                                                           },
                                                         }}
                                                       >
-                                                        Cập nhật
+                                                        SỬA
                                                       </Button>
                                                     </TableCell>
                                                   </TableRow>
@@ -778,13 +822,20 @@ const AssigneeTab = () => {
             value={taskActualCost}
             onChange={(e) => setTaskActualCost(Number(e.target.value))}
           />
-          <TextField
-            margin="normal"
-            label="Status"
-            fullWidth
-            value={taskStatus}
-            onChange={(e) => setTaskStatus(e.target.value)}
-          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="task-status-label">Trạng thái</InputLabel>
+            <Select
+              labelId="task-status-label"
+              value={taskStatus}
+              onChange={(e) =>
+                setTaskToUpdate({ ...taskToUpdate, status: e.target.value })
+              }
+            >
+              <MenuItem value="ON-GOING">ON-GOING</MenuItem>
+              <MenuItem value="TO-DO">TO-DO</MenuItem>
+              <MenuItem value="DONE">DONE</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAddTask}>Hủy</Button>
@@ -809,12 +860,17 @@ const AssigneeTab = () => {
           {taskToUpdate && (
             <>
               <FormControl fullWidth margin="normal">
-                <InputLabel id="select-staff-update-label">Chọn Nhân sự</InputLabel>
+                <InputLabel id="select-staff-update-label">
+                  Chọn Nhân sự
+                </InputLabel>
                 <Select
                   labelId="select-staff-update-label"
                   value={taskToUpdate.staffID}
                   onChange={(e) =>
-                    setTaskToUpdate({ ...taskToUpdate, staffID: e.target.value })
+                    setTaskToUpdate({
+                      ...taskToUpdate,
+                      staffID: e.target.value,
+                    })
                   }
                 >
                   {assignees[selectedEventDetail?.id]?.map((assignee) => (
@@ -826,42 +882,56 @@ const AssigneeTab = () => {
               </FormControl>
               <TextField
                 margin="normal"
-                label="Description"
+                label="Nhiệm Vụ"
                 fullWidth
                 value={taskToUpdate.description}
                 onChange={(e) =>
-                  setTaskToUpdate({ ...taskToUpdate, description: e.target.value })
+                  setTaskToUpdate({
+                    ...taskToUpdate,
+                    description: e.target.value,
+                  })
                 }
               />
               <TextField
                 margin="normal"
-                label="Planned Cost"
+                label="Chi phí dự kiến"
                 fullWidth
                 type="number"
                 value={taskToUpdate.planCost}
                 onChange={(e) =>
-                  setTaskToUpdate({ ...taskToUpdate, planCost: Number(e.target.value) })
+                  setTaskToUpdate({
+                    ...taskToUpdate,
+                    planCost: Number(e.target.value),
+                  })
                 }
               />
               <TextField
                 margin="normal"
-                label="Actual Cost"
+                label="Chi phí thực tế"
                 fullWidth
                 type="number"
                 value={taskToUpdate.actualCost}
                 onChange={(e) =>
-                  setTaskToUpdate({ ...taskToUpdate, actualCost: Number(e.target.value) })
+                  setTaskToUpdate({
+                    ...taskToUpdate,
+                    actualCost: Number(e.target.value),
+                  })
                 }
               />
-              <TextField
-                margin="normal"
-                label="Status"
-                fullWidth
-                value={taskToUpdate.status}
-                onChange={(e) =>
-                  setTaskToUpdate({ ...taskToUpdate, status: e.target.value })
-                }
-              />
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="task-status-label">Trạng thái</InputLabel>
+                <Select
+                  labelId="task-status-label"
+                  value={taskToUpdate.status}
+                  onChange={(e) =>
+                    setTaskToUpdate({ ...taskToUpdate, status: e.target.value })
+                  }
+                >
+                  <MenuItem value="ON-GOING">ON-GOING</MenuItem>
+                  <MenuItem value="TO-DO">TO-DO</MenuItem>
+                  <MenuItem value="DONE">DONE</MenuItem>
+                </Select>
+              </FormControl>
             </>
           )}
         </DialogContent>

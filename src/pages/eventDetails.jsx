@@ -46,6 +46,9 @@ function EventDetails() {
     if (ticketCount === 0) {
       toast.error("Hãy chọn ít nhất 1 vé!");
       return;
+    } else if (ticketCount > 3) {
+      toast.error("Bạn chỉ được mua tối đa 3 vé!");
+      return;
     }
 
     const selectedEvent = {
@@ -126,6 +129,9 @@ function EventDetails() {
     const ticketCount = ticketCounts[id] || 0;
     if (ticketCount === 0) {
       toast.error("Hãy chọn ít nhất 1 vé!");
+      return;
+    } else if (ticketCount > 3) {
+      toast.error("Bạn chỉ được mua tối đa 3 vé!");
       return;
     }
 
@@ -296,7 +302,9 @@ function EventDetails() {
                               className="main-btn btn-hover w-50 me-1"
                               type="button"
                               onClick={() => handleBookNow(eventDetail.id)}
-                              disabled={eventDetail.ticketForSaleInventory === 0}
+                              disabled={
+                                eventDetail.ticketForSaleInventory === 0
+                              }
                             >
                               <strong>Mua Vé!</strong>
                             </button>
@@ -304,7 +312,9 @@ function EventDetails() {
                               className="main-btn btn-hover w-50 ms-1"
                               type="button"
                               onClick={() => handleAddToCart(eventDetail.id)}
-                              disabled={eventDetail.ticketForSaleInventory === 0}
+                              disabled={
+                                eventDetail.ticketForSaleInventory === 0
+                              }
                             >
                               <strong>Thêm giỏ hàng</strong>
                             </button>

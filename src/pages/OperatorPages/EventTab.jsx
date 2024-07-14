@@ -2,12 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Button from "@mui/material/Button";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  Button,
+  TextField,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+
+import { toast } from "react-toastify";
 import {
   Menu as MenuIcon,
   AccountCircle,
@@ -21,6 +29,7 @@ import {
   getEventAnalysisAPI,
   putEventNextPhaseAPI,
   CancelEventAPI,
+  getTasksByEventDetailIdAPI,
 } from "../../components/services/userServices";
 import { formatDateTime, PriceFormat } from "../../utils/tools";
 
@@ -37,6 +46,7 @@ const EventTab = ({ onViewChart }) => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const navigate = useNavigate();
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const fetchEvents = async (page, category, status) => {
     setLoading(true);
@@ -112,10 +122,46 @@ const EventTab = ({ onViewChart }) => {
     setSelectedEventId(eventId);
     setOpen(true);
   };
+  const handleTermsChange = (e) => {
+    setTermsAccepted(e.target.checked);
+  };
 
   const handleConfirmUpdateNextPhase = async () => {
     try {
+      const eventDetails = await getEventDetailsAPI(selectedEventId);
+
+      if (eventDetails.status === "PREPARATION") {
+        if (
+          !eventDetails.eventDetail ||
+          eventDetails.eventDetail.length === 0
+        ) {
+          toast.warn(
+            "Sự kiện chưa đủ thông tin. Vui lòng Thêm Chi tiết Sự kiện"
+          );
+          setOpen(false);
+          return;
+        }
+
+        const taskPromises = eventDetails.eventDetail.map((detail) =>
+          getTasksByEventDetailIdAPI(detail.id)
+        );
+        const tasks = await Promise.all(taskPromises);
+
+        const allTasksDone = tasks.every((taskList) =>
+          taskList.every((task) => task.status === "DONE")
+        );
+
+        if (!allTasksDone) {
+          toast.warn(
+            "Có nhiệm vụ chưa hoàn thành. Không thể chuyển Trạng thái Sự kiện"
+          );
+          setOpen(false);
+          return;
+        }
+      }
+
       await putEventNextPhaseAPI(selectedEventId);
+      toast.success("Chuyển Trạng Thái Sự kiện thành công!");
       setOpen(false);
       fetchEvents(pageNumber, category, status);
     } catch (error) {
@@ -132,7 +178,7 @@ const EventTab = ({ onViewChart }) => {
     setDeleteOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmCancellation = async () => {
     try {
       await CancelEventAPI(eventToDelete);
       setDeleteOpen(false);
@@ -534,6 +580,7 @@ const EventTab = ({ onViewChart }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
       <Dialog
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
@@ -542,37 +589,52 @@ const EventTab = ({ onViewChart }) => {
       >
         <DialogTitle id="alert-dialog-title">Xác nhận Hủy sự kiện</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-title">
             Bạn có chắc chắn muốn hủy sự kiện này?
           </DialogContentText>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={termsAccepted}
+                onChange={handleTermsChange}
+                color="primary"
+              />
+            }
+            label="Tôi đồng ý hủy Sự kiện này"
+          />
+          <p>
+            Bằng cách xác nhận, mọi khoản tài trợ và doanh thu Vé - Gian Hàng sẽ
+            được hoàn tiền 100% cho nhà Tài trợ và Khách Hàng
+          </p>
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => setDeleteOpen(false)}
-            color="primary"
+            variant="contained"
+            type="submit"
+            disabled={!termsAccepted}
             sx={{
-              color: "white",
               backgroundColor: "#450b00",
               "&:hover": {
                 backgroundColor: "#ff7f50",
               },
             }}
-          >
-            Hủy
-          </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            color="primary"
-            autoFocus
-            sx={{
-              color: "white",
-              backgroundColor: "#450b00",
-              "&:hover": {
-                backgroundColor: "#ff7f50",
-              },
-            }}
+            onClick={handleConfirmCancellation}
           >
             Xác nhận
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setDeleteOpen(false)}
+            sx={{
+              borderColor: "#450b00",
+              color: "#450b00",
+              "&:hover": {
+                borderColor: "#ff7f50",
+                color: "#ff7f50",
+              },
+            }}
+          >
+            Đóng
           </Button>
         </DialogActions>
       </Dialog>

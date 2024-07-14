@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { PriceFormat } from "../utils/tools";
 
 
 const styles = {
@@ -73,9 +74,9 @@ const TransactionInfo = () => {
                       style={styles.transactionInfoImg}
                     />
                   </div>
-                  <h4>Transaction Information</h4>
+                  <h4>THÔNG TIN THANH TOÁN</h4>
                   <p className="ps-lg-4 pe-lg-4">
-                    Here are the details of your transaction.
+                    
                   </p>
                 </div>
                 <div className="transaction-info-bottom">
@@ -86,20 +87,20 @@ const TransactionInfo = () => {
                     <table style={styles.transactionDetails}>
                       <thead>
                         <tr>
-                          <th style={styles.transactionDetailsTh}>Field</th>
-                          <th style={styles.transactionDetailsTh}>Details</th>
+                          <th style={styles.transactionDetailsTh}>THÔNG TIN</th>
+                          <th style={styles.transactionDetailsTh}>CHI TIẾT</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr style={styles.transactionDetailItem}>
                           <td style={styles.transactionDetailsTd}>
-                            <strong>Transaction ID:</strong>
+                            <strong>Mã Giao Dịch:</strong>
                           </td>
                           <td style={styles.transactionDetailsTd}>{id}</td>
                         </tr>
                         <tr style={styles.transactionDetailItem}>
                           <td style={styles.transactionDetailsTd}>
-                            <strong>Account ID:</strong>
+                            <strong>Tài Khoản:</strong>
                           </td>
                           <td style={styles.transactionDetailsTd}>
                             {accountID}
@@ -107,7 +108,7 @@ const TransactionInfo = () => {
                         </tr>
                         <tr style={styles.transactionDetailItem}>
                           <td style={styles.transactionDetailsTd}>
-                            <strong>Transaction Type:</strong>
+                            <strong>Loại Giao Dịch:</strong>
                           </td>
                           <td style={styles.transactionDetailsTd}>
                             {transactionType}
@@ -115,13 +116,13 @@ const TransactionInfo = () => {
                         </tr>
                         <tr style={styles.transactionDetailItem}>
                           <td style={styles.transactionDetailsTd}>
-                            <strong>Amount:</strong>
+                            <strong>Số Tiền:</strong>
                           </td>
-                          <td style={styles.transactionDetailsTd}>{amount} VND</td>
+                          <td style={styles.transactionDetailsTd}><PriceFormat price={amount}/></td>
                         </tr>
                         <tr style={styles.transactionDetailItem}>
                           <td style={styles.transactionDetailsTd}>
-                            <strong>Description:</strong>
+                            <strong>Thông tin GD:</strong>
                           </td>
                           <td style={styles.transactionDetailsTd}>
                             {decodeURIComponent(description)}
@@ -129,7 +130,7 @@ const TransactionInfo = () => {
                         </tr>
                         <tr style={styles.transactionDetailItem}>
                           <td style={styles.transactionDetailsTd}>
-                            <strong>Transaction Date:</strong>
+                            <strong>Ngày Giao Dịch:</strong>
                           </td>
                           <td style={styles.transactionDetailsTd}>
                             {transactionDate}
@@ -137,7 +138,7 @@ const TransactionInfo = () => {
                         </tr>
                         <tr style={styles.transactionDetailItem}>
                           <td style={styles.transactionDetailsTd}>
-                            <strong>Status:</strong>
+                            <strong>Trạng Thái:</strong>
                           </td>
                           <td style={styles.transactionDetailsTd}>
                             {status ? "Completed" : "Pending"}
@@ -145,16 +146,9 @@ const TransactionInfo = () => {
                         </tr>
                       </tbody>
                     </table>
-                    <div className="btn-group" style={styles.btnGroup}>
-                      <a
-                        href="transactions.html"
-                        className="main-btn btn-hover h_50 w-100"
-                      >
-                        <i className="fa-solid fa-receipt me-3"></i>View All
-                        Transactions
-                      </a>
+                    <div className="btn-group" style={styles.btnGroup}>                     
                       <a href="/" className="main-btn btn-hover h_50 w-100">
-                        <i className="fa-solid fa-home me-3"></i>Go to Homepage
+                        <i className="fa-solid fa-home me-3"></i>VỀ TRANG CHỦ
                       </a>
                     </div>
                   </div>

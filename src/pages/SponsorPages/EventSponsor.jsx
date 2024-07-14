@@ -209,7 +209,7 @@ function EventSponsorship() {
       </div>
 
       <Dialog open={modalIsOpen} onClose={closeModal}>
-        <DialogTitle>Pledge Sponsorship</DialogTitle>
+        <DialogTitle>TẠO CAM KẾT TÀI TRỢ</DialogTitle>
         <DialogContent>
           <p>Vui lòng nhập số tiền bạn muốn cam kết tài trợ sự kiện:</p>
           <TextField
@@ -248,13 +248,13 @@ function EventSponsorship() {
               },
             }}
           >
-            Hứa Tài trợ
+            TẠO CAM KẾT
           </Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={sponsorModalIsOpen} onClose={closeSponsorModal}>
-        <DialogTitle>Sponsor Event</DialogTitle>
+        <DialogTitle>TÀI TRỢ CHO SỰ KIỆN</DialogTitle>
         <DialogContent>
           <p>
             Bạn sắp tài trợ cho sự kiện này với số tiền đã cam kết là{" "}

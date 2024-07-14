@@ -99,7 +99,7 @@ function Checkout() {
           if (checkoutMode === "cart") {
             sessionStorage.removeItem("cart"); // Clear the cart after successful booking
           }
-          navigate("/userprofile", { state: { activeTab: "orders" } });
+          navigate("/transactioninfor", { state: { activeTab: "orders" } });
         }
       });
     } catch (error) {
@@ -207,6 +207,9 @@ function Checkout() {
                           </span>
                           <span>
                             Giá vé: {<PriceFormat price={item.ticketPrice} />}
+                          </span>
+                          <span>
+                            <strong>Số lượng: {item.ticketCount}</strong>
                           </span>
                         </div>
                       </div>

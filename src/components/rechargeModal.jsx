@@ -29,7 +29,7 @@ const RechargeModal = ({ show, handleClose, handleRecharge }) => {
       return;
     }
 
-    handleRecharge(amountValue);
+    handleRecharge(amount);
     setAmount(""); // Reset amount after submission
     setError("");  // Reset error after successful submission
     setTermsAccepted(false); // Reset terms accepted after submission

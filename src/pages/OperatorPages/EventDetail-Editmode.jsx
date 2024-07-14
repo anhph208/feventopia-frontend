@@ -284,7 +284,7 @@ function EventDetailsOperator() {
                       color: "white",
                       backgroundColor: "#450b00",
                       "&:hover": {
-                        backgroundColor: "ff7f50",
+                        backgroundColor: "#ff7f50",
                       },
                     }}
                   >

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventDetailsAPI, putUpdateEventAPI } from "../../../components/services/userServices";
-import { TextField, Button, MenuItem, Box, Typography } from "@mui/material";
+import { TextField, Button, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
 import { styled } from "@mui/system";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -72,6 +72,7 @@ function UpdateEvent() {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false); // Add this state for submit button loading
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -135,6 +136,7 @@ function UpdateEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoading(true); // Start loading when form is submitted
     try {
       let bannerUrl = formData.banner;
 
@@ -152,10 +154,12 @@ function UpdateEvent() {
       // Send the updated event data
       await putUpdateEventAPI(eventData, eventId, formData.category);
       toast.success("Event updated successfully");
-      navigate(`/event/${eventId}`);
+      navigate(`/edit-eventdetails/${eventId}`);
     } catch (error) {
       console.error("Error updating event:", error);
       toast.error("Failed to update event");
+    } finally {
+      setSubmitLoading(false); // Stop loading after submission is done
     }
   };
 
@@ -303,8 +307,10 @@ function UpdateEvent() {
                                   variant="contained"
                                   color="primary"
                                   type="submit"
+                                  disabled={submitLoading} // Disable button when loading
+                                  startIcon={submitLoading && <CircularProgress size={20} />} // Add CircularProgress when loading
                                 >
-                                  CẬP NHẬT SỰ KIỆN
+                                  {submitLoading ? "ĐANG CẬP NHẬT..." : "CẬP NHẬT SỰ KIỆN"}
                                 </Button>
                               </Box>
                             </form>

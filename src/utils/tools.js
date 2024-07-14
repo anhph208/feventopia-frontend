@@ -1,5 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
+import { CartContext } from '../components/Cart/CartContext';
+
+
+
 
 export const convertToGMT7 = (dateTimeString) => {
   const [datePart, timePart] = decodeURIComponent(dateTimeString).split(' ');
@@ -18,7 +23,7 @@ export const formatDate = (inputDate) => {
   const year = date.getFullYear();
   const formattedDay = day < 10 ? `0${day}` : day;
   const formattedMonth = month < 10 ? `0${month}` : month;
-  const formattedDate = `${formattedDay}.${formattedMonth}.${year}`;
+  const formattedDate = `${formattedDay}/${formattedMonth}/${year}`;
   return formattedDate;
 };
 
@@ -72,8 +77,8 @@ export const calculateTimeAgo = (datetime) => {
   }
 };
 
-export const handleLogout = (navigate) => {
-  navigate(window.location.replace("/signin"));
+export const handleLogout = (navigate, clearCart) => {
+  
   localStorage.removeItem("isLogged");
   localStorage.removeItem("username");
   localStorage.removeItem("phoneNumber");
@@ -82,5 +87,6 @@ export const handleLogout = (navigate) => {
   localStorage.removeItem("avatar");
   localStorage.removeItem("role");
   localStorage.removeItem("token");
+  clearCart(CartContext);
   toast.success("Đăng xuất thành công!");
 };

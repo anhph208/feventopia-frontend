@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createEventAPI } from "../../../components/services/userServices";
-import { TextField, Button, MenuItem, Box, Typography } from "@mui/material";
+import { TextField, Button, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
 import { styled } from "@mui/system";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { storage } from "../../../firebase/firebase"; // import storage from your firebaseConfig
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
+import DOMPurify from "dompurify";
 
 const Input = styled("input")({
   display: "none",
@@ -57,6 +58,7 @@ const modules = {
 
 function CreateEvent() {
   const navigate = useNavigate();
+  const [submitLoading, setSubmitLoading] = useState(false); // Add this state for submit button loading
   const [formData, setFormData] = useState({
     eventName: "",
     eventDescription: "",
@@ -99,6 +101,7 @@ function CreateEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoading(true); // Start loading when form is submitted
     try {
       let bannerUrl = formData.banner;
 
@@ -111,20 +114,23 @@ function CreateEvent() {
       const eventData = {
         ...formData,
         banner: bannerUrl,
+        eventDescription: DOMPurify.sanitize(formData.eventDescription), // Sanitize HTML content
       };
 
       const response = await createEventAPI(eventData, formData.category);
       console.log("Event created successfully:", response);
-      toast.success("Sự kiện được tạo thành công",{
+      toast.success("Sự kiện được tạo thành công", {
         onClose: () => {
-          navigate("/operatorPages");
+          navigate(`/edit-eventdetails/${response.id}`);
         },
-        autoClose: 2000,
+        autoClose: 1000,
       });
 
     } catch (error) {
       console.error("Error creating event:", error);
       toast.error("Failed to create event");
+    } finally {
+      setSubmitLoading(false); // Stop loading after submission is done
     }
   };
 
@@ -197,16 +203,16 @@ function CreateEvent() {
                                       onChange={handleChange}
                                       required
                                     >
-                                      <MenuItem value="TALKSHOW">
+                                      <MenuItem value="0">
                                         TALKSHOW
                                       </MenuItem>
-                                      <MenuItem value="ÂM NHẠC">
+                                      <MenuItem value="1">
                                         ÂM NHẠC
                                       </MenuItem>
-                                      <MenuItem value="FESTIVAL">
+                                      <MenuItem value="2">
                                         FESTIVAL
                                       </MenuItem>
-                                      <MenuItem value="CUỘC THI">
+                                      <MenuItem value="3">
                                         CUỘC THI
                                       </MenuItem>
                                     </TextField>
@@ -295,6 +301,8 @@ function CreateEvent() {
                                   variant="contained"
                                   color="primary"
                                   type="submit"
+                                  disabled={submitLoading} // Disable button when loading
+                                  startIcon={submitLoading && <CircularProgress size={20} />}
                                   sx={{
                                     color: "white",
                                     backgroundColor: "#450b00",
@@ -303,7 +311,7 @@ function CreateEvent() {
                                     },
                                   }}
                                 >
-                                  Tạo Sự Kiện
+                                  {submitLoading ? "ĐANG TẠO SỰ KIỆN..." : "TẠO SỰ KIỆN"}
                                 </Button>
                               </Box>
                             </form>

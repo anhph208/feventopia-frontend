@@ -9,7 +9,6 @@ import SignUp from "./pages/signup";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import UserProfile from "./pages/userprofile";
-import StaffProfile from "./pages/staffprofile";
 import ExploreEvent from "./components/searchEvent";
 import FAQ from "./pages/Help-Support/faq";
 import HelpArticleDetailView from "./pages/Help-Support/help_article_detail_view";
@@ -30,12 +29,12 @@ import CreateEvent from "./pages/OperatorPages/EventType/createEvent";
 import UpdateEvent from "./pages/OperatorPages/EventType/updateEvent";
 import EventDetailsEdit from "./pages/OperatorPages/EventDetail-Editmode";
 import NotFound from "./components/error_404";
-import CheckinTicket from "./pages/EventCheckin";
 import ContactUs from "./pages/Contact";
 import EventAssignees from './pages/OperatorPages/EventAssignee';
 import EventSponsorship from "./pages/SponsorPages/EventSponsor";
 import SponsorProfile from "./pages/sponsorProfile";
 import DashboardTab from './pages/OperatorPages/DashboardTab';
+import StaffProfile from "./pages/StaffPages/StaffProfile";
 // import EventAnalysis from "./pages/OperatorPages/Analysis";
 
 const ConditionalLayout = () => {
@@ -116,7 +115,6 @@ const ConditionalLayout = () => {
           element={<EventDetailsEdit />}
         />
         <Route path="/error_404" element={<NotFound />} />
-        <Route path="/Checkin" element={<CheckinTicket />} />
         {/* <Route path="/Analysis" element={<EventAnalysis />} /> */}
         <Route path="/Contact" element={<ContactUs />} />
         <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
