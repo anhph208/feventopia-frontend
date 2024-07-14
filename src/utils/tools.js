@@ -87,6 +87,5 @@ export const handleLogout = (navigate, clearCart) => {
   localStorage.removeItem("avatar");
   localStorage.removeItem("role");
   localStorage.removeItem("token");
-  clearCart(CartContext);
   toast.success("Đăng xuất thành công!");
 };

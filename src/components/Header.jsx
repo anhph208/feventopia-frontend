@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "../utils/tools";
 import { getProfileAPI } from "../components/services/userServices";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CartContext } from '../components/Cart/CartContext';
 
 const Header = () => {
   const [isLogged, setIsLogged] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { clearCart } = useContext(CartContext);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLogged") === "true";
@@ -42,6 +44,7 @@ const Header = () => {
   const handleLogoutClick = () => {
     handleLogout(navigate);
     setIsLogged(false);
+    clearCart();
     localStorage.setItem("isLogged", "false");
   };
 

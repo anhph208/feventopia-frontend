@@ -43,7 +43,7 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TaskIcon from "@mui/icons-material/Task";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import EditNoteIcon from '@mui/icons-material/EditNote';
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 const AssigneeTab = () => {
   const [events, setEvents] = useState([]);
@@ -193,7 +193,7 @@ const AssigneeTab = () => {
 
     try {
       await postAddTaskAPI(taskData);
-      toast.success("Task added successfully!");
+      toast.success("Thêm Nhiệm Vụ mới thành công!");
       handleCloseAddTask();
       fetchTasks(selectedEventDetail.id);
     } catch (error) {
@@ -658,7 +658,9 @@ const AssigneeTab = () => {
                                                     <TableCell>
                                                       <Button
                                                         variant="contained"
-                                                        startIcon={<EditNoteIcon />}
+                                                        startIcon={
+                                                          <EditNoteIcon />
+                                                        }
                                                         onClick={() =>
                                                           handleClickOpenUpdateTask(
                                                             task,
@@ -786,9 +788,12 @@ const AssigneeTab = () => {
         <DialogTitle>Thêm Nhiệm vụ mới</DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="select-staff-label">Chọn Nhân sự</InputLabel>
-            <Select
-              labelId="select-staff-label"
+            <TextField
+              select
+              label="Chọn Nhân sự"
+              fullWidth
+              variant="outlined"
+              margin="normal"
               value={selectedTaskStaffId}
               onChange={(e) => setSelectedTaskStaffId(e.target.value)}
             >
@@ -797,7 +802,7 @@ const AssigneeTab = () => {
                   {assignee.name}
                 </MenuItem>
               ))}
-            </Select>
+            </TextField>
           </FormControl>
           <TextField
             margin="normal"
@@ -823,18 +828,19 @@ const AssigneeTab = () => {
             onChange={(e) => setTaskActualCost(Number(e.target.value))}
           />
           <FormControl fullWidth margin="normal">
-            <InputLabel id="task-status-label">Trạng thái</InputLabel>
-            <Select
-              labelId="task-status-label"
+            <TextField
+              select
+              label="Trạng thái"
+              fullWidth
+              variant="outlined"
               value={taskStatus}
-              onChange={(e) =>
-                setTaskToUpdate({ ...taskToUpdate, status: e.target.value })
-              }
+              onChange={(e) => setTaskStatus(e.target.value)}
+              margin="normal"
             >
-              <MenuItem value="ON-GOING">ON-GOING</MenuItem>
-              <MenuItem value="TO-DO">TO-DO</MenuItem>
+              <MenuItem value="TODO">TODO</MenuItem>
+              <MenuItem value="INPROGRESS">INPROGRESS</MenuItem>
               <MenuItem value="DONE">DONE</MenuItem>
-            </Select>
+            </TextField>
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -860,11 +866,12 @@ const AssigneeTab = () => {
           {taskToUpdate && (
             <>
               <FormControl fullWidth margin="normal">
-                <InputLabel id="select-staff-update-label">
-                  Chọn Nhân sự
-                </InputLabel>
-                <Select
-                  labelId="select-staff-update-label"
+                <TextField
+                  select
+                  label="Chọn Nhân sự"
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
                   value={taskToUpdate.staffID}
                   onChange={(e) =>
                     setTaskToUpdate({
@@ -878,7 +885,7 @@ const AssigneeTab = () => {
                       {assignee.name}
                     </MenuItem>
                   ))}
-                </Select>
+                </TextField>
               </FormControl>
               <TextField
                 margin="normal"
@@ -919,18 +926,20 @@ const AssigneeTab = () => {
                 }
               />
               <FormControl fullWidth margin="normal">
-                <InputLabel id="task-status-label">Trạng thái</InputLabel>
-                <Select
-                  labelId="task-status-label"
+                <TextField
+                  select
+                  label="Trạng thái"
+                  fullWidth
+                  variant="outlined"
                   value={taskToUpdate.status}
                   onChange={(e) =>
                     setTaskToUpdate({ ...taskToUpdate, status: e.target.value })
                   }
                 >
-                  <MenuItem value="ON-GOING">ON-GOING</MenuItem>
-                  <MenuItem value="TO-DO">TO-DO</MenuItem>
+                  <MenuItem value="TODO">TODO</MenuItem>
+                  <MenuItem value="INPROGRESS">INPROGRESS</MenuItem>
                   <MenuItem value="DONE">DONE</MenuItem>
-                </Select>
+                </TextField>
               </FormControl>
             </>
           )}

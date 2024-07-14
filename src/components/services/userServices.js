@@ -765,15 +765,9 @@ export const getAllTaskByUsernameAPI = async (username) => {
   }
 };
 
-export const getUpdateTaskByUsernameAPI = async (taskId, status, actualCost) => {
+export const putUpdateTaskByUsernameAPI = async (taskId, status, actualCost) => {
   try {
-      const response = await config.get('/task/UpdateTaskStatus', {
-        params: {
-          taskId: taskId,
-          status: status,
-          actualCost: actualCost
-        },
-    });
+      const response = await config.put(`/task/UpdateTaskStatus?id=${taskId}&Status=${status}&ActualCost=${actualCost}`)
       
       if (response.status >= 200 && response.status < 300) {
           return response.data;
@@ -781,7 +775,7 @@ export const getUpdateTaskByUsernameAPI = async (taskId, status, actualCost) => 
           throw new Error(`Request failed with status ${response.status}`);
       }
   } catch (error) {
-      console.error('Error fetching event details:', error);
+      console.error('Error updating task status:', error);
       throw error;
   }
 };
