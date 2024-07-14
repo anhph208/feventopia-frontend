@@ -63,7 +63,7 @@ const SignIn = () => {
       <div className="app-form">
         <div className="app-form-sidebar">
           <div className="sidebar-sign-logo">
-            <a href="/home">
+            <a href="/">
               <img src="./assets/images/logo.svg" alt="logo" />
             </a>
           </div>

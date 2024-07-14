@@ -7,7 +7,7 @@ import {
   buyStallAPI,
 } from "../components/services/userServices";
 import { formatDateTime, PriceFormat } from "../utils/tools";
-import RechargeModal from "./userPage/rechargeModal"; // Import the RechargeModal component
+import RechargeModal from "../components/rechargeModal"; // Import the RechargeModal component
 
 function CheckoutStall() {
   const location = useLocation();

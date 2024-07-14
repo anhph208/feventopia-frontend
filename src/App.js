@@ -32,6 +32,10 @@ import EventDetailsEdit from "./pages/OperatorPages/EventDetail-Editmode";
 import NotFound from "./components/error_404";
 import CheckinTicket from "./pages/EventCheckin";
 import ContactUs from "./pages/Contact";
+import EventAssignees from './pages/OperatorPages/EventAssignee';
+import EventSponsorship from "./pages/SponsorPages/EventSponsor";
+import SponsorProfile from "./pages/sponsorProfile";
+import DashboardTab from './pages/OperatorPages/DashboardTab';
 // import EventAnalysis from "./pages/OperatorPages/Analysis";
 
 const ConditionalLayout = () => {
@@ -82,6 +86,7 @@ const ConditionalLayout = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/staffprofile" element={<StaffProfile />} />
+        <Route path="/sponsorProfile" element={<SponsorProfile />} />
         <Route path="/explored" element={<ExploreEvent />} />
         <Route path="/faq" element={<FAQ />} />
         <Route
@@ -114,6 +119,10 @@ const ConditionalLayout = () => {
         <Route path="/Checkin" element={<CheckinTicket />} />
         {/* <Route path="/Analysis" element={<EventAnalysis />} /> */}
         <Route path="/Contact" element={<ContactUs />} />
+        <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
+        <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
+        <Route path="/dashboard/:eventId" element={<DashboardTab />} />
+        
         {/* Add a route for admin pages if needed */}
       </Routes>
       {!matchPath(noHeaderFooterPaths) && !isOperatorOrAdminPath && <Footer />}

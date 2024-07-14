@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import OwlCarousel from 'react-owl-carousel';
-import 'owl.carousel/dist/assets/owl.carousel.css';
-import 'owl.carousel/dist/assets/owl.theme.default.css';
-import $ from 'jquery';
+// Slider.js
+import React from "react";
+import PropTypes from "prop-types";
+import OwlCarousel from "react-owl-carousel";
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 
 const responsive = {
   0: {
@@ -33,28 +33,33 @@ const Slider = ({ items, autoplayTimeout, loop, margin, smartSpeed }) => {
         mouseDrag={false} // Disable mouse drag
         touchDrag={false} // Disable touch drag
         pullDrag={false} // Disable pull drag
-        freeDrag={false} 
+        freeDrag={false}
       >
         {items.map((item, index) => (
-          <div className="item" key={index}>
-            <div className="sponsor">
-              <a href={item.link}>
-                <img src={item.image} alt={item.altText} />
-              </a>
+            <div className="item" key={index}>
+              <div className="main-card">
+                <div className="host-item">
+                  <div className="host-img">
+                    <img src={item.image} alt={item.altText} />
+                  </div>
+                  <h4>{item.title}</h4>
+                  <p>{item.description}</p>
+                </div>
+              </div>
             </div>
-          </div>
         ))}
       </OwlCarousel>
     </div>
   );
-}
+};
 
 Slider.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      link: PropTypes.string.isRequired,
       image: PropTypes.string.isRequired,
       altText: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
     })
   ).isRequired,
   autoplayTimeout: PropTypes.number,

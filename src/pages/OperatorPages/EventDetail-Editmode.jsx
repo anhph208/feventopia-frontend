@@ -18,6 +18,9 @@ import {
   DialogTitle,
   Grid,
 } from "@mui/material";
+import Datetime from "react-datetime";
+import dayjs from "dayjs";
+import "react-datetime/css/react-datetime.css";
 
 function EventDetailsOperator() {
   const { eventId } = useParams();
@@ -31,29 +34,33 @@ function EventDetailsOperator() {
   const [newEventDetails, setNewEventDetails] = useState({
     eventID: eventId,
     locationID: "",
-    startDate: "",
-    endDate: "",
+    startDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
+    endDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
     ticketForSaleInventory: 0,
     stallForSaleInventory: 0,
     stallPrice: 0,
     ticketPrice: 0,
+    processModel: "", // Ensure processModel is included
   });
   const [updateEventDetails, setUpdateEventDetails] = useState({
     id: "",
     eventID: eventId,
     locationID: "",
-    startDate: "",
-    endDate: "",
+    startDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
+    endDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
     ticketForSaleInventory: 0,
     stallForSaleInventory: 0,
     stallPrice: 0,
     ticketPrice: 0,
+    processModel: "", // Ensure processModel is included
   });
   const [originalUpdateDetails, setOriginalUpdateDetails] = useState(null);
 
   const handleClickOpenAdd = () => {
     if (eventDetails.status !== "PREPARATION") {
-      toast.error("Sự kiện chỉ có thể thêm Chi tiết khi chuyển sang trạng thái PREPARATION.");
+      toast.error(
+        "Sự kiện chỉ có thể thêm Chi tiết khi chuyển sang trạng thái PREPARATION."
+      );
       return;
     }
     setOpenAddDialog(true);
@@ -62,19 +69,22 @@ function EventDetailsOperator() {
 
   const handleClickOpenUpdate = (eventDetail) => {
     if (eventDetails.status !== "PREPARATION") {
-      toast.error("Sự kiện chỉ có thể Cập nhật chi tiết khi ở trạng thái PREPARATION.");
+      toast.error(
+        "Sự kiện chỉ có thể Cập nhật chi tiết khi ở trạng thái PREPARATION."
+      );
       return;
     }
     const detail = {
       id: eventDetail.id,
       eventID: eventId,
       locationID: eventDetail.location.id,
-      startDate: eventDetail.startDate,
-      endDate: eventDetail.endDate,
+      startDate: dayjs(eventDetail.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+      endDate: dayjs(eventDetail.endDate).format("YYYY-MM-DDTHH:mm:ss"),
       ticketForSaleInventory: eventDetail.ticketForSaleInventory,
       stallForSaleInventory: eventDetail.stallForSaleInventory,
       stallPrice: eventDetail.stallPrice,
       ticketPrice: eventDetail.ticketPrice,
+      processModel: eventDetail.processModel || "", // Ensure processModel is included
     };
     setUpdateEventDetails(detail);
     setOriginalUpdateDetails(detail);
@@ -132,11 +142,16 @@ function EventDetailsOperator() {
   };
 
   const handleUpdateEventDetails = async () => {
-    if (!validateDates(updateEventDetails.startDate, updateEventDetails.endDate)) {
+    if (
+      !validateDates(updateEventDetails.startDate, updateEventDetails.endDate)
+    ) {
       return;
     }
 
-    if (JSON.stringify(updateEventDetails) === JSON.stringify(originalUpdateDetails)) {
+    if (
+      JSON.stringify(updateEventDetails) ===
+      JSON.stringify(originalUpdateDetails)
+    ) {
       toast.info("No changes detected.");
       return;
     }
@@ -151,17 +166,17 @@ function EventDetailsOperator() {
   };
 
   const validateDates = (startDate, endDate) => {
-    const now = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const now = dayjs();
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
 
-    if (start < now) {
-      toast.error("Start date cannot be in the past.");
+    if (start.isBefore(now)) {
+      toast.error("Ngày Bắt đầu phải từ hôm nay.");
       return false;
     }
 
-    if (end <= start) {
-      toast.error("End date must be after the start date.");
+    if (end.isBefore(start)) {
+      toast.error("Ngày Kết thúc phải sau ngày bắt đầu.");
       return false;
     }
 
@@ -200,14 +215,29 @@ function EventDetailsOperator() {
     fetchLocations();
   }, [eventId]);
 
+  const handleDateChange = (date, isUpdate = false, field) => {
+    const formattedDate = dayjs(date).format("YYYY-MM-DDTHH:mm:ss");
+    if (isUpdate) {
+      setUpdateEventDetails((prevDetails) => ({
+        ...prevDetails,
+        [field]: formattedDate,
+      }));
+    } else {
+      setNewEventDetails((prevDetails) => ({
+        ...prevDetails,
+        [field]: formattedDate,
+      }));
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading event details</div>;
   if (!eventDetails) return <div>No event details found</div>;
 
   const isEventPast = (endDate) => {
-    const currentDateTime = new Date();
-    const eventEndDate = new Date(endDate);
-    return currentDateTime > eventEndDate;
+    const currentDateTime = dayjs();
+    const eventEndDate = dayjs(endDate);
+    return currentDateTime.isAfter(eventEndDate);
   };
 
   return (
@@ -322,9 +352,7 @@ function EventDetailsOperator() {
                             <button
                               className="main-btn btn-hover w-100 mt-3"
                               type="button"
-                              onClick={() =>
-                                handleClickOpenUpdate(eventDetail)
-                              }
+                              onClick={() => handleClickOpenUpdate(eventDetail)}
                             >
                               <strong>Cập nhật Chi tiết Sự kiện</strong>
                             </button>
@@ -337,9 +365,7 @@ function EventDetailsOperator() {
                             <button
                               className="main-btn btn-hover w-100 mt-3"
                               type="button"
-                              onClick={() =>
-                                handleClickOpenUpdate(eventDetail)
-                              }
+                              onClick={() => handleClickOpenUpdate(eventDetail)}
                             >
                               <strong>CẬP NHẬT CHI TIẾT SỰ KIỆN</strong>
                             </button>
@@ -356,7 +382,7 @@ function EventDetailsOperator() {
       </div>
 
       <Dialog open={openAddDialog} onClose={handleCloseAdd}>
-        <DialogTitle>Add New Event Details</DialogTitle>
+        <DialogTitle>THÊM MỚI CHI TIẾT SỰ KIỆN</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -377,39 +403,30 @@ function EventDetailsOperator() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                autoFocus
-                margin="dense"
-                name="startDate"
-                label="Start Date"
-                type="datetime-local"
-                fullWidth
-                variant="standard"
-                value={newEventDetails.startDate}
-                onChange={(e) => handleChange(e, false)}
-                InputLabelProps={{ shrink: true }}
-                required
+              <Datetime
+                value={dayjs(newEventDetails.startDate).toDate()}
+                onChange={(date) => handleDateChange(date, false, "startDate")}
+                dateFormat="DD/MM/YYYY"
+                timeFormat="HH:mm"
+                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
+                closeOnSelect
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                margin="dense"
-                name="endDate"
-                label="End Date"
-                type="datetime-local"
-                fullWidth
-                variant="standard"
-                value={newEventDetails.endDate}
-                onChange={(e) => handleChange(e, false)}
-                InputLabelProps={{ shrink: true }}
-                required
+              <Datetime
+                value={dayjs(newEventDetails.endDate).toDate()}
+                onChange={(date) => handleDateChange(date, false, "endDate")}
+                dateFormat="DD/MM/YYYY"
+                timeFormat="HH:mm"
+                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
+                closeOnSelect
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 margin="dense"
                 name="ticketForSaleInventory"
-                label="Ticket Inventory"
+                label="Số lượng vé mở bán"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -427,7 +444,7 @@ function EventDetailsOperator() {
               <TextField
                 margin="dense"
                 name="stallForSaleInventory"
-                label="Stall Inventory"
+                label="Số lượng gian hàng mở bán"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -440,7 +457,7 @@ function EventDetailsOperator() {
               <TextField
                 margin="dense"
                 name="stallPrice"
-                label="Stall Price"
+                label="Giá bán Gian hàng"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -453,7 +470,7 @@ function EventDetailsOperator() {
               <TextField
                 margin="dense"
                 name="ticketPrice"
-                label="Ticket Price"
+                label="Giá bán vé"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -465,13 +482,13 @@ function EventDetailsOperator() {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAdd}>Cancel</Button>
-          <Button onClick={handleAddNewEventDetails}>Add</Button>
+          <Button onClick={handleCloseAdd}>HỦY</Button>
+          <Button onClick={handleAddNewEventDetails}>THÊM MỚI</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openUpdateDialog} onClose={handleCloseUpdate}>
-        <DialogTitle>Update Event Details</DialogTitle>
+        <DialogTitle>CẬP NHẬT CHI TIẾT SỰ KIỆN</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -492,39 +509,30 @@ function EventDetailsOperator() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                autoFocus
-                margin="dense"
-                name="startDate"
-                label="Start Date"
-                type="datetime-local"
-                fullWidth
-                variant="standard"
-                value={updateEventDetails.startDate}
-                onChange={(e) => handleChange(e, true)}
-                InputLabelProps={{ shrink: true }}
-                required
+              <Datetime
+                value={dayjs(updateEventDetails.startDate).toDate()}
+                onChange={(date) => handleDateChange(date, true, "startDate")}
+                dateFormat="DD/MM/YYYY"
+                timeFormat="HH:mm"
+                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
+                closeOnSelect
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                margin="dense"
-                name="endDate"
-                label="End Date"
-                type="datetime-local"
-                fullWidth
-                variant="standard"
-                value={updateEventDetails.endDate}
-                onChange={(e) => handleChange(e, true)}
-                InputLabelProps={{ shrink: true }}
-                required
+              <Datetime
+                value={dayjs(updateEventDetails.endDate).toDate()}
+                onChange={(date) => handleDateChange(date, true, "endDate")}
+                dateFormat="DD/MM/YYYY"
+                timeFormat="HH:mm"
+                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
+                closeOnSelect
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 margin="dense"
                 name="ticketForSaleInventory"
-                label="Ticket Inventory"
+                label="Số lượng vé mở bán"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -542,7 +550,7 @@ function EventDetailsOperator() {
               <TextField
                 margin="dense"
                 name="stallForSaleInventory"
-                label="Stall Inventory"
+                label="Số lượng Gian hàng mở bán"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -555,7 +563,7 @@ function EventDetailsOperator() {
               <TextField
                 margin="dense"
                 name="stallPrice"
-                label="Stall Price"
+                label="Giá bán Gian hàng"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -568,7 +576,7 @@ function EventDetailsOperator() {
               <TextField
                 margin="dense"
                 name="ticketPrice"
-                label="Ticket Price"
+                label="Giá bán vé"
                 type="number"
                 fullWidth
                 variant="standard"
@@ -580,8 +588,8 @@ function EventDetailsOperator() {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseUpdate}>Cancel</Button>
-          <Button onClick={handleUpdateEventDetails}>Update</Button>
+          <Button onClick={handleCloseUpdate}>HỦY</Button>
+          <Button onClick={handleUpdateEventDetails}>CẬP NHẬT</Button>
         </DialogActions>
       </Dialog>
     </div>

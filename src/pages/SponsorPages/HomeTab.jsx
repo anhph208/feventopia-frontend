@@ -4,7 +4,7 @@ import {
   getProfileAPI,
   rechargeAPI,
   getAllProfileTransactionAPI,
-  getAllEventCheckInAPI,
+  getAllSponsorAgreementAPI,
 } from "../../components/services/userServices";
 import { toast } from "react-toastify";
 import RechargeModal from "../../components/rechargeModal";
@@ -27,12 +27,12 @@ const HomeTab = ({ initialProfile }) => {
   const [showModal, setShowModal] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
-  const [events, setEvents] = useState([]);
-  const [loadingTickets, setLoadingTickets] = useState(true);
+  const [sponsorAgreements, setSponsorAgreements] = useState([]);
+  const [loadingAgreements, setLoadingAgreements] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [ticketPage, setTicketPage] = useState(1);
-  const [totalTicketPages, setTotalTicketPages] = useState(1);
+  const [agreementPage, setAgreementPage] = useState(1);
+  const [totalAgreementPages, setTotalAgreementPages] = useState(1);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -75,31 +75,24 @@ const HomeTab = ({ initialProfile }) => {
   }, [page]);
 
   useEffect(() => {
-    const fetchTickets = async () => {
+    const fetchSponsorAgreements = async () => {
       try {
-        const { tickets, pagination } = await getAllEventCheckInAPI(
-          ticketPage,
+        const { sponsorShip, pagination } = await getAllSponsorAgreementAPI(
+          agreementPage,
           5
         );
-        // Create a map to store unique events
-        const eventMap = new Map();
-        tickets.forEach((ticket) => {
-          if (!eventMap.has(ticket.event.id)) {
-            eventMap.set(ticket.event.id, ticket);
-          }
-        });
-        setEvents(Array.from(eventMap.values()));
-        setTotalTicketPages(pagination.TotalPages);
-        setLoadingTickets(false);
+        setSponsorAgreements(sponsorShip);
+        setTotalAgreementPages(pagination.TotalPages);
+        setLoadingAgreements(false);
       } catch (error) {
-        console.error("Error fetching tickets:", error);
-        setLoadingTickets(false);
-        toast.error("Error fetching tickets");
+        console.error("Error fetching sponsor agreements:", error);
+        setLoadingAgreements(false);
+        toast.error("Error fetching sponsor agreements");
       }
     };
 
-    fetchTickets();
-  }, [ticketPage]);
+    fetchSponsorAgreements();
+  }, [agreementPage]);
 
   const handleWithdraw = () => {
     alert("Withdraw functionality to be implemented");
@@ -137,8 +130,8 @@ const HomeTab = ({ initialProfile }) => {
     setPage(newPage);
   };
 
-  const handleChangeTicketPage = (event, newPage) => {
-    setTicketPage(newPage);
+  const handleChangeAgreementPage = (event, newPage) => {
+    setAgreementPage(newPage);
   };
 
   if (loading) {
@@ -179,13 +172,13 @@ const HomeTab = ({ initialProfile }) => {
           <button
             className="event-link"
             data-bs-toggle="tab"
-            data-bs-target="#feedback"
+            data-bs-target="#sponsorAgreements"
             type="button"
             role="tab"
-            aria-controls="feedback"
+            aria-controls="sponsorAgreements"
             aria-selected="false"
           >
-            <span>Xem đánh giá sự kiện đã tham gia</span>
+            <span>Thỏa thuận tài trợ của tôi</span>
           </button>
         </div>
         <div className="tab-content">
@@ -317,68 +310,85 @@ const HomeTab = ({ initialProfile }) => {
             </div>
           </div>
 
-          <div className="tab-pane fade" id="feedback" role="tabpanel">
+          <div
+            className="tab-pane fade"
+            id="sponsorAgreements"
+            role="tabpanel"
+          >
             <div className="row">
-              {loadingTickets ? (
-                <div>Loading tickets...</div>
-              ) : events.length > 0 ? (
-                events.map((event) => (
-                  <div className="col-md-12" key={event.id}>
-                    <div className="main-card mt-4">
-                      <div className="card-top p-4">
-                        <div className="card-event-img">
-                          <img
-                            src={event.event.banner}
-                            alt={event.event.eventName}
-                          />
-                        </div>
-                        <div className="card-event-dt">
-                          <h5>{event.event.eventName}</h5>
-                          <div className="evnt-time">
-                            {formatDateTime(event.eventDetail.startDate)}
-                          </div>
-                          <div className="event-btn-group">
-                            <button
-                              className="esv-btn me-2"
-                              onClick={() => navigate(`/feedback/${event.id}`)}
-                            >
-                              <i className="fa-solid fa-comments me-2" />
-                              View Feedback
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+              <div className="col-md-12">
+                <div className="main-card mt-4">
+                  <div className="card-top p-4">
+                    <div className="card-event-dt">
+                      <h5>THỎA THUẬN TÀI TRỢ CỦA TÔI</h5>
+                      {loadingAgreements ? (
+                        <div>Loading agreements...</div>
+                      ) : sponsorAgreements.length > 0 ? (
+                        <TableContainer component={Paper}>
+                          <Table
+                            sx={{ minWidth: 750 }}
+                            aria-label="agreements table"
+                          >
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>MÃ THỎA THUẬN</TableCell>
+                                <TableCell>TÊN SỰ KIỆN</TableCell>
+                                <TableCell>HẠNG</TableCell>
+                                <TableCell>SỐ TIỀN CAM KẾT</TableCell>
+                                <TableCell>SỐ TIỀN THỰC TẾ</TableCell>
+                                <TableCell>TRẠNG THÁI</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {sponsorAgreements.map((agreement) => (
+                                <TableRow key={agreement.id}>
+                                  <TableCell>{agreement.id}</TableCell>
+                                  <TableCell>{agreement.event.eventName}</TableCell>
+                                  <TableCell>{agreement.rank}</TableCell>
+                                  <TableCell>
+                                    <PriceFormat price={agreement.pledgeAmount} />
+                                  </TableCell>
+                                  <TableCell>
+                                    <PriceFormat price={agreement.actualAmount} />
+                                  </TableCell>
+                                  <TableCell>{agreement.status}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          <Stack
+                            spacing={2}
+                            sx={{ mt: 2 }}
+                            className="pagination-controls mt-2 mb-2"
+                          >
+                            <Pagination
+                              count={totalAgreementPages}
+                              page={agreementPage}
+                              onChange={handleChangeAgreementPage}
+                              variant="outlined"
+                              shape="rounded"
+                              sx={{
+                                "& .MuiPaginationItem-root": {
+                                  color: "white",
+                                  backgroundColor: "#450b00",
+                                  "&.Mui-selected": {
+                                    backgroundColor: "#ff7f50",
+                                  },
+                                  "&:hover": {
+                                    backgroundColor: "#450b00",
+                                  },
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </TableContainer>
+                      ) : (
+                        <div>Không có thỏa thuận tài trợ nào.</div>
+                      )}
                     </div>
                   </div>
-                ))
-              ) : (
-                <div>Không có vé nào.</div>
-              )}
-              <Stack
-                spacing={2}
-                sx={{ mt: 2 }}
-                className="pagination-controls mt-2 mb-2"
-              >
-                <Pagination
-                  count={totalTicketPages}
-                  page={ticketPage}
-                  onChange={handleChangeTicketPage}
-                  variant="outlined"
-                  shape="rounded"
-                  sx={{
-                    "& .MuiPaginationItem-root": {
-                      color: "white",
-                      backgroundColor: "#450b00",
-                      "&.Mui-selected": {
-                        backgroundColor: "#ff7f50",
-                      },
-                      "&:hover": {
-                        backgroundColor: "#450b00",
-                      },
-                    },
-                  }}
-                />
-              </Stack>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,12 +1,888 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import {
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Pagination,
+  Stack,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
+} from "@mui/material";
+import {
+  getAllEventForOtherAPI,
+  getEventDetailsAPI,
+  getAllEventAssigneeAPI,
+  getAccountById,
+  getAccountStaffAPI,
+  postAddEventAssignee,
+  getTasksByEventDetailIdAPI,
+  postAddTaskAPI,
+  putUpdateTaskAPI,
+} from "../../components/services/userServices";
+import { formatDateTime, PriceFormat } from "../../utils/tools";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import TaskIcon from "@mui/icons-material/Task";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const MyTeamTab = () => {
+const AssigneeTab = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [category, setCategory] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [assignees, setAssignees] = useState({});
+  const [tasks, setTasks] = useState({});
+  const [openAddAssigneeDialog, setOpenAddAssigneeDialog] = useState(false);
+  const [selectedEventDetail, setSelectedEventDetail] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [selectedAccountId, setSelectedAccountId] = useState("");
+  const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
+  const [taskDescription, setTaskDescription] = useState("");
+  const [taskPlanCost, setTaskPlanCost] = useState("");
+  const [taskActualCost, setTaskActualCost] = useState("");
+  const [taskStatus, setTaskStatus] = useState("");
+  const [selectedTaskStaffId, setSelectedTaskStaffId] = useState("");
+
+  const [openUpdateTaskDialog, setOpenUpdateTaskDialog] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState(null);
+
+  const fetchEvents = async (page, category, status) => {
+    setLoading(true);
+    try {
+      const response = await getAllEventForOtherAPI(page, 3, category, status);
+      const { events, pagination } = response;
+
+      const eventDetailsPromises = events.map((event) =>
+        getEventDetailsAPI(event.id)
+      );
+      const eventsWithDetails = await Promise.all(eventDetailsPromises);
+
+      const processedEvents = eventsWithDetails.map((eventDetails, index) => {
+        const earliestStartDate =
+          eventDetails.eventDetail.length > 0
+            ? eventDetails.eventDetail.reduce((earliest, current) =>
+                new Date(current.startDate) < new Date(earliest.startDate)
+                  ? current
+                  : earliest
+              ).startDate
+            : null;
+
+        const smallestPrice =
+          eventDetails.eventDetail.length > 0
+            ? Math.min(
+                ...eventDetails.eventDetail.map((detail) => detail.ticketPrice)
+              )
+            : null;
+
+        return {
+          ...eventDetails,
+          earliestStartDate,
+          smallestPrice,
+          status: events[index].status,
+        };
+      });
+
+      setEvents(processedEvents);
+      setTotalPages(pagination.TotalPages);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setError(error);
+      setLoading(false);
+      toast.error("Error fetching events.");
+    }
+  };
+
+  const fetchAssignees = async (eventDetailId) => {
+    try {
+      const response = await getAllEventAssigneeAPI(eventDetailId, 1);
+      const assigneesWithDetails = await Promise.all(
+        response.assignee.map(async (assignee) => {
+          const accountDetails = await getAccountById(assignee.accountId);
+          return { ...assignee, ...accountDetails };
+        })
+      );
+      return assigneesWithDetails;
+    } catch (error) {
+      console.error("Error fetching assignees:", error);
+      throw error;
+    }
+  };
+
+  const fetchTasks = async (eventDetailId) => {
+    try {
+      const response = await getTasksByEventDetailIdAPI(eventDetailId);
+      const tasksByAssignee = response.reduce((acc, task) => {
+        if (!acc[task.staffID]) {
+          acc[task.staffID] = [];
+        }
+        acc[task.staffID].push(task);
+        return acc;
+      }, {});
+      return tasksByAssignee;
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      throw error;
+    }
+  };
+
+  const fetchAccounts = async () => {
+    try {
+      const allAccounts = await getAccountStaffAPI();
+      setAccounts(allAccounts);
+    } catch (error) {
+      console.error("Failed to fetch accounts:", error);
+      toast.error("Failed to fetch accounts.");
+    }
+  };
+
+  const handleAddAssignee = async () => {
+    if (!selectedAccountId) {
+      toast.warn("Please select an account.");
+      return;
+    }
+
+    try {
+      await postAddEventAssignee(selectedAccountId, selectedEventDetail.id);
+      toast.success("Assignee added successfully!");
+      handleCloseAddAssignee();
+      fetchAssignees(selectedEventDetail.id);
+    } catch (error) {
+      console.error("Failed to add assignee:", error);
+      toast.error("Failed to add assignee.");
+    }
+  };
+
+  const handleAddTask = async () => {
+    if (!selectedTaskStaffId || !taskDescription || !taskStatus) {
+      toast.warn("Please fill in all required fields.");
+      return;
+    }
+
+    const taskData = {
+      staffID: selectedTaskStaffId,
+      eventDetailId: selectedEventDetail.id,
+      description: taskDescription,
+      planCost: taskPlanCost,
+      actualCost: taskActualCost,
+      status: taskStatus,
+    };
+
+    try {
+      await postAddTaskAPI(taskData);
+      toast.success("Task added successfully!");
+      handleCloseAddTask();
+      fetchTasks(selectedEventDetail.id);
+    } catch (error) {
+      console.error("Failed to add task:", error);
+      toast.error("Failed to add task.");
+    }
+  };
+
+  const handleUpdateTask = async () => {
+    if (!taskToUpdate.staffID || !taskToUpdate.description || !taskToUpdate.status) {
+      toast.warn("Please fill in all required fields.");
+      return;
+    }
+
+    const taskData = {
+      staffID: taskToUpdate.staffID,
+      eventDetailId: taskToUpdate.eventDetailId,
+      description: taskToUpdate.description,
+      planCost: taskToUpdate.planCost,
+      actualCost: taskToUpdate.actualCost,
+      status: taskToUpdate.status,
+    };
+
+    try {
+      await putUpdateTaskAPI(taskToUpdate.id, taskData);
+      toast.success("Cập nhật Thành công!");
+      handleCloseUpdateTask();
+      fetchTasks(selectedEventDetail.id);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      toast.error("Failed to update task.");
+    }
+  };
+
+  const handleClickOpenAddAssignee = async (eventDetail) => {
+    setSelectedEventDetail(eventDetail);
+    setOpenAddAssigneeDialog(true);
+    fetchAccounts();
+  };
+
+  const handleClickOpenUpdateTask = async (task, eventDetailId) => {
+    const assignees = await fetchAssignees(eventDetailId);
+    setAssignees((prevAssignees) => ({ ...prevAssignees, [eventDetailId]: assignees }));
+    setTaskToUpdate(task);
+    setOpenUpdateTaskDialog(true);
+  };
+
+  const handleCloseAddAssignee = () => {
+    setOpenAddAssigneeDialog(false);
+  };
+
+  const handleClickOpenAddTask = async (eventDetail) => {
+    await fetchAssignees(eventDetail.id);
+    setSelectedEventDetail(eventDetail);
+    setOpenAddTaskDialog(true);
+  };
+
+  const handleCloseAddTask = () => {
+    setOpenAddTaskDialog(false);
+  };
+
+  const handleCloseUpdateTask = () => {
+    setOpenUpdateTaskDialog(false);
+  };
+
+  useEffect(() => {
+    fetchEvents(pageNumber, category, status);
+  }, [pageNumber, category, status]);
+
+  useEffect(() => {
+    const fetchAllAssigneesAndTasks = async () => {
+      const allAssignees = {};
+      const allTasks = {};
+      for (const event of events) {
+        for (const detail of event.eventDetail) {
+          const assigneeData = await fetchAssignees(detail.id);
+          const taskData = await fetchTasks(detail.id);
+          allAssignees[detail.id] = assigneeData;
+          allTasks[detail.id] = taskData;
+        }
+      }
+      setAssignees(allAssignees);
+      setTasks(allTasks);
+    };
+    if (events.length > 0) {
+      fetchAllAssigneesAndTasks();
+    }
+  }, [events]);
+
+  const handlePageChange = (event, value) => {
+    setPageNumber(value);
+  };
+
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+    setPageNumber(1);
+  };
+
+  const handleStatusChange = (newStatus) => {
+    setStatus(newStatus);
+    setPageNumber(1);
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
   return (
-    <div>
-      <h3><i className="fa-solid fa-calendar-days me-3"></i>Event</h3>
-      {/* Add your Event content here */}
-    </div>
+    <Container className="wrapper wrapper-body">
+      <div className="dashboard-body">
+        <Typography variant="h4" component="div" gutterBottom>
+          <i className="fa-solid fa-user me-3" />
+          <strong>TỔNG QUAN NHÂN SỰ</strong>
+        </Typography>
+
+        <div className="main-card">
+          <div className="dashboard-wrap-content p-4">
+            <h5 className="mb-4">Danh mục Sự kiện</h5>
+
+            <div className="rs ms-auto mt_r4 mb-4">
+              <div className="nav custom2-tabs btn-group" role="tablist">
+                <button
+                  className={`tab-link ${category === null ? "active" : ""}`}
+                  onClick={() => handleCategoryChange(null)}
+                >
+                  Tất cả Sự kiện
+                </button>
+                <button
+                  className={`tab-link ${
+                    category === "TALKSHOW" ? "active" : ""
+                  }`}
+                  onClick={() => handleCategoryChange("TALKSHOW")}
+                >
+                  Talkshow
+                </button>
+                <button
+                  className={`tab-link ${
+                    category === "COMPETITION" ? "active" : ""
+                  }`}
+                  onClick={() => handleCategoryChange("COMPETITION")}
+                >
+                  Competition
+                </button>
+                <button
+                  className={`tab-link ${
+                    category === "FESTIVAL" ? "active" : ""
+                  }`}
+                  onClick={() => handleCategoryChange("FESTIVAL")}
+                >
+                  Festival
+                </button>
+                <button
+                  className={`tab-link ${
+                    category === "MUSICSHOW" ? "active" : ""
+                  }`}
+                  onClick={() => handleCategoryChange("MUSICSHOW")}
+                >
+                  Music Show
+                </button>
+              </div>
+            </div>
+
+            <h5 className="mb-4">Trạng thái Sự kiện</h5>
+            <div className="nav custom2-tabs btn-group" role="tablist">
+              <button
+                className={`tab-link ${status === null ? "active" : ""}`}
+                onClick={() => handleStatusChange(null)}
+              >
+                Tất cả
+              </button>
+              <button
+                className={`tab-link ${status === "INITIAL" ? "active" : ""}`}
+                onClick={() => handleStatusChange("INITIAL")}
+              >
+                INITIAL
+              </button>
+              <button
+                className={`tab-link ${
+                  status === "FUNDRAISING" ? "active" : ""
+                }`}
+                onClick={() => handleStatusChange("FUNDRAISING")}
+              >
+                FUNDRAISING
+              </button>
+              <button
+                className={`tab-link ${
+                  status === "PREPARATION" ? "active" : ""
+                }`}
+                onClick={() => handleStatusChange("PREPARATION")}
+              >
+                PREPARATION
+              </button>
+              <button
+                className={`tab-link ${status === "EXECUTE" ? "active" : ""}`}
+                onClick={() => handleStatusChange("EXECUTE")}
+              >
+                EXECUTE
+              </button>
+              <button
+                className={`tab-link ${status === "POST" ? "active" : ""}`}
+                onClick={() => handleStatusChange("POST")}
+              >
+                POST
+              </button>
+              <button
+                className={`tab-link ${status === "CANCELED" ? "active" : ""}`}
+                onClick={() => handleStatusChange("CANCELED")}
+              >
+                CANCELED
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="event-list">
+          <Grid container spacing={3} className="mt-4">
+            {events.map((event) => (
+              <Grid item xs={12} key={event.id}>
+                <Card
+                  style={{
+                    backgroundColor:
+                      event.status === "CANCELED"
+                        ? "#9CAFAA"
+                        : event.status === "POST"
+                        ? "#BFEA7C"
+                        : "white",
+                  }}
+                >
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={4}>
+                      <Box
+                        component="div"
+                        sx={{
+                          margin: 2,
+                          borderRadius: 2,
+                          overflow: "hidden",
+                        }}
+                      >
+                        <CardMedia
+                          component="img"
+                          alt={event.eventName}
+                          height="200"
+                          image={
+                            event.banner ||
+                            "./assets/images/event-imgs/big-2.jpg"
+                          }
+                        />
+                      </Box>
+                      <CardContent>
+                        <Typography variant="h5">
+                          <strong>{event.eventName}</strong>
+                        </Typography>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          alignItems="center"
+                          marginTop="16px"
+                        >
+                          <div className="card-icon">
+                            <i className="fa-solid fa-location-dot" />
+                          </div>
+                          <Box>
+                            <Typography variant="h7">Trạng thái</Typography>
+                            <Typography variant="h6">{event.status}</Typography>
+                          </Box>
+                        </Stack>
+                      </CardContent>
+                    </Grid>
+                    {event.status !== "CANCELED" && (
+                      <Grid item xs={12} md={8}>
+                        <CardContent>
+                          {event.eventDetail.map((detail) => (
+                            <div key={detail.id}>
+                              <Box
+                                key={detail.id}
+                                sx={{
+                                  mb: 2.2,
+                                  ml: 0.4,
+                                  border: "2px solid #450b00",
+                                  borderRadius: 2,
+                                  p: 2,
+                                }}
+                              >
+                                <Stack
+                                  direction="row"
+                                  spacing={2}
+                                  alignItems="center"
+                                >
+                                  <div className="event-dt-right-icon">
+                                    <i className="fa-solid fa-calendar-days" />
+                                  </div>
+                                  <Box>
+                                    <Typography variant="h6">
+                                      <strong>Thời gian</strong>
+                                    </Typography>
+                                    <Typography variant="body1">
+                                      {formatDateTime(detail.startDate)} -{" "}
+                                      {formatDateTime(detail.endDate)}
+                                    </Typography>
+                                  </Box>
+                                </Stack>
+
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginTop: "16px",
+                                  }}
+                                >
+                                  <Typography variant="h6" mb={1}>
+                                    Nhân sự
+                                  </Typography>
+                                  {["PREPARATION", "INITIAL", "FUNDRAISING"].includes(event.status) && (
+                                  <Button
+                                    variant="contained"
+                                    startIcon={<GroupAddIcon />}
+                                    onClick={() =>
+                                      handleClickOpenAddAssignee(detail)
+                                    }
+                                    sx={{
+                                      color: "white",
+                                      backgroundColor: "#450b00",
+                                      "&:hover": {
+                                        backgroundColor: "#ff7f50",
+                                      },
+                                    }}
+                                  >
+                                    Thêm Nhân sự mới
+                                  </Button>
+                                  )}
+                                </Box>
+                                <TableContainer
+                                  component={Paper}
+                                  sx={{ mb: 5 }}
+                                >
+                                  <Table aria-label="assignee table">
+                                    <TableHead>
+                                      <TableRow>
+                                        <TableCell>Họ Tên</TableCell>
+                                        <TableCell>Vai trò</TableCell>
+                                      </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                      {assignees[detail.id] &&
+                                      assignees[detail.id].length > 0 ? (
+                                        assignees[detail.id].map((assignee) => (
+                                          <TableRow key={assignee.id}>
+                                            <TableCell>
+                                              {assignee.name}
+                                            </TableCell>
+                                            <TableCell>
+                                              {assignee.role}
+                                            </TableCell>
+                                          </TableRow>
+                                        ))
+                                      ) : (
+                                        <TableRow>
+                                          <TableCell colSpan={2}>
+                                            Không có Nhân sự nào.
+                                          </TableCell>
+                                        </TableRow>
+                                      )}
+                                    </TableBody>
+                                  </Table>
+                                </TableContainer>
+
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginTop: "16px",
+                                  }}
+                                >
+                                  <Typography variant="h6" mb={1}>
+                                    Nhiệm vụ
+                                  </Typography>
+                                  {["PREPARATION", "INITIAL", "FUNDRAISING"].includes(event.status) && (
+                                  <Button
+                                    variant="contained"
+                                    startIcon={<TaskIcon />}
+                                    onClick={() =>
+                                      handleClickOpenAddTask(detail)
+                                    }
+                                    sx={{
+                                      color: "white",
+                                      backgroundColor: "#450b00",
+                                      "&:hover": {
+                                        backgroundColor: "#ff7f50",
+                                      },
+                                    }}
+                                  >
+                                    Thêm Nhiệm vụ mới
+                                  </Button>
+                                  )}
+                                </Box>
+                                <TableContainer
+                                  component={Paper}
+                                  sx={{ mb: 2 }}
+                                >
+                                  <Table aria-label="task table">
+                                    <TableHead>
+                                      <TableRow>
+                                        <TableCell>Nhiệm vụ</TableCell>
+                                        <TableCell>Họ Tên</TableCell>
+                                        <TableCell>Vai trò</TableCell>
+                                        <TableCell>
+                                          Trạng thái Nhiệm vụ
+                                        </TableCell>
+                                        <TableCell>Hành động</TableCell>
+                                      </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                      {assignees[detail.id] &&
+                                      assignees[detail.id].length > 0 ? (
+                                        assignees[detail.id].flatMap(
+                                          (assignee) =>
+                                            tasks[detail.id] &&
+                                            tasks[detail.id][assignee.id] &&
+                                            tasks[detail.id][assignee.id]
+                                              .length > 0
+                                              ? tasks[detail.id][
+                                                  assignee.id
+                                                ].map((task) => (
+                                                  <TableRow key={task.id}>
+                                                    <TableCell>
+                                                      {task.description}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                      {assignee.name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                      {assignee.role}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                      {task.status}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                      <Button
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                          handleClickOpenUpdateTask(
+                                                            task,
+                                                            detail.id
+                                                          )
+                                                        }
+                                                        sx={{
+                                                          color: "white",
+                                                          backgroundColor: "#450b00",
+                                                          "&:hover": {
+                                                            backgroundColor: "#ff7f50",
+                                                          },
+                                                        }}
+                                                      >
+                                                        Cập nhật
+                                                      </Button>
+                                                    </TableCell>
+                                                  </TableRow>
+                                                ))
+                                              : []
+                                        )
+                                      ) : (
+                                        <TableRow>
+                                          <TableCell colSpan={5}>
+                                            Không có Nhiệm vụ nào.
+                                          </TableCell>
+                                        </TableRow>
+                                      )}
+                                    </TableBody>
+                                  </Table>
+                                </TableContainer>
+                              </Box>
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Grid>
+                    )}
+                  </Grid>
+                </Card>
+              </Grid>
+            ))}
+
+            {events.length === 0 && !loading && (
+              <Typography variant="body1">No events found.</Typography>
+            )}
+          </Grid>
+        </div>
+        <Stack spacing={2} className="pagination-controls mt-5">
+          <Pagination
+            count={totalPages}
+            page={pageNumber}
+            onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "white",
+                backgroundColor: "#450b00",
+                "&.Mui-selected": {
+                  backgroundColor: "#ff7f50",
+                },
+                "&:hover": {
+                  backgroundColor: "#450b00",
+                },
+              },
+            }}
+          />
+        </Stack>
+        {error && (
+          <Typography variant="body1">Error: {error.message}</Typography>
+        )}
+      </div>
+
+      <Dialog open={openAddAssigneeDialog} onClose={handleCloseAddAssignee}>
+        <DialogTitle>Thêm Nhân sự mới</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth>
+            <InputLabel>Chọn Nhân sự</InputLabel>
+            <Select
+              value={selectedAccountId}
+              onChange={(e) => setSelectedAccountId(e.target.value)}
+            >
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.id}>
+                  {account.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddAssignee}>Hủy</Button>
+          <Button
+            onClick={handleAddAssignee}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Thêm Nhân sự
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openAddTaskDialog} onClose={handleCloseAddTask}>
+        <DialogTitle>Thêm Nhiệm vụ mới</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="select-staff-label">Chọn Nhân sự</InputLabel>
+            <Select
+              labelId="select-staff-label"
+              value={selectedTaskStaffId}
+              onChange={(e) => setSelectedTaskStaffId(e.target.value)}
+            >
+              {assignees[selectedEventDetail?.id]?.map((assignee) => (
+                <MenuItem key={assignee.id} value={assignee.accountId}>
+                  {assignee.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            margin="normal"
+            label="Description"
+            fullWidth
+            value={taskDescription}
+            onChange={(e) => setTaskDescription(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            label="Planned Cost"
+            fullWidth
+            type="number"
+            value={taskPlanCost}
+            onChange={(e) => setTaskPlanCost(Number(e.target.value))}
+          />
+          <TextField
+            margin="normal"
+            label="Actual Cost"
+            fullWidth
+            type="number"
+            value={taskActualCost}
+            onChange={(e) => setTaskActualCost(Number(e.target.value))}
+          />
+          <TextField
+            margin="normal"
+            label="Status"
+            fullWidth
+            value={taskStatus}
+            onChange={(e) => setTaskStatus(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddTask}>Hủy</Button>
+          <Button
+            onClick={handleAddTask}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Thêm Nhiệm vụ mới
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openUpdateTaskDialog} onClose={handleCloseUpdateTask}>
+        <DialogTitle>Cập nhật Nhiệm vụ</DialogTitle>
+        <DialogContent>
+          {taskToUpdate && (
+            <>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="select-staff-update-label">Chọn Nhân sự</InputLabel>
+                <Select
+                  labelId="select-staff-update-label"
+                  value={taskToUpdate.staffID}
+                  onChange={(e) =>
+                    setTaskToUpdate({ ...taskToUpdate, staffID: e.target.value })
+                  }
+                >
+                  {assignees[selectedEventDetail?.id]?.map((assignee) => (
+                    <MenuItem key={assignee.id} value={assignee.accountId}>
+                      {assignee.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                margin="normal"
+                label="Description"
+                fullWidth
+                value={taskToUpdate.description}
+                onChange={(e) =>
+                  setTaskToUpdate({ ...taskToUpdate, description: e.target.value })
+                }
+              />
+              <TextField
+                margin="normal"
+                label="Planned Cost"
+                fullWidth
+                type="number"
+                value={taskToUpdate.planCost}
+                onChange={(e) =>
+                  setTaskToUpdate({ ...taskToUpdate, planCost: Number(e.target.value) })
+                }
+              />
+              <TextField
+                margin="normal"
+                label="Actual Cost"
+                fullWidth
+                type="number"
+                value={taskToUpdate.actualCost}
+                onChange={(e) =>
+                  setTaskToUpdate({ ...taskToUpdate, actualCost: Number(e.target.value) })
+                }
+              />
+              <TextField
+                margin="normal"
+                label="Status"
+                fullWidth
+                value={taskToUpdate.status}
+                onChange={(e) =>
+                  setTaskToUpdate({ ...taskToUpdate, status: e.target.value })
+                }
+              />
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateTask}>Hủy</Button>
+          <Button
+            onClick={handleUpdateTask}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Cập nhật Nhiệm vụ
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
   );
 };
 
-export default MyTeamTab;
+export default AssigneeTab;

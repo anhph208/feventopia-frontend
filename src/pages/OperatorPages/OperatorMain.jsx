@@ -8,25 +8,22 @@ import {
   ListItemText,
   CssBaseline,
   Toolbar,
-  Typography,
-  IconButton,
+  Box,
+  Container,
+  Divider,
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
   Event as EventIcon,
-  Contacts as ContactsIcon,
-  Assessment as AssessmentIcon,
   Group as GroupIcon,
-  Menu as MenuIcon,
+  AccountCircle as AccountCircleIcon,
 } from "@mui/icons-material";
-import DashboardTab from "../OperatorPages/DashboardTab";
+
+import OverAll from "../OperatorPages/OverAllDashBoard";
 import EventTab from "../OperatorPages/EventTab";
-import ContactListTab from "../OperatorPages/ContactListTab";
-import ReportTab from "../OperatorPages/ReportTab";
 import MyTeamTab from "../OperatorPages/MyTeamTab";
 import queryString from "query-string";
-
-import EvOAdminHeader from "../../components/EvOAdminHeader"; 
+import EvOAdminHeader from "../../components/EvOAdminHeader"; // Import the header
 
 const drawerWidth = 240;
 
@@ -63,7 +60,7 @@ const OperatorMain = () => {
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
-          <ListItemText primary="Dashboard" />
+          <ListItemText primary="Tổng quan" />
         </ListItem>
         <ListItem
           button
@@ -73,27 +70,7 @@ const OperatorMain = () => {
           <ListItemIcon>
             <EventIcon />
           </ListItemIcon>
-          <ListItemText primary="Event" />
-        </ListItem>
-        <ListItem
-          button
-          selected={activeTab === "contactList"}
-          onClick={() => handleTabChange("contactList")}
-        >
-          <ListItemIcon>
-            <ContactsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Contact List" />
-        </ListItem>
-        <ListItem
-          button
-          selected={activeTab === "report"}
-          onClick={() => handleTabChange("report")}
-        >
-          <ListItemIcon>
-            <AssessmentIcon />
-          </ListItemIcon>
-          <ListItemText primary="Report" />
+          <ListItemText primary="Sự kiện" />
         </ListItem>
         <ListItem
           button
@@ -103,17 +80,32 @@ const OperatorMain = () => {
           <ListItemIcon>
             <GroupIcon />
           </ListItemIcon>
-          <ListItemText primary="My Team" />
+          <ListItemText primary="Nhân sự Sự kiện" />
         </ListItem>
       </List>
+      <Divider />
+      <ListItem
+        button
+        selected={activeTab === "account"}
+        onClick={() => handleTabChange("account")}
+      >
+        <ListItemIcon>
+          <AccountCircleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Account Info" />
+      </ListItem>
     </div>
   );
 
   return (
-    <div className="wrapper">
-
-
-      <nav className="drawer" aria-label="menu items">
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <EvOAdminHeader /> {/* Add the header here */}
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -142,22 +134,24 @@ const OperatorMain = () => {
         >
           {drawer}
         </Drawer>
-      </nav>
-      <main className="content">
-        <div className="toolbar" />
-        <div className="wrapper-body">
-          <div className="dashboard-body">
-            <div className="container-fluid">
-              {activeTab === "dashboard" && <DashboardTab />}
-              {activeTab === "event" && <EventTab />}
-              {activeTab === "contactList" && <ContactListTab />}
-              {activeTab === "report" && <ReportTab />}
-              {activeTab === "myTeam" && <MyTeamTab />}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      </Box>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 1,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
+      >
+        <Toolbar />
+        <Container>
+          {activeTab === "dashboard" && <OverAll />}
+          {activeTab === "event" && <EventTab />}
+          {activeTab === "myTeam" && <MyTeamTab />}
+          {activeTab === "account" && <div>Account Info Content</div>}
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

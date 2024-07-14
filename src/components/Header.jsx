@@ -22,7 +22,13 @@ const Header = () => {
           setProfile(profileData);
         } catch (error) {
           console.error("Error fetching user profile:", error);
-          toast.error("Failed to fetch user profile.");
+          if (error.response && error.response.status === 401) {
+            // Handle session expiration
+            handleLogoutClick();
+            toast.error("Session expired. Please log in again.");
+          } else {
+            toast.error("Failed to fetch user profile.");
+          }
         } finally {
           setLoading(false);
         }
@@ -37,11 +43,6 @@ const Header = () => {
     handleLogout(navigate);
     setIsLogged(false);
     localStorage.setItem("isLogged", "false");
-  };
-
-  const handleLogin = () => {
-    setIsLogged(true);
-    localStorage.setItem("isLogged", "true");
   };
 
   const handleClickLogo = () => {
@@ -128,7 +129,7 @@ const Header = () => {
                       aria-current="page"
                       href="/explored"
                     >
-                      <strong>KHÁM PHÁ SỰ KIỆN</strong>
+                      <strong>TÌM KIẾM SỰ KIỆN</strong>
                     </a>
                   </li>
                   <li className="nav-item dropdown">
@@ -275,7 +276,10 @@ const Header = () => {
                         >
                           Vé đã mua
                         </Link>
-                        <Link to="/userprofile" className="link-item">
+                        <Link
+                          to={profile?.role === "SPONSOR" ? "/sponsorProfile" : "/userprofile"}
+                          className="link-item"
+                        >
                           Trang cá nhân
                         </Link>
                         <button
@@ -290,7 +294,7 @@ const Header = () => {
                 ) : (
                   <li>
                     <Link to="/signin" className="create-btn btn-hover">
-                      <strong>Đăng nhập</strong>
+                      <strong>ĐĂNG NHẬP</strong>
                     </Link>
                   </li>
                 )}

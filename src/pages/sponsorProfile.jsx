@@ -3,13 +3,13 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 import { getProfileAPI } from "../components/services/userServices";
-import HomeTab from "../pages/userPage/HomeTab";
-import AboutTab from "../pages/userPage/AboutTab";
-import SettingTab from "../pages/userPage/SettingTab";
-import OrdersTab from "../pages/userPage/OrdersTab";
+import HomeTab from "./SponsorPages/HomeTab";
+import SponsorshipsTab from "../pages/SponsorPages/SponsorshipsTab";
+import AboutTab from "../pages/SponsorPages/AboutTab";
+import SettingTab from "../pages/SponsorPages/SettingTab";
 import queryString from "query-string";
 
-const UserProfile = () => {
+const SponsorProfile = () => {
   const location = useLocation();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,19 +25,19 @@ const UserProfile = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    const fetchUserProfile = async () => {
+    const fetchSponsorProfile = async () => {
       try {
         const profileData = await getProfileAPI(token);
         setProfile(profileData);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching user profile:", error);
-        toast.error("Failed to fetch user profile.");
+        console.error("Error fetching sponsor profile:", error);
+        toast.error("Failed to fetch sponsor profile.");
         setLoading(false);
       }
     };
 
-    fetchUserProfile();
+    fetchSponsorProfile();
   }, []);
 
   if (loading) {
@@ -56,7 +56,7 @@ const UserProfile = () => {
             <div className="hero-cover-img">
               <img
                 src="./assets/images/userBackground.jpg"
-                alt="User Background"
+                alt="Sponsor Background"
               />
             </div>
           </div>
@@ -72,7 +72,7 @@ const UserProfile = () => {
                         profile.avatar ||
                         "./assets/images/profile-imgs/img-13.jpg"
                       }
-                      alt="User Avatar"
+                      alt="Sponsor Avatar"
                     />
                     <div className="avatar-img-btn">
                       <input type="file" id="avatar-img" />
@@ -91,7 +91,7 @@ const UserProfile = () => {
                     <span className="user-email">{profile.email}</span>
                   </div>
                   <div className="user-description">
-                    <p>Tớ là {profile.name}</p>
+                    <p>I am {profile.name}, a proud sponsor.</p>
                   </div>
                 </div>
               </div>
@@ -142,13 +142,13 @@ const UserProfile = () => {
                       <li className="nav-item">
                         <button
                           className={`nav-link ${
-                            activeTab === "orders" ? "active" : ""
+                            activeTab === "sponsorships" ? "active" : ""
                           }`}
-                          id="orders-tab"
-                          onClick={() => setActiveTab("orders")}
+                          id="sponsorships-tab"
+                          onClick={() => setActiveTab("sponsorships")}
                         >
-                          <i className="fa-solid fa-box" />
-                          <strong>Vé của tôi</strong>
+                          <i className="fa-solid fa-handshake" />
+                          <strong>Sự kiện đã Tài trợ</strong>
                         </button>
                       </li>
                     </ul>
@@ -185,14 +185,15 @@ const UserProfile = () => {
                         <SettingTab />
                       </div>
                     )}
-                    {activeTab === "orders" && (
+
+                    {activeTab === "sponsorships" && (
                       <div
                         className="tab-pane fade show active"
-                        id="orders"
+                        id="sponsorships"
                         role="tabpanel"
-                        aria-labelledby="orders-tab"
+                        aria-labelledby="sponsorships-tab"
                       >
-                        <OrdersTab />
+                        <SponsorshipsTab />
                       </div>
                     )}
                   </div>
@@ -206,4 +207,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default SponsorProfile;

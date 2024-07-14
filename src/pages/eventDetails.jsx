@@ -296,6 +296,7 @@ function EventDetails() {
                               className="main-btn btn-hover w-50 me-1"
                               type="button"
                               onClick={() => handleBookNow(eventDetail.id)}
+                              disabled={eventDetail.ticketForSaleInventory === 0}
                             >
                               <strong>Mua Vé!</strong>
                             </button>
@@ -303,6 +304,7 @@ function EventDetails() {
                               className="main-btn btn-hover w-50 ms-1"
                               type="button"
                               onClick={() => handleAddToCart(eventDetail.id)}
+                              disabled={eventDetail.ticketForSaleInventory === 0}
                             >
                               <strong>Thêm giỏ hàng</strong>
                             </button>
@@ -355,6 +357,7 @@ function EventDetails() {
                               className="main-btn btn-hover w-100 mt-3"
                               type="button"
                               onClick={() => handleBuyStall(eventDetail.id)}
+                              disabled={eventDetail.stallForSaleInventory === 0}
                             >
                               <strong>Mua gian hàng</strong>
                             </button>

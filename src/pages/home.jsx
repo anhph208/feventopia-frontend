@@ -7,10 +7,12 @@ import {
   getEventDetailsAPI,
 } from "../components/services/userServices";
 import HomeSlider from "../components/HomeSlider";
+import FeatureSlider from "../components/featureSlider";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { formatDateTime, PriceFormat } from "../utils/tools";
 
+// Define slider items for the home page
 const sliderItems = [
   {
     image:
@@ -29,34 +31,81 @@ const sliderItems = [
   },
 ];
 
+// Define sponsor items for the home page
 const sponsorItems = [
   {
-    image: "./assets/images/icons/sponsor-1.png",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-images%2F2020-FPT%20Edu-White.png?alt=media&token=451c0887-9a56-4e0c-b4c6-7c3a1a375959",
     altText: "Sponsor 1",
   },
   {
-    image: "./assets/images/icons/sponsor-2.png",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-images%2FFAT-abt%20(1).png?alt=media&token=3547e3ae-f81b-4298-9a47-73c62d6c1a0d",
     altText: "Sponsor 2",
   },
   {
-    image: "./assets/images/icons/sponsor-3.png",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-images%2FFPT-Retail-Ngang-white.png?alt=media&token=eb9ab319-0aa3-4e87-923d-fa73b826c203",
     altText: "Sponsor 3",
   },
   {
-    image: "./assets/images/icons/sponsor-4.png",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-images%2FFPTU%20GLobal%20trang%20png-05.png?alt=media&token=0e176912-1871-4998-a5c5-0b9184c22d48",
     altText: "Sponsor 4",
   },
   {
-    image: "./assets/images/icons/sponsor-5.png",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-images%2FLOGO-FSB-02%20white.png?alt=media&token=67dd5e22-332f-418c-bd3d-a874b607ff30",
     altText: "Sponsor 5",
   },
   {
-    image: "./assets/images/icons/sponsor-6.png",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-images%2FLogo_White-01.png?alt=media&token=a1bc452a-a59d-4be8-b294-0076777aaec6",
     altText: "Sponsor 6",
   },
   {
-    image: "./assets/images/icons/sponsor-7.png",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-images%2Flogo-white.png?alt=media&token=ffaa7243-6303-4060-bdf3-7896a714f687",
     altText: "Sponsor 7",
+  },
+];
+
+// Define feature items for the home page
+const featureItems = [
+  {
+    image: "./assets/images/icons/venue-events.png",
+    altText: "Venue Events",
+    title: "Venue Events",
+    description:
+      "Create outstanding event page for your venue events, attract attendees and sell more tickets.",
+  },
+  {
+    image: "./assets/images/icons/webinar.png",
+    altText: "Webinar",
+    title: "Webinar",
+    description:
+      "Webinars tend to be one-way events. Barren helps to make them more engaging.",
+  },
+  {
+    image: "./assets/images/icons/training-workshop.png",
+    altText: "Training & Workshop",
+    title: "Training & Workshop",
+    description:
+      "Create and host profitable workshops and training sessions online, sell tickets and earn money.",
+  },
+  {
+    image: "./assets/images/icons/online-class.png",
+    altText: "Online Class",
+    title: "Online Class",
+    description:
+      "Try our e-learning template to create a fantastic e-learning event page and drive engagement.",
+  },
+  {
+    image: "./assets/images/icons/talk-show.png",
+    altText: "Talk Show",
+    title: "Talk Show",
+    description:
+      "Use our intuitive built-in event template to create and host an engaging Talk Show.",
   },
 ];
 
@@ -69,12 +118,15 @@ function Home() {
   const [category, setCategory] = useState(null);
   const role = localStorage.getItem("role");
 
+  // Function to fetch events based on role and category
   const fetchEvents = async (page, category) => {
     setLoading(true);
     try {
-      const apiFunction = !role || role === "VISITOR" 
-        ? getAllEventForVisitorAPI 
-        : getAllEventForOtherAPI;
+      const apiFunction =
+        !role || role === "VISITOR"
+          ? getAllEventForVisitorAPI
+          : (page, pageSize, category) =>
+              getAllEventForOtherAPI(page, pageSize, category, "FUNDRAISING");
 
       const response = await apiFunction(page, 8, category);
       console.log("API Response:", response);
@@ -92,20 +144,21 @@ function Home() {
 
       // Process the details to get the earliest start date and smallest price
       const processedEvents = eventsWithDetails.map((eventDetails) => {
-        const earliestStartDate = eventDetails.eventDetail.length > 0
-          ? eventDetails.eventDetail.reduce(
-              (earliest, current) =>
+        const earliestStartDate =
+          eventDetails.eventDetail.length > 0
+            ? eventDetails.eventDetail.reduce((earliest, current) =>
                 new Date(current.startDate) < new Date(earliest.startDate)
                   ? current
                   : earliest
-            ).startDate
-          : null;
+              ).startDate
+            : null;
 
-        const smallestPrice = eventDetails.eventDetail.length > 0
-          ? Math.min(
-              ...eventDetails.eventDetail.map((detail) => detail.ticketPrice)
-            )
-          : null;
+        const smallestPrice =
+          eventDetails.eventDetail.length > 0
+            ? Math.min(
+                ...eventDetails.eventDetail.map((detail) => detail.ticketPrice)
+              )
+            : null;
 
         return {
           ...eventDetails,
@@ -127,14 +180,17 @@ function Home() {
     }
   };
 
+  // Fetch events when component mounts or page/category changes
   useEffect(() => {
     fetchEvents(pageNumber, category);
   }, [pageNumber, category]);
 
+  // Handle page change
   const handlePageChange = (event, value) => {
     setPageNumber(value);
   };
 
+  // Handle category change
   const handleCategoryChange = (newCategory) => {
     setCategory(newCategory);
     setPageNumber(1); // Reset to first page when changing category
@@ -216,7 +272,11 @@ function Home() {
                         <div className="main-card mt-4">
                           <div className="event-thumbnail">
                             <Link
-                              to={`/event/${event.id}`}
+                              to={
+                                role === "SPONSOR"
+                                  ? `/sponsor-event/${event.id}`
+                                  : `/event/${event.id}`
+                              }
                               className="thumbnail-img"
                             >
                               <img
@@ -232,20 +292,30 @@ function Home() {
                           </div>
                           <div className="event-content">
                             <Link
-                              to={`/event/${event.id}`}
+                              to={
+                                role === "SPONSOR"
+                                  ? `/sponsor-event/${event.id}`
+                                  : `/event/${event.id}`
+                              }
                               className="event-title"
                             >
                               {event.eventName}
                             </Link>
-                            <div className="duration-price-remaining">
-                              <span className="duration-price">
-                                GIÁ VÉ TỪ{" "}
-                                <strong>
-                                  <PriceFormat price={event.smallestPrice} />
-                                </strong>
-                              </span>
-                              <span className="remaining" />
-                            </div>
+                            {event.status === "POST" ? (
+                              <div className="event-ended">
+                                <strong>Sự kiện đã kết thúc</strong>
+                              </div>
+                            ) : (
+                              <div className="duration-price-remaining">
+                                <span className="duration-price">
+                                  GIÁ VÉ TỪ{" "}
+                                  <strong>
+                                    <PriceFormat price={event.smallestPrice} />
+                                  </strong>
+                                </span>
+                                <span className="remaining" />
+                              </div>
+                            )}
                           </div>
                           <div className="event-footer">
                             <div className="event-timing">
@@ -310,87 +380,13 @@ function Home() {
             </div>
             <div className="col-lg-12">
               <div className="engaging-block">
-                <div className="owl-carousel engaging-slider owl-theme">
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="host-item">
-                        <div className="host-img">
-                          <img
-                            src="./assets/images/icons/venue-events.png"
-                            alt
-                          />
-                        </div>
-                        <h4>Venue Events</h4>
-                        <p>
-                          Create outstanding event page for your venue events,
-                          attract attendees and sell more tickets.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="host-item">
-                        <div className="host-img">
-                          <img src="./assets/images/icons/webinar.png" alt />
-                        </div>
-                        <h4>Webinar</h4>
-                        <p>
-                          Webinars tend to be one-way events. Barren helps to
-                          make them more engaging.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="host-item">
-                        <div className="host-img">
-                          <img
-                            src="./assets/images/icons/training-workshop.png"
-                            alt
-                          />
-                        </div>
-                        <h4>Training &amp; Workshop </h4>
-                        <p>
-                          Create and host profitable workshops and training
-                          sessions online, sell tickets and earn money.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="host-item">
-                        <div className="host-img">
-                          <img
-                            src="./assets/images/icons/online-class.png"
-                            alt
-                          />
-                        </div>
-                        <h4>Online Class</h4>
-                        <p>
-                          Try our e-learning template to create a fantastic
-                          e-learning event page and drive engagement.{" "}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="host-item">
-                        <div className="host-img">
-                          <img src="./assets/images/icons/talk-show.png" alt />
-                        </div>
-                        <h4>Talk Show</h4>
-                        <p>
-                          Use our intuitive built-in event template to create
-                          and host an engaging Talk Show.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <FeatureSlider
+                  items={featureItems}
+                  autoplayTimeout={3000}
+                  loop={true}
+                  margin={10}
+                  smartSpeed={700}
+                />
               </div>
             </div>
           </div>
@@ -403,8 +399,8 @@ function Home() {
               <div className="main-title">
                 <h3>KHÔNG BỎ LỠ BẤT KÌ SỰ KIỆN NÀO VỚI FEVENTOPIA</h3>
                 <p>
-                  Use early-bird discounts, coupons and group ticketing to
-                  double your ticket sale. Get paid quickly and securely.
+                  Thông tin nhanh chóng, dễ dàng thanh toán và bảo mật cao cùng
+                  các sự kiện hấp dẫn
                 </p>
               </div>
             </div>
@@ -463,12 +459,6 @@ function Home() {
                     role="tabpanel"
                   >
                     <div className="row">
-                      <div className="col-lg-12 col-md-12">
-                        <div className="step-text">
-                          Sign up for free and create your event easily in
-                          minutes.
-                        </div>
-                      </div>
                       <div className="col-lg-4 col-md-6">
                         <div className="step-item">
                           <div className="step-icon">
@@ -477,10 +467,10 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Sign up for free</h4>
+                          <h4>Đăng kí miễn phí</h4>
                           <p>
-                            Sign up easily using your Google or Facebook account
-                            or email and create your events in minutes.
+                            Đăng kí dễ dàng bằng email của bạn trong thời gian
+                            ngắn nhất.
                           </p>
                         </div>
                       </div>
@@ -492,25 +482,10 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Use built-in event page template</h4>
+                          <h4>Đa dạng danh mục sự kiện</h4>
                           <p>
-                            Choose from our customised page templates specially
-                            designed to attract attendees.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="col-lg-4 col-md-6">
-                        <div className="step-item">
-                          <div className="step-icon">
-                            <img
-                              src="./assets/images/icons/step-icon-3.png"
-                              alt
-                            />
-                          </div>
-                          <h4>Customise your event page as you like</h4>
-                          <p>
-                            Add logo, collage hero images, and add details to
-                            create an outstanding event page.
+                            Các trang sự kiện được tạo trực quan dễ dàng nắm bắt
+                            thông tin.
                           </p>
                         </div>
                       </div>
@@ -518,29 +493,6 @@ function Home() {
                   </div>
                   <div className="tab-pane fade" id="step-02" role="tabpanel">
                     <div className="row">
-                      <div className="col-lg-12 col-md-12">
-                        <div className="step-text">
-                          Use our multiple ticketing features &amp; marketing
-                          automation tools to boost ticket sales.
-                        </div>
-                      </div>
-                      <div className="col-lg-4 col-md-6">
-                        <div className="step-item">
-                          <div className="step-icon">
-                            <img
-                              src="./assets/images/icons/step-icon-4.png"
-                              alt
-                            />
-                          </div>
-                          <h4>
-                            Promote your events on social media &amp; email
-                          </h4>
-                          <p>
-                            Use our intuitive event promotion tools to reach
-                            your target audience and sell tickets.
-                          </p>
-                        </div>
-                      </div>
                       <div className="col-lg-4 col-md-6">
                         <div className="step-item">
                           <div className="step-icon">
@@ -549,14 +501,7 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>
-                            Use early-bird discounts, coupons &amp; group
-                            ticketing
-                          </h4>
-                          <p>
-                            Double your ticket sales using our built-in
-                            discounts, coupons and group ticketing features.
-                          </p>
+                          <h4>Vé được quản lí một cách dễ dàng</h4>
                         </div>
                       </div>
                       <div className="col-lg-4 col-md-6">
@@ -567,23 +512,15 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Get paid quickly &amp; securely</h4>
-                          <p>
-                            Use our PCI compliant payment gateways to collect
-                            your payment securely.
-                          </p>
+                          <h4>
+                            Thanh toán nhanh chóng và bảo mật với FEventWallet
+                          </h4>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="tab-pane fade" id="step-03" role="tabpanel">
                     <div className="row">
-                      <div className="col-lg-12 col-md-12">
-                        <div className="step-text">
-                          Use Barren to host any types of online events for
-                          free.
-                        </div>
-                      </div>
                       <div className="col-lg-4 col-md-6">
                         <div className="step-item">
                           <div className="step-icon">
@@ -592,29 +529,10 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Free event hosting</h4>
-                          <p>
-                            Use Eventbookings to host any types of online events
-                            for free.
-                          </p>
+                          <h4>Đảm bảo dễ dàng tham gia sự kiện</h4>
                         </div>
                       </div>
-                      <div className="col-lg-4 col-md-6">
-                        <div className="step-item">
-                          <div className="step-icon">
-                            <img
-                              src="./assets/images/icons/step-icon-8.png"
-                              alt
-                            />
-                          </div>
-                          <h4>Built-in video conferencing platform</h4>
-                          <p>
-                            No need to integrate with ZOOM or other 3rd party
-                            apps, use our built-in video conferencing platform
-                            for your events.
-                          </p>
-                        </div>
-                      </div>
+
                       <div className="col-lg-4 col-md-6">
                         <div className="step-item">
                           <div className="step-icon">
@@ -623,22 +541,16 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Connect your attendees with your event</h4>
-                          <p>
-                            Use our live engagement tools to connect with
-                            attendees during the event.
-                          </p>
+                          <h4>
+                            Kết nối cùng với những người tham gia khác và Ban tổ
+                            chức sự kiện
+                          </h4>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="tab-pane fade" id="step-04" role="tabpanel">
                     <div className="row">
-                      <div className="col-lg-12 col-md-12">
-                        <div className="step-text">
-                          Create more events and earn more money.
-                        </div>
-                      </div>
                       <div className="col-lg-4 col-md-6">
                         <div className="step-item">
                           <div className="step-icon">
@@ -647,11 +559,7 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Create multiple sessions &amp; earn more</h4>
-                          <p>
-                            Use our event scheduling features to create multiple
-                            sessions for your events &amp; earn more money.
-                          </p>
+                          <h4>Tiếp tục những chuỗi sự kiện diễn ra sau đó.</h4>
                         </div>
                       </div>
                       <div className="col-lg-4 col-md-6">
@@ -662,11 +570,7 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Clone past event to create similar events</h4>
-                          <p>
-                            Use our event cloning feature to clone past event
-                            and create a new one easily within a few clicks.
-                          </p>
+                          <h4>Đánh giá sự kiện một cách trực quan</h4>
                         </div>
                       </div>
                       <div className="col-lg-4 col-md-6">
@@ -677,265 +581,8 @@ function Home() {
                               alt
                             />
                           </div>
-                          <h4>Get support like nowhere else</h4>
-                          <p>
-                            Our dedicated on-boarding coach will assist you in
-                            becoming an expert in no time.
-                          </p>
+                          <h4>Ban tổ chức sẵn sàng hỗ trợ mọi thắc mắc</h4>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="testimonial-block p-80">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-10">
-              <div className="main-title">
-                <h3>Transforming Thousands of Event Hosts Just Like You</h3>
-                <p>
-                  Be part of a winning team. We are continuously thriving to
-                  bring the best to our customers. Be that a new product
-                  feature, help in setting up your events or even supporting
-                  your customers so that they can easily buy tickets and
-                  participate your in events. Here is what some of the clients
-                  have to say,
-                </p>
-              </div>
-            </div>
-            <div className="col-lg-12">
-              <div className="testimonial-slider-area">
-                <div className="owl-carousel testimonial-slider owl-theme">
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="testimonial-content">
-                        <div className="testimonial-text">
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus maximus arcu et ligula maximus
-                            vehicula. Phasellus at luctus lacus, quis eleifend
-                            nibh. Nam vitae convallis nisi, vitae tempus risus.
-                          </p>
-                        </div>
-                        <div className="testimonial-user-dt">
-                          <h5>Madeline S.</h5>
-                          <span>Events Co-ordinator</span>
-                          <ul>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                          </ul>
-                        </div>
-                        <span className="quote-icon">
-                          <i className="fa-solid fa-quote-right" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="testimonial-content">
-                        <div className="testimonial-text">
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus maximus arcu et ligula maximus
-                            vehicula. Phasellus at luctus lacus, quis eleifend
-                            nibh. Nam vitae convallis nisi, vitae tempus risus.
-                          </p>
-                        </div>
-                        <div className="testimonial-user-dt">
-                          <h5>Gabrielle B.</h5>
-                          <span>Administration</span>
-                          <ul>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                          </ul>
-                        </div>
-                        <span className="quote-icon">
-                          <i className="fa-solid fa-quote-right" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="testimonial-content">
-                        <div className="testimonial-text">
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus maximus arcu et ligula maximus
-                            vehicula. Phasellus at luctus lacus, quis eleifend
-                            nibh. Nam vitae convallis nisi, vitae tempus risus.
-                          </p>
-                        </div>
-                        <div className="testimonial-user-dt">
-                          <h5>Piyush G.</h5>
-                          <span>Application Developer</span>
-                          <ul>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                          </ul>
-                        </div>
-                        <span className="quote-icon">
-                          <i className="fa-solid fa-quote-right" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="testimonial-content">
-                        <div className="testimonial-text">
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus maximus arcu et ligula maximus
-                            vehicula. Phasellus at luctus lacus, quis eleifend
-                            nibh. Nam vitae convallis nisi, vitae tempus risus.
-                          </p>
-                        </div>
-                        <div className="testimonial-user-dt">
-                          <h5>Joanna P.</h5>
-                          <span>Event manager</span>
-                          <ul>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                          </ul>
-                        </div>
-                        <span className="quote-icon">
-                          <i className="fa-solid fa-quote-right" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="testimonial-content">
-                        <div className="testimonial-text">
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus maximus arcu et ligula maximus
-                            vehicula. Phasellus at luctus lacus, quis eleifend
-                            nibh. Nam vitae convallis nisi, vitae tempus risus.
-                          </p>
-                        </div>
-                        <div className="testimonial-user-dt">
-                          <h5>Romo S.</h5>
-                          <span>Admin</span>
-                          <ul>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                          </ul>
-                        </div>
-                        <span className="quote-icon">
-                          <i className="fa-solid fa-quote-right" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="main-card">
-                      <div className="testimonial-content">
-                        <div className="testimonial-text">
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus maximus arcu et ligula maximus
-                            vehicula. Phasellus at luctus lacus, quis eleifend
-                            nibh. Nam vitae convallis nisi, vitae tempus risus.
-                          </p>
-                        </div>
-                        <div className="testimonial-user-dt">
-                          <h5>Christopher F.</h5>
-                          <span>Online Marketing Executive</span>
-                          <ul>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                            <li>
-                              <i className="fa-solid fa-star" />
-                            </li>
-                          </ul>
-                        </div>
-                        <span className="quote-icon">
-                          <i className="fa-solid fa-quote-right" />
-                        </span>
                       </div>
                     </div>
                   </div>
@@ -950,10 +597,7 @@ function Home() {
           <div className="row">
             <div className="col-lg-12">
               <div className="main-title text-center">
-                <h3>
-                  321+ events created by thousands of organisations around the
-                  globe
-                </h3>
+                <h3>CÙNG NHIỀU NHÀ TẠI TRỢ UY TÍN</h3>
               </div>
             </div>
             <div className="col-lg-12">
@@ -962,7 +606,7 @@ function Home() {
                   items={sponsorItems}
                   autoplayTimeout={3000}
                   loop={true}
-                  margin={10}
+                  margin={25}
                   smartSpeed={700}
                 />
               </div>
@@ -973,4 +617,5 @@ function Home() {
     </div>
   );
 }
+
 export default Home;
