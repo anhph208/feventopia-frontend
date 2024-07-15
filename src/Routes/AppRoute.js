@@ -47,10 +47,11 @@ const AppRoutes = () => {
         <Route path="/transactioninfo" element={<TransactionInfo />} />
         <Route path="/event/:eventId" element={<EventDetails />} />
         <Route path="/Contact" element={<ContactUs />} />
-        <Route path="/" element={<Home />} />
+        
 
         {role === "VISITOR" && (
           <>
+            <Route path="/" element={<Home />} />
             <Route path="/userprofile" element={<UserProfile />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/checkoutstall" element={<CheckoutStall />} />
@@ -60,6 +61,7 @@ const AppRoutes = () => {
 
         {role === "SPONSOR" && (
           <>
+            <Route path="/" element={<Home />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/sponsorProfile" element={<SponsorProfile />} />
             <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
@@ -68,7 +70,7 @@ const AppRoutes = () => {
 
         {role === "CHECKINGSTAFF" && (
           <>
-            <Route path="/staffprofile" element={<ProtectedRoute element={<StaffProfile />} />} />
+            <Route path="/staffprofile" element={<StaffProfile />} />
             <Route path="/*" element={<Navigate to="/staffprofile" />} />
           </>
         )}

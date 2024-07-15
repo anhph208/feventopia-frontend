@@ -55,7 +55,7 @@ const UserProfile = () => {
           <div className="hero-cover">
             <div className="hero-cover-img">
               <img
-                src="./assets/images/userBackground.jpg"
+                src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2FproBanner.jpg?alt=media&token=6bf520da-4091-4615-a193-6bb8fbfb490b"
                 alt="User Background"
               />
             </div>
@@ -74,12 +74,7 @@ const UserProfile = () => {
                       }
                       alt="User Avatar"
                     />
-                    <div className="avatar-img-btn">
-                      <input type="file" id="avatar-img" />
-                      <label htmlFor="avatar-img">
-                        <i className="fa-solid fa-camera" />
-                      </label>
-                    </div>
+                    
                   </div>
                   <div className="user-dts">
                     <h4 className="user-name">

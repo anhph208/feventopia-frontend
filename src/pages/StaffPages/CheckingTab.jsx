@@ -1,7 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { getAllEventForVisitorAPI, getEventDetailsAPI } from "../../components/services/userServices";
-import { Pagination, Stack } from "@mui/material";
+import {
+  getAllEventForVisitorAPI,
+  getEventDetailsAPI,
+  checkinEventAPI,
+} from "../../components/services/userServices";
+import {
+  Pagination,
+  Stack,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField,
+} from "@mui/material";
 import { formatDateTime } from "../../utils/tools";
+import { toast } from "react-toastify";
+import QrScanner from "react-qr-scanner";
 
 function CheckingTab() {
   const [events, setEvents] = useState([]);
@@ -10,6 +25,8 @@ function CheckingTab() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [checkinEvent, setCheckinEvent] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [ticketId, setTicketId] = useState("");
 
   const fetchEvents = async (page = 1, category = null, status = null) => {
     try {
@@ -34,7 +51,7 @@ function CheckingTab() {
   useEffect(() => {
     fetchEvents(page);
     const interval = setInterval(() => {
-      setEvents(prevEvents => [...prevEvents]); // Force re-render
+      setEvents((prevEvents) => [...prevEvents]); // Force re-render
     }, 60000); // Update every minute
     return () => clearInterval(interval);
   }, [page]);
@@ -43,8 +60,8 @@ function CheckingTab() {
     setPage(newPage);
   };
 
-  const handleCheckin = (eventId, eventDetailId) => {
-    const selectedEvent = events.find(event => event.id === eventId);
+  const handleCheckinClick = (eventId, eventDetailId) => {
+    const selectedEvent = events.find((event) => event.id === eventId);
 
     if (!selectedEvent) {
       console.error("Không tìm thấy sự kiện.");
@@ -69,17 +86,51 @@ function CheckingTab() {
       eventBanner: selectedEvent.banner,
     };
 
-    console.log("Setting checkin event with detail:", selectedEventData);
     setCheckinEvent(selectedEventData);
+    setIsDialogOpen(true);
+  };
+
+  const handleCheckinConfirm = async () => {
+    if (!ticketId) {
+      toast.error("Please enter a ticket ID.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await checkinEventAPI(ticketId, checkinEvent.eventId);
+      toast.success("VÉ ĐÃ CHECK-IN THÀNH CÔNG!");
+      setIsDialogOpen(false);
+      setTicketId("");
+    } catch (error) {
+      console.error("Check-in failed:", error);
+      toast.error("VÉ CHECK-IN THẤT BẠI! VUI LÒNG THỬ LẠI!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setTicketId("");
+  };
+
+  const handleScan = (data) => {
+    if (data) {
+      setTicketId(data.text); // Extracting text property
+      toast.success("QR Code quét thành công!");
+    }
+  };
+
+  const handleError = (err) => {
+    console.error("Lỗi quét QR code:", err);
+    toast.error("Error scanning QR code.");
   };
 
   const isEventActive = (startDate, endDate) => {
     const now = new Date();
     const start = new Date(startDate);
     const end = new Date(endDate);
-    console.log('Current time:', now);
-    console.log('Event start time:', start);
-    console.log('Event end time:', end);
     return now >= start && now <= end;
   };
 
@@ -126,7 +177,7 @@ function CheckingTab() {
                       <i className="fa-solid fa-calendar-days" />
                     </div>
                     <div className="card-dt-text">
-                      <h6>Event Start</h6>
+                      <h6>Sự kiện bắt đầu</h6>
                       <span>{formatDateTime(detail.startDate)}</span>
                     </div>
                   </div>
@@ -135,7 +186,7 @@ function CheckingTab() {
                       <i className="fa-solid fa-clock" />
                     </div>
                     <div className="card-dt-text">
-                      <h6>Event End</h6>
+                      <h6>Sự kiện kết thúc</h6>
                       <span>{formatDateTime(detail.endDate)}</span>
                     </div>
                   </div>
@@ -144,21 +195,25 @@ function CheckingTab() {
                       <i className="fa-solid fa-location-dot" />
                     </div>
                     <div className="card-dt-text">
-                      <h6>Location</h6>
+                      <h6>Địa Điểm</h6>
                       <span>{detail.location.locationName}</span>
                     </div>
                   </div>
                   <div className="card-bottom-item">
                     <button
                       className={`main-btn btn-hover ${
-                        isEventActive(detail.startDate, detail.endDate) ? "active-event" : "inactive-event"
+                        isEventActive(detail.startDate, detail.endDate)
+                          ? "active-event"
+                          : "inactive-event"
                       }`}
                       onClick={() => {
                         if (isEventActive(detail.startDate, detail.endDate)) {
-                          handleCheckin(event.id, detail.id);
+                          handleCheckinClick(event.id, detail.id);
                         }
                       }}
-                      disabled={!isEventActive(detail.startDate, detail.endDate)}
+                      disabled={
+                        !isEventActive(detail.startDate, detail.endDate)
+                      }
                     >
                       Check in
                     </button>
@@ -197,18 +252,57 @@ function CheckingTab() {
         <div>No events available</div>
       )}
 
-      {checkinEvent && (
-        <div>
-          <h1>Check-in Details</h1>
-          <div>
-            <h2>{checkinEvent.eventName}</h2>
-            <p>Location: {checkinEvent.location}</p>
-            <p>Start Date: {formatDateTime(checkinEvent.startDate)}</p>
-            <p>End Date: {formatDateTime(checkinEvent.endDate)}</p>
-            <img src={checkinEvent.eventBanner} alt={checkinEvent.eventName} />
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Check-in Sự kiện</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="MÃ VÉ CHECK-IN"
+            type="text"
+            fullWidth
+            value={ticketId}
+            onChange={(event) => setTicketId(event.target.value)}
+          />
+          <div style={{ marginTop: "10px" }}>
+            <QrScanner
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
+              style={{ width: "100%" }}
+            />
           </div>
-        </div>
-      )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseDialog}
+            sx={{
+              mt: 3,
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={handleCheckinConfirm}
+            color="primary"
+            sx={{
+              mt: 3,
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Check-In
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

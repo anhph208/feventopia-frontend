@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getProfileAPI,
-  getAllProfileTransactionAPI,
+  getAllEventForVisitorAPI,
   getAllTaskByUsernameAPI,
   putUpdateTaskByUsernameAPI,
+  getEventDetailsAPI,
 } from "../../components/services/userServices";
 import { toast } from "react-toastify";
 import {
@@ -23,22 +24,26 @@ import {
   DialogTitle,
   TextField,
   MenuItem,
+  Stack,
+  Pagination,
+  Typography,
 } from "@mui/material";
-import { formatDate, PriceFormat } from "../../utils/tools.js";
+import { formatDate, formatDateTime, PriceFormat } from "../../utils/tools.js";
 
 const StaffHomeTab = ({ initialProfile }) => {
   const [profile, setProfile] = useState(initialProfile || {});
   const [loading, setLoading] = useState(!initialProfile);
   const [showModal, setShowModal] = useState(false);
-  const [transactions, setTransactions] = useState([]);
-  const [loadingTransactions, setLoadingTransactions] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(true);
+  const [events, setEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -64,26 +69,6 @@ const StaffHomeTab = ({ initialProfile }) => {
   }, [initialProfile, token]);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const { transactions, pagination } = await getAllProfileTransactionAPI(
-          page,
-          10
-        );
-        setTransactions(transactions);
-        setTotalPages(pagination.TotalPages);
-        setLoadingTransactions(false);
-      } catch (error) {
-        console.error("Error fetching transactions:", error);
-        setLoadingTransactions(false);
-        toast.error("Error fetching transactions");
-      }
-    };
-
-    fetchTransactions();
-  }, [page]);
-
-  useEffect(() => {
     const fetchTasks = async () => {
       try {
         const tasksData = await getAllTaskByUsernameAPI(username);
@@ -103,6 +88,28 @@ const StaffHomeTab = ({ initialProfile }) => {
       setLoadingTasks(false);
     }
   }, [username]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const result = await getAllEventForVisitorAPI(page, 5);
+        const eventsWithDetails = await Promise.all(
+          result.events.map(async (event) => {
+            const details = await getEventDetailsAPI(event.id);
+            return { ...event, eventDetails: details.eventDetail };
+          })
+        );
+        setEvents(eventsWithDetails);
+        setLoadingEvents(false);
+      } catch (error) {
+        setError(error);
+        console.error("Error fetching events:", error);
+        setLoadingEvents(false);
+      }
+    };
+
+    fetchEvents();
+  }, [page]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -159,6 +166,8 @@ const StaffHomeTab = ({ initialProfile }) => {
     return <div>Loading...</div>;
   }
 
+  const completedTasks = tasks.filter((task) => task.status === "DONE");
+
   return (
     <div className="tab-content" id="myTabContent">
       <div
@@ -182,10 +191,10 @@ const StaffHomeTab = ({ initialProfile }) => {
           <button
             className="event-link"
             data-bs-toggle="tab"
-            data-bs-target="#allTransactions"
+            data-bs-target="#completedTasks"
             type="button"
             role="tab"
-            aria-controls="allTransactions"
+            aria-controls="completedTasks"
             aria-selected="false"
           >
             <span>NHIỆM VỤ HOÀN THÀNH</span>
@@ -291,33 +300,164 @@ const StaffHomeTab = ({ initialProfile }) => {
             </div>
           </div>
 
-          <div className="tab-pane fade" id="feedback" role="tabpanel">
+          <div className="tab-pane fade" id="completedTasks" role="tabpanel">
             <div className="row">
               <div className="col-md-12">
                 <div className="main-card mt-4">
                   <div className="card-top p-4">
-                    <div className="card-event-img">
-                      <img
-                        src="./assets/images/event-imgs/img-6.jpg"
-                        alt="Event"
-                      />
-                    </div>
                     <div className="card-event-dt">
-                      <h5>Step Up Open Mic Show</h5>
-                      <div className="evnt-time">Thu, Jun 30, 2022 4:30 AM</div>
-                      <div className="event-btn-group">
-                        <button
-                          className="esv-btn me-2"
-                          onClick={() =>
-                            (window.location.href = "feedback_detail.html")
-                          }
-                        >
-                          <i className="fa-solid fa-comments me-2" />
-                          View Feedback
-                        </button>
-                      </div>
+                      <h5>NHIỆM VỤ HOÀN THÀNH</h5>
+                      {loadingTasks ? (
+                        <div>Loading tasks...</div>
+                      ) : completedTasks.length > 0 ? (
+                        <TableContainer component={Paper}>
+                          <Table
+                            sx={{ minWidth: 820 }}
+                            aria-label="completed tasks table"
+                          >
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>Nhiệm Vụ</TableCell>
+                                <TableCell>Chi phí dự kiến</TableCell>
+                                <TableCell>Chi phí thực tế</TableCell>
+                                <TableCell>Ngày Giao</TableCell>
+                                <TableCell>Ngày Cập nhật</TableCell>
+                                <TableCell>Trạng thái</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {completedTasks.map((task) => (
+                                <TableRow key={task.id}>
+                                  <TableCell>{task.description}</TableCell>
+                                  <TableCell>
+                                    <PriceFormat price={task.planCost} />
+                                  </TableCell>
+                                  <TableCell>
+                                    <PriceFormat price={task.actualCost} />
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatDate(task.createdDate)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatDate(task.updatedDate)}
+                                  </TableCell>
+                                  <TableCell>{task.status}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      ) : (
+                        <div>Không có Nhiệm vụ nào.</div>
+                      )}
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="tab-pane fade" id="feedback" role="tabpanel">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="main-card mt-4">
+                  {events.map((event) => (
+                    <div key={event.id} className="mb-4">
+                      <div className="card-top p-4">
+                        <div className="card-event-img">
+                          <img src={event.banner} alt={event.eventName} />
+                        </div>
+                        <div className="card-event-dt">
+                          <Typography variant="h5">
+                            {event.eventName}
+                          </Typography>
+                        </div>
+                      </div>
+                      {event.eventDetails.map((detail) => (
+                        <div key={detail.id} className="card-bottom mb-4">
+                          <div className="card-bottom-item">
+                            <div className="card-icon">
+                              <i className="fa-solid fa-calendar-days" />
+                            </div>
+                            <div className="card-dt-text">
+                              <Typography variant="h6">
+                                Sự kiện bắt đầu
+                              </Typography>
+                              <span>{formatDateTime(detail.startDate)}</span>
+                            </div>
+                          </div>
+                          <div className="card-bottom-item">
+                            <div className="card-icon">
+                              <i className="fa-solid fa-clock" />
+                            </div>
+                            <div className="card-dt-text">
+                              <Typography variant="h6">
+                                Sự kiện kết thúc
+                              </Typography>
+                              <span>{formatDateTime(detail.endDate)}</span>
+                            </div>
+                          </div>
+                          <div className="card-bottom-item">
+                            <div className="card-icon">
+                              <i className="fa-solid fa-location-dot" />
+                            </div>
+                            <div className="card-dt-text">
+                              <Typography variant="h6">Địa Điểm</Typography>
+                              <span>{detail.location.locationName}</span>
+                            </div>
+                          </div>
+                          {tasks.filter(
+                            (task) => task.eventDetailId === detail.id
+                          ).length > 0 && (
+                            <TableContainer component={Paper} sx={{ mt: 2 }}>
+                              <Table>
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell>ID</TableCell>
+                                    <TableCell>Description</TableCell>
+                                    <TableCell>Plan Cost</TableCell>
+                                    <TableCell>Actual Cost</TableCell>
+                                    <TableCell>Status</TableCell>
+                                    <TableCell>Created Date</TableCell>
+                                    <TableCell>Updated Date</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {tasks
+                                    .filter(
+                                      (task) => task.eventDetailId === detail.id
+                                    )
+                                    .map((task) => (
+                                      <TableRow key={task.id}>
+                                        <TableCell>{task.id}</TableCell>
+                                        <TableCell>
+                                          {task.description}
+                                        </TableCell>
+                                        <TableCell>
+                                          <PriceFormat price={task.planCost} />
+                                        </TableCell>
+                                        <TableCell>
+                                          <PriceFormat
+                                            price={task.actualCost}
+                                          />
+                                        </TableCell>
+                                        <TableCell>{task.status}</TableCell>
+                                        <TableCell>
+                                          {formatDate(task.createdDate)}
+                                        </TableCell>
+                                        <TableCell>
+                                          {formatDate(task.updatedDate)}
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -350,9 +490,9 @@ const StaffHomeTab = ({ initialProfile }) => {
             onChange={(e) => setStatus(e.target.value)}
             margin="normal"
           >
-            <MenuItem value="0">TODO</MenuItem>
-            <MenuItem value="1">INPROGRESS</MenuItem>
-            <MenuItem value="2">DONE</MenuItem>
+            <MenuItem value="TODO">TODO</MenuItem>
+            <MenuItem value="INPROGRESS">INPROGRESS</MenuItem>
+            <MenuItem value="DONE">DONE</MenuItem>
           </TextField>
         </DialogContent>
         <DialogActions>

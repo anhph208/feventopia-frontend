@@ -55,7 +55,7 @@ const StaffProfile = () => {
           <div className="hero-cover">
             <div className="hero-cover-img">
               <img
-                src="./assets/images/userBackground.jpg"
+                src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2FproBanner.jpg?alt=media&token=6bf520da-4091-4615-a193-6bb8fbfb490b"
                 alt="User Background"
               />
             </div>
@@ -74,12 +74,6 @@ const StaffProfile = () => {
                       }
                       alt="User Avatar"
                     />
-                    <div className="avatar-img-btn">
-                      <input type="file" id="avatar-img" />
-                      <label htmlFor="avatar-img">
-                        <i className="fa-solid fa-camera" />
-                      </label>
-                    </div>
                   </div>
                   <div className="user-dts">
                     <h4 className="user-name">
@@ -105,7 +99,9 @@ const StaffProfile = () => {
                     >
                       <li className="nav-item">
                         <button
-                          className={`nav-link ${activeTab === "feed" ? "active" : ""}`}
+                          className={`nav-link ${
+                            activeTab === "feed" ? "active" : ""
+                          }`}
                           id="feed-tab"
                           onClick={() => setActiveTab("feed")}
                         >
@@ -115,7 +111,9 @@ const StaffProfile = () => {
                       </li>
                       <li className="nav-item">
                         <button
-                          className={`nav-link ${activeTab === "about" ? "active" : ""}`}
+                          className={`nav-link ${
+                            activeTab === "about" ? "active" : ""
+                          }`}
                           id="about-tab"
                           onClick={() => setActiveTab("about")}
                         >
@@ -125,7 +123,9 @@ const StaffProfile = () => {
                       </li>
                       <li className="nav-item">
                         <button
-                          className={`nav-link ${activeTab === "setting" ? "active" : ""}`}
+                          className={`nav-link ${
+                            activeTab === "setting" ? "active" : ""
+                          }`}
                           id="setting-tab"
                           onClick={() => setActiveTab("setting")}
                         >
@@ -135,7 +135,9 @@ const StaffProfile = () => {
                       </li>
                       <li className="nav-item">
                         <button
-                          className={`nav-link ${activeTab === "orders" ? "active" : ""}`}
+                          className={`nav-link ${
+                            activeTab === "orders" ? "active" : ""
+                          }`}
                           id="checkin-tab"
                           onClick={() => setActiveTab("chekin")}
                         >

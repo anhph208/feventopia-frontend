@@ -49,7 +49,7 @@ const EvOAdminHeader = () => {
   }, [loggedIn]);
 
   const handleLogoutClick = () => {
-    handleLogout(navigate);
+    handleLogout(navigate('/signin'));
   };
 
   const handleMenu = (event) => {

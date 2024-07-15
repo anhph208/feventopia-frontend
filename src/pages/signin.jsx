@@ -26,7 +26,7 @@ const SignIn = () => {
         if (role === "EVENTOPERATOR") {
           window.location.replace("/operatorPages");
         } else if (role === "CHECKINGSTAFF") {
-          window.location.replace("/StaffProfile");
+          window.location.replace("/staffprofile");
         } else {
           window.location.replace("/");
         }

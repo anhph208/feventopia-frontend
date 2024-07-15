@@ -42,7 +42,7 @@ const Header = () => {
   }, []);
 
   const handleLogoutClick = () => {
-    handleLogout(navigate);
+    handleLogout(navigate('/signin'));
     setIsLogged(false);
     clearCart();
     localStorage.setItem("isLogged", "false");
