@@ -13,7 +13,7 @@ import { ToastContainer } from "react-toastify";
 
 const ConditionalLayout = () => {
   const location = useLocation();
-  const { userRole } = useAuth();
+  const { role } = useAuth();
 
   const noHeaderFooterPaths = ["/signin", "/signup", "/transactioninfo"];
 
@@ -45,7 +45,7 @@ const ConditionalLayout = () => {
   const isOperatorOrAdminPath =
     matchPath(operatorPaths) || matchPath(adminPaths);
 
-  const headerComponent = userRole === "EVENTOPERATOR" ? (
+  const headerComponent = role === "EVENTOPERATOR" ? (
     <EvOAdminHeader />
   ) : (
     <Header />
@@ -56,7 +56,7 @@ const ConditionalLayout = () => {
       {!matchPath(noHeaderFooterPaths) && headerComponent}
       <AppRoutes />
       {!matchPath(noHeaderFooterPaths) && !isOperatorOrAdminPath && <Footer />}
-      {!matchPath(noCartPaths) && userRole === "VISITOR" && <Cart />}
+      {!matchPath(noCartPaths) && role === "VISITOR" && <Cart />}
       <ToastContainer /> {/* Ensure ToastContainer is present here */}
     </div>
   );

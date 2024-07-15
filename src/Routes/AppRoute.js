@@ -31,7 +31,7 @@ import DashboardTab from "../pages/OperatorPages/DashboardTab";
 import StaffProfile from "../pages/StaffPages/StaffProfile";
 
 const AppRoutes = () => {
-  const { role: userRole } = useAuth();
+  const { role } = useAuth();
 
   return (
     <>
@@ -49,34 +49,39 @@ const AppRoutes = () => {
         <Route path="/Contact" element={<ContactUs />} />
         <Route path="/" element={<Home />} />
 
-        {(userRole === "VISITOR" || userRole === "SPONSOR") && (
+        {role === "VISITOR" && (
           <>
-
-            <Route path="/userprofile" element={UserProfile} allowedRoles={["VISITOR"]} />
-            <Route path="/checkout" element={Checkout} allowedRoles={["VISITOR"]} />
-            <Route path="/checkoutstall" element={CheckoutStall} allowedRoles={["VISITOR"]} />
-            <Route path="/booking_confirmed" element={BookingConfirm} allowedRoles={["VISITOR"]} />
-            <Route path="/sponsorProfile" element={SponsorProfile} allowedRoles={["SPONSOR"]} />
-            <Route path="/sponsor-event/:eventId" element={EventSponsorship} allowedRoles={["SPONSOR"]} />
+            <Route path="/userprofile" element={<UserProfile />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkoutstall" element={<CheckoutStall />} />
+            <Route path="/booking_confirmed" element={<BookingConfirm />} />
           </>
         )}
 
-        {userRole === "CHECKINGSTAFF" && (
+        {role === "SPONSOR" && (
           <>
-            <Route path="/staffprofile" element={<ProtectedRoute element={StaffProfile} allowedRoles={["CHECKINGSTAFF"]} />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/sponsorProfile" element={<SponsorProfile />} />
+            <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
+          </>
+        )}
+
+        {role === "CHECKINGSTAFF" && (
+          <>
+            <Route path="/staffprofile" element={<ProtectedRoute element={<StaffProfile />} />} />
             <Route path="/*" element={<Navigate to="/staffprofile" />} />
           </>
         )}
 
-        {userRole === "EVENTOPERATOR" && (
+        {role === "EVENTOPERATOR" && (
           <>
-            <Route path="/operatorPages" element={OperatorPages} allowedRoles={["EVENTOPERATOR"]} />
-            <Route path="/createEventType" element={CreateEventType} allowedRoles={["EVENTOPERATOR"]} />
-            <Route path="/create-event" element={CreateEvent} allowedRoles={["EVENTOPERATOR"]} />
-            <Route path="/update-event/:eventId" element={UpdateEvent} allowedRoles={["EVENTOPERATOR"]} />
-            <Route path="/edit-eventDetails/:eventId" element={EventDetailsEdit} allowedRoles={["EVENTOPERATOR"]} />
-            <Route path="/event-assignees/:eventId" element={EventAssignees} allowedRoles={["EVENTOPERATOR"]} />
-            <Route path="/dashboard/:eventId" element={DashboardTab} allowedRoles={["EVENTOPERATOR"]} />
+            <Route path="/operatorPages" element={<OperatorPages />} />
+            <Route path="/createEventType" element={<CreateEventType />} />
+            <Route path="/create-event" element={<CreateEvent />} />
+            <Route path="/update-event/:eventId" element={<UpdateEvent />} />
+            <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
+            <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
+            <Route path="/dashboard/:eventId" element={<DashboardTab />} />
             <Route path="/*" element={<Navigate to="/operatorPages" />} />
           </>
         )}
@@ -85,5 +90,6 @@ const AppRoutes = () => {
     </>
   );
 };
+
 
 export default AppRoutes;
