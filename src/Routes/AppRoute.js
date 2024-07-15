@@ -27,31 +27,36 @@ import ContactUs from "../pages/Contact";
 import EventAssignees from "../pages/OperatorPages/EventAssignee";
 import EventSponsorship from "../pages/SponsorPages/EventSponsor";
 import SponsorProfile from "../pages/sponsorProfile";
-import DashboardTab from "../pages/OperatorPages/DashboardTab";
 import StaffProfile from "../pages/StaffPages/StaffProfile";
 
 const AppRoutes = () => {
   const { role } = useAuth();
+
+  const publicRoutes = (
+    <>
+      <Route path="/explored" element={<ExploreEvent />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/helpSectionDetailView" element={<HelpSectionDetailView />} />
+      <Route path="/helpCenter" element={<HelpCenter />} />
+      <Route path="/helpCenterKnowledgeBase" element={<HelpCenterKnowledgeBase />} />
+      <Route path="/helpArticleDetailView" element={<HelpArticleDetailView />} />
+      <Route path="/transactioninfo" element={<TransactionInfo />} />
+      <Route path="/event/:eventId" element={<EventDetails />} />
+      <Route path="/Contact" element={<ContactUs />} />
+      <Route path="/" element={<Home />} />
+    </>
+  );
 
   return (
     <>
       <Routes>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/explored" element={<ExploreEvent />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/helpSectionDetailView" element={<HelpSectionDetailView />} />
-        <Route path="/helpCenter" element={<HelpCenter />} />
-        <Route path="/helpCenterKnowledgeBase" element={<HelpCenterKnowledgeBase />} />
-        <Route path="/helpArticleDetailView" element={<HelpArticleDetailView />} />
-        <Route path="/transactioninfo" element={<TransactionInfo />} />
-        <Route path="/event/:eventId" element={<EventDetails />} />
-        <Route path="/Contact" element={<ContactUs />} />
         
-
+        {(!role || role === "VISITOR" || role === "SPONSOR" || role === "ADMIN") && publicRoutes}
+        
         {role === "VISITOR" && (
           <>
-            <Route path="/" element={<Home />} />
             <Route path="/userprofile" element={<UserProfile />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/checkoutstall" element={<CheckoutStall />} />
@@ -61,7 +66,6 @@ const AppRoutes = () => {
 
         {role === "SPONSOR" && (
           <>
-            <Route path="/" element={<Home />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/sponsorProfile" element={<SponsorProfile />} />
             <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
@@ -83,7 +87,6 @@ const AppRoutes = () => {
             <Route path="/update-event/:eventId" element={<UpdateEvent />} />
             <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
             <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
-            <Route path="/dashboard/:eventId" element={<DashboardTab />} />
             <Route path="/*" element={<Navigate to="/operatorPages" />} />
           </>
         )}
@@ -92,6 +95,5 @@ const AppRoutes = () => {
     </>
   );
 };
-
 
 export default AppRoutes;
