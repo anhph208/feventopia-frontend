@@ -2005,6 +2005,9 @@ body {
 .main-event-content {
   margin-top: 37px;
 }
+.main-event-dt {
+  margin-top: 40px;
+}
 
 .main-event-content h4 {
   font-size: 18px;
@@ -2019,6 +2022,14 @@ body {
 
 .main-event-content p:last-child {
   margin-bottom: 0;
+}
+
+/* New CSS rule to handle images within .main-event-content */
+.main-event-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto; /* Center images horizontally */
 }
 
 .booking-ends h4 {

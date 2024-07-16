@@ -1,64 +1,56 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createEventAPI } from "../../../components/services/userServices";
-import { TextField, Button, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Box,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import { styled } from "@mui/system";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { storage } from "../../../firebase/firebase"; // import storage from your firebaseConfig
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
-import DOMPurify from "dompurify";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // import styles for react-quill
 
 const Input = styled("input")({
   display: "none",
 });
 
+// Custom toolbar options
 const modules = {
-  toolbar: {
-    container: [
-      [{ header: "1" }, { header: "2" }, { font: [] }],
-      [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
-      ["link", "image", "video"],
-      ["clean"],
-    ],
-    handlers: {
-      image: function () {
-        const input = document.createElement("input");
-        input.setAttribute("type", "file");
-        input.setAttribute("accept", "image/*");
-        input.click();
-
-        input.onchange = async () => {
-          const file = input.files[0];
-          const formData = new FormData();
-          formData.append("image", file);
-
-          // Perform the image upload logic here, for example, uploading to Firebase
-          const storageRef = ref(storage, `event-images/${file.name}`);
-          const snapshot = await uploadBytes(storageRef, file);
-          const imageUrl = await getDownloadURL(snapshot.ref);
-
-          // Insert the image into the editor
-          const quill = this.quill;
-          const range = quill.getSelection();
-          quill.insertEmbed(range.index, "image", imageUrl);
-        };
-      },
-    },
-  },
+  toolbar: [
+    [{ 'font': [] }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+    ['bold', 'underline', 'strike'],        // toggled buttons
+    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+    [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+    [{ 'header': '1'}, { 'header': '2' }, 'blockquote', 'code-block'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'direction': 'rtl' }, { 'align': [] }],
+    ['link', 'image', 'video'],
+    ['clean'],                                         // remove formatting button
+  ],
 };
+
+const formats = [
+  'font',
+  'size',
+  'bold', 'underline', 'strike',
+  'color', 'background',
+  'script',
+  'header', 'blockquote', 'code-block',
+  'list', 'bullet',
+  'direction', 'align',
+  'link', 'image', 'video'
+];
 
 function CreateEvent() {
   const navigate = useNavigate();
-  const [submitLoading, setSubmitLoading] = useState(false); // Add this state for submit button loading
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [formData, setFormData] = useState({
     eventName: "",
     eventDescription: "",
@@ -101,7 +93,7 @@ function CreateEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitLoading(true); // Start loading when form is submitted
+    setSubmitLoading(true);
     try {
       let bannerUrl = formData.banner;
 
@@ -114,7 +106,7 @@ function CreateEvent() {
       const eventData = {
         ...formData,
         banner: bannerUrl,
-        eventDescription: DOMPurify.sanitize(formData.eventDescription), // Sanitize HTML content
+        eventDescription: formData.eventDescription,
       };
 
       const response = await createEventAPI(eventData, formData.category);
@@ -125,12 +117,11 @@ function CreateEvent() {
         },
         autoClose: 1000,
       });
-
     } catch (error) {
       console.error("Error creating event:", error);
       toast.error("Failed to create event");
     } finally {
-      setSubmitLoading(false); // Stop loading after submission is done
+      setSubmitLoading(false);
     }
   };
 
@@ -192,7 +183,7 @@ function CreateEvent() {
                                     </Typography>
                                     <Typography className="mt-2 d-block fs-14 mb-3">
                                       Việc lựa chọn các danh mục phù hợp sẽ giúp
-                                      cải thiện khả năng nhận diện Sự kiện .
+                                      cải thiện khả năng nhận diện Sự kiện.
                                     </Typography>
                                     <TextField
                                       select
@@ -203,18 +194,10 @@ function CreateEvent() {
                                       onChange={handleChange}
                                       required
                                     >
-                                      <MenuItem value="0">
-                                        TALKSHOW
-                                      </MenuItem>
-                                      <MenuItem value="1">
-                                        ÂM NHẠC
-                                      </MenuItem>
-                                      <MenuItem value="2">
-                                        FESTIVAL
-                                      </MenuItem>
-                                      <MenuItem value="3">
-                                        CUỘC THI
-                                      </MenuItem>
+                                      <MenuItem value="0">TALKSHOW</MenuItem>
+                                      <MenuItem value="1">ÂM NHẠC</MenuItem>
+                                      <MenuItem value="2">FESTIVAL</MenuItem>
+                                      <MenuItem value="3">CUỘC THI</MenuItem>
                                     </TextField>
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
@@ -275,23 +258,16 @@ function CreateEvent() {
                                       </Box>
                                     </Box>
                                   </Box>
-                                  <Box className="form-group border_bottom pb_30">
+                                  <Box className="form-group border_bottom pb_30" style={{ height: 400 }}>
                                     <Typography className="form-label fs-16">
                                       Chi tiết Sự kiện*
                                     </Typography>
-
                                     <ReactQuill
-                                      theme="snow"
                                       value={formData.eventDescription}
                                       onChange={handleDescriptionChange}
-                                      placeholder="Viết một vài thông tin để mô tả
-                                      sự kiện và cung cấp thông tin bổ sung
-                                      chẳng hạn như lịch trình,
-                                      hướng dẫn đặc biệt cần thiết để tham dự
-                                      sự kiện."
-                                      required
                                       modules={modules}
-                                      style={{ height: "400px" }} // Adjust the height as needed
+                                      formats={formats}
+                                      style={{ height: "300px" }}
                                     />
                                   </Box>
                                 </Box>
@@ -301,8 +277,12 @@ function CreateEvent() {
                                   variant="contained"
                                   color="primary"
                                   type="submit"
-                                  disabled={submitLoading} // Disable button when loading
-                                  startIcon={submitLoading && <CircularProgress size={20} />}
+                                  disabled={submitLoading}
+                                  startIcon={
+                                    submitLoading && (
+                                      <CircularProgress size={20} />
+                                    )
+                                  }
                                   sx={{
                                     color: "white",
                                     backgroundColor: "#450b00",
@@ -311,7 +291,9 @@ function CreateEvent() {
                                     },
                                   }}
                                 >
-                                  {submitLoading ? "ĐANG TẠO SỰ KIỆN..." : "TẠO SỰ KIỆN"}
+                                  {submitLoading
+                                    ? "ĐANG TẠO SỰ KIỆN..."
+                                    : "TẠO SỰ KIỆN"}
                                 </Button>
                               </Box>
                             </form>

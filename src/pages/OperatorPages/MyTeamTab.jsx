@@ -68,6 +68,7 @@ const AssigneeTab = () => {
 
   const [openUpdateTaskDialog, setOpenUpdateTaskDialog] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState(null);
+  const [currentEventDetailId, setCurrentEventDetailId] = useState(null);
 
   const fetchEvents = async (page, category, status) => {
     setLoading(true);
@@ -169,7 +170,9 @@ const AssigneeTab = () => {
       await postAddEventAssignee(selectedAccountId, selectedEventDetail.id);
       toast.success("Assignee added successfully!");
       handleCloseAddAssignee();
-      fetchAssignees(selectedEventDetail.id);
+      await fetchAssignees(selectedEventDetail.id);
+      // Re-fetch data for the specific event detail
+      await fetchEvents(pageNumber, category, status);
     } catch (error) {
       console.error("Failed to add assignee:", error);
       toast.error("Failed to add assignee.");
@@ -195,7 +198,9 @@ const AssigneeTab = () => {
       await postAddTaskAPI(taskData);
       toast.success("Thêm Nhiệm Vụ mới thành công!");
       handleCloseAddTask();
-      fetchTasks(selectedEventDetail.id);
+      await fetchTasks(selectedEventDetail.id);
+      // Re-fetch data for the specific event detail
+      await fetchEvents(pageNumber, category, status);
     } catch (error) {
       console.error("Failed to add task:", error);
       toast.error("Failed to add task.");
@@ -234,8 +239,16 @@ const AssigneeTab = () => {
 
   const handleClickOpenAddAssignee = async (eventDetail) => {
     setSelectedEventDetail(eventDetail);
+    setCurrentEventDetailId(eventDetail.id);
     setOpenAddAssigneeDialog(true);
     fetchAccounts();
+  };
+
+  const handleClickOpenAddTask = async (eventDetail) => {
+    await fetchAssignees(eventDetail.id);
+    setSelectedEventDetail(eventDetail);
+    setCurrentEventDetailId(eventDetail.id);
+    setOpenAddTaskDialog(true);
   };
 
   const handleClickOpenUpdateTask = async (task, eventDetail) => {
@@ -252,12 +265,6 @@ const AssigneeTab = () => {
 
   const handleCloseAddAssignee = () => {
     setOpenAddAssigneeDialog(false);
-  };
-
-  const handleClickOpenAddTask = async (eventDetail) => {
-    await fetchAssignees(eventDetail.id);
-    setSelectedEventDetail(eventDetail);
-    setOpenAddTaskDialog(true);
   };
 
   const handleCloseAddTask = () => {
@@ -546,6 +553,7 @@ const AssigneeTab = () => {
                                       <TableRow>
                                         <TableCell>Họ Tên</TableCell>
                                         <TableCell>Vai trò</TableCell>
+                                        <TableCell>Ngày Thêm</TableCell>
                                       </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -558,6 +566,9 @@ const AssigneeTab = () => {
                                             </TableCell>
                                             <TableCell>
                                               {assignee.role}
+                                            </TableCell>
+                                            <TableCell>
+                                              {formatDateTime(assignee.createdDate)}
                                             </TableCell>
                                           </TableRow>
                                         ))
@@ -614,10 +625,7 @@ const AssigneeTab = () => {
                                       <TableRow>
                                         <TableCell>Nhiệm vụ</TableCell>
                                         <TableCell>Họ Tên</TableCell>
-
-                                        <TableCell>
-                                          Trạng thái Nhiệm vụ
-                                        </TableCell>
+                                        <TableCell>Trạng thái Nhiệm vụ</TableCell>
                                         <TableCell>Ngày Giao</TableCell>
                                         <TableCell>Ngày Cập nhật</TableCell>
                                         <TableCell>Hành động</TableCell>

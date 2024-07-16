@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { getEventDetailsAPI } from "../components/services/userServices";
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../components/Cart/CartContext";
+import { useAuth } from "../context/AuthContext"; // Use the useAuth hook from AuthContext
 import Cart from "../components/Cart/Cart";
 import { toast } from "react-toastify";
 import { formatDateTime, PriceFormat } from "../utils/tools";
@@ -11,6 +12,7 @@ function EventDetails() {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
+  const { token } = useAuth(); // Using useAuth hook to get authentication state
 
   const [eventDetails, setEventDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,6 +32,16 @@ function EventDetails() {
       ...prevCounts,
       [id]: (prevCounts[id] || 0) + 1,
     }));
+  };
+
+  const handleAction = (action, eventId, additionalData = {}) => {
+    if (!token) {
+      toast.error("Vui lòng Đăng Nhập để tiếp tục!", {
+        onClose: () => navigate("/signin"),
+      });
+      return;
+    }
+    action(eventId, additionalData);
   };
 
   const handleBookNow = (id) => {
@@ -72,7 +84,6 @@ function EventDetails() {
           },
         });
       },
-      autoClose: 2000,
     });
   };
 
@@ -112,7 +123,6 @@ function EventDetails() {
           },
         });
       },
-      autoClose: 2000,
     });
   };
 
@@ -147,7 +157,6 @@ function EventDetails() {
     };
 
     addToCart(cartItem);
-    toast.success("Vé đã được thêm vào Giỏ Hàng!");
   };
 
   const handleStallChange = (eventId, value) => {
@@ -301,7 +310,9 @@ function EventDetails() {
                             <button
                               className="main-btn btn-hover w-50 me-1"
                               type="button"
-                              onClick={() => handleBookNow(eventDetail.id)}
+                              onClick={() =>
+                                handleAction(handleBookNow, eventDetail.id)
+                              }
                               disabled={
                                 eventDetail.ticketForSaleInventory === 0
                               }
@@ -311,7 +322,9 @@ function EventDetails() {
                             <button
                               className="main-btn btn-hover w-50 ms-1"
                               type="button"
-                              onClick={() => handleAddToCart(eventDetail.id)}
+                              onClick={() =>
+                                handleAction(handleAddToCart, eventDetail.id)
+                              }
                               disabled={
                                 eventDetail.ticketForSaleInventory === 0
                               }
@@ -366,7 +379,9 @@ function EventDetails() {
                             <button
                               className="main-btn btn-hover w-100 mt-3"
                               type="button"
-                              onClick={() => handleBuyStall(eventDetail.id)}
+                              onClick={() =>
+                                handleAction(handleBuyStall, eventDetail.id)
+                              }
                               disabled={eventDetail.stallForSaleInventory === 0}
                             >
                               <strong>Mua gian hàng</strong>

@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginAPI } from "../components/services/userServices";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from '../context/AuthContext';  // Adjust the import path as necessary
 
 const SignIn = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -17,12 +18,9 @@ const SignIn = () => {
       const response = await loginAPI(emailOrUsername, password);
       const jwtToken = response.headers["json-web-token"];
       if (jwtToken) {
-        localStorage.setItem("token", jwtToken);
-        const decoded = jwtDecode(jwtToken);
-        const username = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-        const userEmail = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
-        const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        login(jwtToken);
 
+        const role = localStorage.getItem("role");
         if (role === "EVENTOPERATOR") {
           window.location.replace("/operatorPages");
         } else if (role === "CHECKINGSTAFF") {
@@ -31,10 +29,6 @@ const SignIn = () => {
           window.location.replace("/");
         }
 
-        localStorage.setItem("isLogged", "true");
-        localStorage.setItem("username", username);
-        localStorage.setItem("email", userEmail);
-        localStorage.setItem("role", role);
         toast.success("Đăng nhập thành công!!!");
       }
     } catch (err) {

@@ -57,7 +57,7 @@ const ConditionalLayout = () => {
       <AppRoutes />
       {!matchPath(noHeaderFooterPaths) && !isOperatorOrAdminPath && <Footer />}
       {!matchPath(noCartPaths) && role === "VISITOR" && <Cart />}
-      <ToastContainer /> {/* Ensure ToastContainer is present here */}
+      <ToastContainer limit={5} autoClose={2000} /> {/* Ensure ToastContainer is present here */}
     </div>
   );
 };

@@ -3,53 +3,44 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getEventDetailsAPI, putUpdateEventAPI } from "../../../components/services/userServices";
 import { TextField, Button, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
 import { styled } from "@mui/system";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { storage } from "../../../firebase/firebase"; // import storage from your firebaseConfig
+import { storage } from "../../../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
+import DOMPurify from "dompurify";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Import styles for react-quill
 
 const Input = styled("input")({
   display: "none",
 });
 
+// Custom toolbar options
 const modules = {
-  toolbar: {
-    container: [
-      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-      [{size: []}],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, 
-       {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image', 'video'],
-      ['clean']                                         
-    ],
-    handlers: {
-      image: function() {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
-        input.click();
-
-        input.onchange = async () => {
-          const file = input.files[0];
-          const formData = new FormData();
-          formData.append('image', file);
-
-          // Perform the image upload logic here, for example, uploading to Firebase
-          const storageRef = ref(storage, `event-images/${file.name}`);
-          const snapshot = await uploadBytes(storageRef, file);
-          const imageUrl = await getDownloadURL(snapshot.ref);
-
-          // Insert the image into the editor
-          const quill = this.quill;
-          const range = quill.getSelection();
-          quill.insertEmbed(range.index, 'image', imageUrl);
-        };
-      }
-    }
-  }
+  toolbar: [
+    [{ 'font': [] }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+    [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+    [{ 'header': '1'}, { 'header': '2' }, 'blockquote', 'code-block'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'direction': 'rtl' }, { 'align': [] }],
+    ['link', 'image', 'video'],
+    ['clean'],                                         // remove formatting button
+  ],
 };
+
+const formats = [
+  'font',
+  'size',
+  'bold', 'italic', 'underline', 'strike',
+  'color', 'background',
+  'script',
+  'header', 'blockquote', 'code-block',
+  'list', 'bullet',
+  'direction', 'align',
+  'link', 'image', 'video'
+];
 
 function UpdateEvent() {
   const { eventId } = useParams();
@@ -72,28 +63,31 @@ function UpdateEvent() {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [submitLoading, setSubmitLoading] = useState(false); // Add this state for submit button loading
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [eventDescription, setEventDescription] = useState("");
+
   useEffect(() => {
-    const fetcheventInfor = async () => {
+    const fetchEventInfo = async () => {
       try {
         setLoading(true);
-        const eventInfor = await getEventDetailsAPI(eventId);
+        const eventInfo = await getEventDetailsAPI(eventId);
         setFormData({
-          eventName: eventInfor.eventName,
-          eventDescription: eventInfor.eventDescription,
-          banner: eventInfor.banner,
-          initialCapital: eventInfor.initialCapital,
-          category: eventInfor.category,
+          eventName: eventInfo.eventName,
+          eventDescription: eventInfo.eventDescription,
+          banner: eventInfo.banner,
+          initialCapital: eventInfo.initialCapital,
+          category: eventInfo.category,
         });
         setPlaceholders({
-          eventName: eventInfor.eventName,
-          eventDescription: eventInfor.eventDescription,
-          banner: eventInfor.banner,
-          initialCapital: eventInfor.initialCapital,
-          category: eventInfor.category,
+          eventName: eventInfo.eventName,
+          eventDescription: eventInfo.eventDescription,
+          banner: eventInfo.banner,
+          initialCapital: eventInfo.initialCapital,
+          category: eventInfo.category,
         });
+        setEventDescription(eventInfo.eventDescription); // Initialize editor state
       } catch (error) {
         setError(error);
       } finally {
@@ -101,7 +95,7 @@ function UpdateEvent() {
       }
     };
 
-    fetcheventInfor();
+    fetchEventInfo();
   }, [eventId]);
 
   const handleChange = (e) => {
@@ -128,15 +122,12 @@ function UpdateEvent() {
   };
 
   const handleDescriptionChange = (value) => {
-    setFormData({
-      ...formData,
-      eventDescription: value,
-    });
+    setEventDescription(value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitLoading(true); // Start loading when form is submitted
+    setSubmitLoading(true); 
     try {
       let bannerUrl = formData.banner;
 
@@ -149,9 +140,9 @@ function UpdateEvent() {
       const eventData = {
         ...formData,
         banner: bannerUrl,
+        eventDescription: DOMPurify.sanitize(eventDescription),
       };
 
-      // Send the updated event data
       await putUpdateEventAPI(eventData, eventId, formData.category);
       toast.success("Event updated successfully");
       navigate(`/edit-eventdetails/${eventId}`);
@@ -159,7 +150,7 @@ function UpdateEvent() {
       console.error("Error updating event:", error);
       toast.error("Failed to update event");
     } finally {
-      setSubmitLoading(false); // Stop loading after submission is done
+      setSubmitLoading(false);
     }
   };
 
@@ -188,10 +179,7 @@ function UpdateEvent() {
                     </Box>
                   </Box>
                   <Box className="step-content">
-                    <Box
-                      className="step-tab-panel step-tab-info active"
-                      id="tab_step1"
-                    >
+                    <Box className="step-tab-panel step-tab-info active" id="tab_step1">
                       <Box className="tab-from-content">
                         <Box className="main-card">
                           <Box className="bp-title">
@@ -229,13 +217,12 @@ function UpdateEvent() {
                                       name="category"
                                       value={formData.category}
                                       onChange={handleChange}
-                                      placeholder={placeholders.initialCapital}
                                       required
                                     >
-                                      <MenuItem value="TALKSHOW">TALKSHOW</MenuItem>
-                                      <MenuItem value="ÂM NHẠC">ÂM NHẠC</MenuItem>
-                                      <MenuItem value="FESTIVAL">FESTIVAL</MenuItem>
-                                      <MenuItem value="CUỘC THI">CUỘC THI</MenuItem>
+                                      <MenuItem value="0">TALKSHOW</MenuItem>
+                                      <MenuItem value="1">ÂM NHẠC</MenuItem>
+                                      <MenuItem value="2">FESTIVAL</MenuItem>
+                                      <MenuItem value="3">CUỘC THI</MenuItem>
                                     </TextField>
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
@@ -269,6 +256,13 @@ function UpdateEvent() {
                                           <Button
                                             variant="contained"
                                             component="span"
+                                            sx={{
+                                              color: "white",
+                                              backgroundColor: "#450b00",
+                                              "&:hover": {
+                                                backgroundColor: "#ff7f50",
+                                              },
+                                            }}
                                           >
                                             Tải Ảnh lên
                                           </Button>
@@ -291,13 +285,11 @@ function UpdateEvent() {
                                       Chi tiết Sự kiện
                                     </Typography>
                                     <ReactQuill
-                                      theme="snow"
-                                      value={formData.eventDescription}
+                                      value={eventDescription}
                                       onChange={handleDescriptionChange}
-                                      placeholder={placeholders.eventDescription}
-                                      required
                                       modules={modules}
-                                      style={{ height: "400px" }} // Adjust the height as needed
+                                      formats={formats}
+                                      style={{ height: "350px" }}
                                     />
                                   </Box>
                                 </Box>
@@ -307,8 +299,15 @@ function UpdateEvent() {
                                   variant="contained"
                                   color="primary"
                                   type="submit"
-                                  disabled={submitLoading} // Disable button when loading
-                                  startIcon={submitLoading && <CircularProgress size={20} />} // Add CircularProgress when loading
+                                  sx={{
+                                    color: "white",
+                                    backgroundColor: "#450b00",
+                                    "&:hover": {
+                                      backgroundColor: "#ff7f50",
+                                    },
+                                  }}
+                                  disabled={submitLoading} 
+                                  startIcon={submitLoading && <CircularProgress size={20} />}
                                 >
                                   {submitLoading ? "ĐANG CẬP NHẬT..." : "CẬP NHẬT SỰ KIỆN"}
                                 </Button>

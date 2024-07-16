@@ -380,7 +380,7 @@ const EventTab = ({ onViewChart }) => {
                                 }
                               >
                                 <i className="fa-solid fa-users me-3" />
-                                View All Event Assignees
+                                Xem Tất cả Nhân sự
                               </button>
                               {event.status !== "CANCELED" &&
                                 event.status !== "POST" && (
@@ -487,14 +487,27 @@ const EventTab = ({ onViewChart }) => {
                                 onClick={() =>
                                   handleUpdateNextPhaseClick(event.id)
                                 }
+                                disabled={
+                                  event.status ===
+                                  "POST"}
                                 sx={{
                                   mt: 3,
-                                  color: "white",
-                                  backgroundColor: "#450b00",
+                                  color: event.status !==
+                                  "POST"
+                                    ? "white"
+                                    : "gray",
+                                  backgroundColor: event.status !==
+                                  "POST"
+                                    ? "#450b00"
+                                    : "#cccccc",
                                   "&:hover": {
-                                    backgroundColor: "#ff7f50",
+                                    backgroundColor: event.status !==
+                                    "POST"
+                                      ? "#ff7f50"
+                                      : "#aaaaaa",
                                   },
                                 }}
+                                
                               >
                                 CẬP NHẬT TRẠNG THÁI SỰ KIỆN
                               </Button>

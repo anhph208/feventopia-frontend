@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import {
   getEventDetailsAPI,
   getAllEventAssigneeAPI,
+  getAccountById,
   getAccountStaffAPI,
   postAddEventAssignee,
+  getTasksByEventDetailIdAPI,
+  postAddTaskAPI,
+  putUpdateTaskAPI,
 } from "../../components/services/userServices";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { formatDateTime } from "../../utils/tools";
+import { formatDateTime, formatDate, PriceFormat } from "../../utils/tools";
 import {
   Button,
   Dialog,
@@ -22,14 +26,18 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TablePagination,
   MenuItem,
   Select,
   FormControl,
   InputLabel,
+  TextField,
+  Typography,
+  Box,
 } from "@mui/material";
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import GroupsIcon from '@mui/icons-material/Groups';
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import GroupsIcon from "@mui/icons-material/Groups";
+import TaskIcon from "@mui/icons-material/Task";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 function ViewEventAssignee() {
   const { eventId } = useParams();
@@ -38,18 +46,25 @@ function ViewEventAssignee() {
   const [error, setError] = useState(null);
   const [openAssigneeDialog, setOpenAssigneeDialog] = useState(false);
   const [openAddAssigneeDialog, setOpenAddAssigneeDialog] = useState(false);
+  const [openTaskDialog, setOpenTaskDialog] = useState(false);
+  const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
+  const [openUpdateTaskDialog, setOpenUpdateTaskDialog] = useState(false);
   const [selectedEventDetail, setSelectedEventDetail] = useState(null);
   const [assignees, setAssignees] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [selectedAccountId, setSelectedAccountId] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [pagination, setPagination] = useState({});
+  const [tasks, setTasks] = useState([]);
+  const [taskDescription, setTaskDescription] = useState("");
+  const [taskPlanCost, setTaskPlanCost] = useState("");
+  const [taskActualCost, setTaskActualCost] = useState("");
+  const [taskStatus, setTaskStatus] = useState("");
+  const [taskToUpdate, setTaskToUpdate] = useState(null);
+  const [selectedTaskStaffId, setSelectedTaskStaffId] = useState("");
 
   const handleClickOpenAssignee = async (eventDetail) => {
     setSelectedEventDetail(eventDetail);
     setOpenAssigneeDialog(true);
-    fetchAssignees(eventDetail.id, page + 1, rowsPerPage);
+    fetchAssignees(eventDetail.id);
   };
 
   const handleCloseAssignee = () => {
@@ -66,15 +81,49 @@ function ViewEventAssignee() {
     setOpenAddAssigneeDialog(false);
   };
 
-  const fetchAssignees = async (eventDetailId, pageNumber, pageSize) => {
+  const handleClickOpenTask = async (eventDetail) => {
+    setSelectedEventDetail(eventDetail);
+    setOpenTaskDialog(true);
+    fetchTasks(eventDetail.id);
+  };
+
+  const handleCloseTask = () => {
+    setOpenTaskDialog(false);
+  };
+
+  const handleClickOpenAddTask = () => {
+    setOpenAddTaskDialog(true);
+  };
+
+  const handleCloseAddTask = () => {
+    setOpenAddTaskDialog(false);
+    setTaskDescription("");
+    setTaskPlanCost("");
+    setTaskActualCost("");
+    setTaskStatus("");
+    setSelectedTaskStaffId("");
+  };
+
+  const handleClickOpenUpdateTask = (task) => {
+    setTaskToUpdate(task);
+    setOpenUpdateTaskDialog(true);
+  };
+
+  const handleCloseUpdateTask = () => {
+    setOpenUpdateTaskDialog(false);
+    setTaskToUpdate(null);
+  };
+
+  const fetchAssignees = async (eventDetailId) => {
     try {
-      const { assignee, pagination } = await getAllEventAssigneeAPI(
-        eventDetailId,
-        pageNumber,
-        pageSize
+      const { assignee } = await getAllEventAssigneeAPI(eventDetailId);
+      const assigneesWithDetails = await Promise.all(
+        assignee.map(async (assignee) => {
+          const accountDetails = await getAccountById(assignee.accountId);
+          return { ...assignee, ...accountDetails };
+        })
       );
-      setAssignees(assignee);
-      setPagination(pagination);
+      setAssignees(assigneesWithDetails);
     } catch (error) {
       toast.error("Failed to fetch assignees.");
     }
@@ -99,25 +148,64 @@ function ViewEventAssignee() {
       await postAddEventAssignee(selectedAccountId, selectedEventDetail.id);
       toast.success("Assignee added successfully!");
       handleCloseAddAssignee();
-      fetchAssignees(selectedEventDetail.id, page + 1, rowsPerPage);
+      fetchAssignees(selectedEventDetail.id);
     } catch (error) {
       toast.error("Failed to add assignee.");
     }
   };
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-    if (selectedEventDetail) {
-      fetchAssignees(selectedEventDetail.id, newPage + 1, rowsPerPage);
+  const fetchTasks = async (eventDetailId) => {
+    try {
+      const response = await getTasksByEventDetailIdAPI(eventDetailId);
+      setTasks(response);
+    } catch (error) {
+      toast.error("Failed to fetch tasks.");
     }
   };
 
-  const handleRowsPerPageChange = (event) => {
-    const newRowsPerPage = parseInt(event.target.value, 10);
-    setRowsPerPage(newRowsPerPage);
-    setPage(0);
-    if (selectedEventDetail) {
-      fetchAssignees(selectedEventDetail.id, 1, newRowsPerPage);
+  const handleAddTask = async () => {
+    if (!taskDescription || !taskStatus || !selectedTaskStaffId) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    const taskData = {
+      eventDetailId: selectedEventDetail.id,
+      description: taskDescription,
+      planCost: taskPlanCost,
+      actualCost: taskActualCost,
+      status: taskStatus,
+      staffID: selectedTaskStaffId,
+    };
+
+    try {
+      await postAddTaskAPI(taskData);
+      toast.success("Task added successfully!");
+      handleCloseAddTask();
+      fetchTasks(selectedEventDetail.id);
+    } catch (error) {
+      toast.error("Failed to add task.");
+    }
+  };
+
+  const handleUpdateTask = async () => {
+    if (
+      !taskToUpdate ||
+      !taskToUpdate.description ||
+      !taskToUpdate.status ||
+      !taskToUpdate.staffID
+    ) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      await putUpdateTaskAPI(taskToUpdate.id, taskToUpdate);
+      toast.success("Task updated successfully!");
+      handleCloseUpdateTask();
+      fetchTasks(selectedEventDetail.id);
+    } catch (error) {
+      toast.error("Failed to update task.");
     }
   };
 
@@ -196,7 +284,7 @@ function ViewEventAssignee() {
                           <Button
                             className="main-btn btn-hover w-100 mt-3"
                             variant="contained"
-                            startIcon = {<GroupsIcon />}
+                            startIcon={<GroupsIcon />}
                             onClick={() => handleClickOpenAssignee(eventDetail)}
                             sx={{
                               color: "white",
@@ -211,10 +299,8 @@ function ViewEventAssignee() {
                           <Button
                             className="main-btn btn-hover w-100 mt-3"
                             variant="contained"
-                            startIcon = {<GroupAddIcon />}
-                            onClick={() =>
-                              handleClickOpenAddAssignee(eventDetail)
-                            }
+                            startIcon={<TaskIcon />}
+                            onClick={() => handleClickOpenTask(eventDetail)}
                             sx={{
                               color: "white",
                               backgroundColor: "#450b00",
@@ -223,7 +309,7 @@ function ViewEventAssignee() {
                               },
                             }}
                           >
-                            <strong>Thêm Thành viên</strong>
+                            <strong>Xem Nhiệm vụ</strong>
                           </Button>
                         </div>
                       </div>
@@ -237,69 +323,72 @@ function ViewEventAssignee() {
       </div>
 
       <Dialog open={openAssigneeDialog} onClose={handleCloseAssignee}>
-        <DialogTitle>View Assignee</DialogTitle>
+        <DialogTitle>Xem Nhân sự</DialogTitle>
         <DialogContent>
           {selectedEventDetail && (
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <h4>Event Detail ID: {selectedEventDetail.id}</h4>
-              </Grid>
-              <Grid item xs={12}>
-                <h4>
-                  Start Date: {formatDateTime(selectedEventDetail.startDate)}
-                </h4>
-              </Grid>
-              <Grid item xs={12}>
-                <h4>End Date: {formatDateTime(selectedEventDetail.endDate)}</h4>
-              </Grid>
-              <Grid item xs={12}>
-                <TableContainer component={Paper}>
-                  <Table>
+                <Button
+                  variant="contained"
+                  startIcon={<GroupAddIcon />}
+                  onClick={() =>
+                    handleClickOpenAddAssignee(selectedEventDetail)
+                  }
+                  sx={{
+                    color: "white",
+                    backgroundColor: "#450b00",
+                    "&:hover": {
+                      backgroundColor: "#ff7f50",
+                    },
+                    mb: 2,
+                  }}
+                >
+                  Thêm Nhân sự mới
+                </Button>
+                <TableContainer component={Paper} sx={{ mb: 5 }}>
+                  <Table aria-label="assignee table">
                     <TableHead>
                       <TableRow>
-                        <TableCell>ID</TableCell>
-                        <TableCell>Account ID</TableCell>
-                        <TableCell>Role</TableCell>
-                        <TableCell>Add Date</TableCell>
+                        <TableCell>Họ Tên</TableCell>
+                        <TableCell>Vai trò</TableCell>
+                        <TableCell>Ngày thêm</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {assignees.map((assignee) => (
-                        <TableRow key={assignee.id}>
-                          <TableCell>{assignee.id}</TableCell>
-                          <TableCell>{assignee.accountId}</TableCell>
-                          <TableCell>{assignee.role}</TableCell>
-                          <TableCell>
-                            {formatDateTime(assignee.createdDate)}
+                      {assignees.length > 0 ? (
+                        assignees.map((assignee) => (
+                          <TableRow key={assignee.id}>
+                            <TableCell>{assignee.name}</TableCell>
+                            <TableCell>{assignee.role}</TableCell>
+                            <TableCell>
+                              {formatDateTime(assignee.createdDate)}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={3}>
+                            Không có Nhân sự nào.
                           </TableCell>
                         </TableRow>
-                      ))}
+                      )}
                     </TableBody>
                   </Table>
                 </TableContainer>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25]}
-                  component="div"
-                  count={pagination.TotalCount || 0}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handlePageChange}
-                  onRowsPerPageChange={handleRowsPerPageChange}
-                />
               </Grid>
             </Grid>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAssignee}>Close</Button>
+          <Button onClick={handleCloseAssignee}>Đóng</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openAddAssigneeDialog} onClose={handleCloseAddAssignee}>
-        <DialogTitle>Add New Assignee</DialogTitle>
+        <DialogTitle>Thêm Thành viên mới</DialogTitle>
         <DialogContent>
           <FormControl fullWidth>
-            <InputLabel>Select Account</InputLabel>
+            <InputLabel>Chọn Thành viên</InputLabel>
             <Select
               value={selectedAccountId}
               onChange={(e) => setSelectedAccountId(e.target.value)}
@@ -313,7 +402,7 @@ function ViewEventAssignee() {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAddAssignee}>Cancel</Button>
+          <Button onClick={handleCloseAddAssignee}>Hủy</Button>
           <Button
             onClick={handleAddAssignee}
             sx={{
@@ -324,8 +413,45 @@ function ViewEventAssignee() {
               },
             }}
           >
-            Thêm{" "}
+            Thêm
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openTaskDialog} onClose={handleCloseTask}>
+        <DialogTitle>Nhiệm vụ</DialogTitle>
+        <DialogContent>
+          <TableContainer component={Paper} sx={{ mb: 2 }}>
+            <Table aria-label="task table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Mô tả Nhiệm vụ</TableCell>
+                  <TableCell>Chi phí Dự kiến</TableCell>
+                  <TableCell>Chi phí Thực tế</TableCell>
+                  <TableCell>Trạng thái Nhiệm vụ</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tasks.length > 0 ? (
+                  tasks.map((task) => (
+                    <TableRow key={task.id}>
+                      <TableCell>{task.description}</TableCell>
+                      <TableCell><PriceFormat price={task.planCost}/></TableCell>
+                      <TableCell><PriceFormat price={task.actualCost}/></TableCell>
+                      <TableCell>{task.status}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5}>Không có Nhiệm vụ nào.</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseTask}>Đóng</Button>
         </DialogActions>
       </Dialog>
     </div>
