@@ -74,7 +74,10 @@ const HomeTab = ({ initialProfile }) => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const { transactions, pagination } = await getAllProfileTransactionAPI(page, 10); // Fetch 10 transactions per page
+        const { transactions, pagination } = await getAllProfileTransactionAPI(
+          page,
+          10
+        ); // Fetch 10 transactions per page
         setTransactions(transactions);
         setTotalPages(pagination.TotalPages);
         setLoadingTransactions(false);
@@ -91,7 +94,10 @@ const HomeTab = ({ initialProfile }) => {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const { tickets, pagination } = await getAllEventCheckInAPI(ticketPage, 5);
+        const { tickets, pagination } = await getAllEventCheckInAPI(
+          ticketPage,
+          5
+        );
         // Create a map to store unique events
         const eventMap = new Map();
         tickets.forEach((ticket) => {
@@ -191,7 +197,9 @@ const HomeTab = ({ initialProfile }) => {
   const isFeedbackAllowed = (event) => {
     const eventEndDate = new Date(event.eventDetail.endDate);
     const currentDate = new Date();
-    const fiveDaysAfterEventEnd = new Date(eventEndDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+    const fiveDaysAfterEventEnd = new Date(
+      eventEndDate.getTime() + 5 * 24 * 60 * 60 * 1000
+    );
     return currentDate <= fiveDaysAfterEventEnd;
   };
 
@@ -201,7 +209,12 @@ const HomeTab = ({ initialProfile }) => {
 
   return (
     <div className="tab-content" id="myTabContent">
-      <div className="tab-pane fade active show" id="feed" role="tabpanel" aria-labelledby="feed-tab">
+      <div
+        className="tab-pane fade active show"
+        id="feed"
+        role="tabpanel"
+        aria-labelledby="feed-tab"
+      >
         <div className="nav my-event-tabs mt-4" role="tablist">
           <button
             className="event-link active"
@@ -238,7 +251,11 @@ const HomeTab = ({ initialProfile }) => {
           </button>
         </div>
         <div className="tab-content">
-          <div className="tab-pane fade show active" id="wallet" role="tabpanel">
+          <div
+            className="tab-pane fade show active"
+            id="wallet"
+            role="tabpanel"
+          >
             <div className="row">
               <div className="col-md-12">
                 <div className="main-card mt-4">
@@ -273,154 +290,210 @@ const HomeTab = ({ initialProfile }) => {
               </div>
             </div>
           </div>
+
           <div className="tab-pane fade" id="allTransactions" role="tabpanel">
             <div className="row">
               <div className="col-md-12">
                 <div className="main-card mt-4">
                   <div className="card-top p-4">
-                    <h5 className="mb-0">Tất cả Giao dịch</h5>
-                  </div>
-                  <div className="transaction-table">
-                    {loadingTransactions ? (
-                      <div>Loading...</div>
-                    ) : (
-                      <TableContainer component={Paper}>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Ngày</TableCell>
-                              <TableCell>Mô tả</TableCell>
-                              <TableCell align="right">Số tiền</TableCell>
-                              <TableCell align="right">Trạng thái</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {transactions.map((transaction) => (
-                              <TableRow key={transaction.id}>
-                                <TableCell>{formatDateTime(transaction.createdAt)}</TableCell>
-                                <TableCell>{transaction.description}</TableCell>
-                                <TableCell align="right">
-                                  <PriceFormat price={transaction.amount} />
-                                </TableCell>
-                                <TableCell align="right">
-                                  {transaction.status}
-                                </TableCell>
+                    <div className="card-event-dt">
+                      <h5>TẤT CẢ GIAO DỊCH</h5>
+                      {loadingTransactions ? (
+                        <div>Loading transactions...</div>
+                      ) : transactions.length > 0 ? (
+                        <TableContainer component={Paper}>
+                          <Table
+                            sx={{ minWidth: 750 }}
+                            aria-label="transactions table"
+                          >
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>MÃ GD</TableCell>
+                                <TableCell>LOẠI GD</TableCell>
+                                <TableCell>SỐ TIỀN</TableCell>
+                                <TableCell>CHI TIẾT</TableCell>
+                                <TableCell>NGÀY THỰC HIỆN</TableCell>
+                                <TableCell>TRẠNG THÁI</TableCell>
                               </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                        <Stack spacing={2} sx={{ padding: 2 }}>
-                          <Pagination
-                            count={totalPages}
-                            page={page}
-                            onChange={handleChangePage}
-                          />
-                        </Stack>
-                      </TableContainer>
-                    )}
+                            </TableHead>
+                            <TableBody>
+                              {transactions.map((transaction) => (
+                                <TableRow key={transaction.id}>
+                                  <TableCell>{transaction.id}</TableCell>
+                                  <TableCell>
+                                    {transaction.transactionType}
+                                  </TableCell>
+                                  <TableCell>
+                                    <PriceFormat price={transaction.amount} />
+                                  </TableCell>
+                                  <TableCell>
+                                    {transaction.description}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatDateTime(
+                                      transaction.transactionDate
+                                    )}
+                                  </TableCell>
+                                  <TableCell>
+                                    {transaction.status
+                                      ? "Completed"
+                                      : "Pending"}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          <Stack
+                            spacing={2}
+                            sx={{ mt: 2 }}
+                            className="pagination-controls mt-2 mb-2"
+                          >
+                            <Pagination
+                              count={totalPages}
+                              page={page}
+                              onChange={handleChangePage}
+                              variant="outlined"
+                              shape="rounded"
+                              sx={{
+                                "& .MuiPaginationItem-root": {
+                                  color: "white",
+                                  backgroundColor: "#450b00",
+                                  "&.Mui-selected": {
+                                    backgroundColor: "#ff7f50",
+                                  },
+                                  "&:hover": {
+                                    backgroundColor: "#450b00",
+                                  },
+                                },
+                              }}
+                            />
+                          </Stack>
+                        </TableContainer>
+                      ) : (
+                        <div>Không có giao dịch nào.</div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
           <div className="tab-pane fade" id="feedback" role="tabpanel">
             <div className="row">
-              <div className="col-md-12">
-                <div className="main-card mt-4">
-                  <div className="card-top p-4">
-                    <h5 className="mb-0">Đánh giá sự kiện đã tham gia</h5>
-                  </div>
-                  <div className="ticket-table">
-                    {loadingTickets ? (
-                      <div>Loading...</div>
-                    ) : (
-                      <TableContainer component={Paper}>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Sự kiện</TableCell>
-                              <TableCell>Ngày</TableCell>
-                              <TableCell>Địa điểm</TableCell>
-                              <TableCell>Thời gian kết thúc</TableCell>
-                              <TableCell align="right">Thao tác</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {events.map((event) => (
-                              <TableRow key={event.eventDetail.id}>
-                                <TableCell>{event.eventDetail.eventName}</TableCell>
-                                <TableCell>{formatDateTime(event.eventDetail.startDate)}</TableCell>
-                                <TableCell>{event.eventDetail.location}</TableCell>
-                                <TableCell>{formatDateTime(event.eventDetail.endDate)}</TableCell>
-                                <TableCell align="right">
-                                  {isFeedbackAllowed(event) && (
-                                    <button
-                                      className="esv-btn"
-                                      onClick={() => handleFeedbackOpen(event)}
-                                    >
-                                      Đánh giá
-                                    </button>
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                        <Stack spacing={2} sx={{ padding: 2 }}>
-                          <Pagination
-                            count={totalTicketPages}
-                            page={ticketPage}
-                            onChange={handleChangeTicketPage}
+              {loadingTickets ? (
+                <div>Loading tickets...</div>
+              ) : events.length > 0 ? (
+                events.map((event) => (
+                  <div className="col-md-12" key={event.id}>
+                    <div className="main-card mt-4">
+                      <div className="card-top p-4">
+                        <div className="card-event-img">
+                          <img
+                            src={event.event.banner}
+                            alt={event.event.eventName}
                           />
-                        </Stack>
-                      </TableContainer>
-                    )}
+                        </div>
+                        <div className="card-event-dt">
+                          <h5>{event.event.eventName}</h5>
+                          <div className="evnt-time">
+                            {formatDateTime(event.eventDetail.startDate)}
+                          </div>
+                          <div className="event-btn-group">
+                            <button
+                              className="esv-btn me-2"
+                              onClick={() =>
+                                navigate(`/feedback/${event.id}`)
+                              }
+                            >
+                              <i className="fa-solid fa-comments me-2" />
+                              Xem đánh giá
+                            </button>
+                            {isFeedbackAllowed(event) ? (
+                              <button
+                                className="esv-btn"
+                                onClick={() => handleFeedbackOpen(event)}
+                              >
+                                <i className="fa-solid fa-pen me-2" />
+                                Create Feedback
+                              </button>
+                            ) : (
+                              <button className="esv-btn" disabled>
+                                <i className="fa-solid fa-pen me-2" />
+                                Feedback Disabled
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                ))
+              ) : (
+                <div>Không có vé nào.</div>
+              )}
+              <Stack
+                spacing={2}
+                sx={{ mt: 2 }}
+                className="pagination-controls mt-2 mb-2"
+              >
+                <Pagination
+                  count={totalTicketPages}
+                  page={ticketPage}
+                  onChange={handleChangeTicketPage}
+                  variant="outlined"
+                  shape="rounded"
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "white",
+                      backgroundColor: "#450b00",
+                      "&.Mui-selected": {
+                        backgroundColor: "#ff7f50",
+                      },
+                      "&:hover": {
+                        backgroundColor: "#450b00",
+                      },
+                    },
+                  }}
+                />
+              </Stack>
             </div>
           </div>
         </div>
       </div>
-      {/* Recharge Modal */}
       <RechargeModal
-        showModal={showModal}
+        show={showModal}
         handleClose={handleClose}
         handleRecharge={handleRecharge}
       />
-      {/* Feedback Dialog */}
-      <Dialog open={feedbackDialogOpen} onClose={handleFeedbackClose}>
-        <DialogTitle>Đánh giá sự kiện</DialogTitle>
+      <Dialog
+        open={feedbackDialogOpen}
+        onClose={handleFeedbackClose}
+        aria-labelledby="feedback-dialog-title"
+      >
+        <DialogTitle id="feedback-dialog-title">Create Feedback</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Đánh giá"
-            type="number"
-            inputProps={{ min: 1, max: 5 }}
-            fullWidth
-            name="rate"
-            value={feedback.rate}
-            onChange={handleFeedbackChange}
-          />
           <Rating
             name="rate"
             value={feedback.rate}
             onChange={handleRatingChange}
           />
           <TextField
-            label="Mô tả"
-            fullWidth
-            multiline
-            rows={4}
+            autoFocus
+            margin="dense"
+            id="description"
             name="description"
+            label="Description"
+            type="text"
+            fullWidth
+            variant="standard"
             value={feedback.description}
             onChange={handleFeedbackChange}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleFeedbackClose}>Hủy</Button>
-          <Button onClick={handleFeedbackSubmit} color="primary">
-            Gửi
-          </Button>
+          <Button onClick={handleFeedbackClose}>Cancel</Button>
+          <Button onClick={handleFeedbackSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>
     </div>
