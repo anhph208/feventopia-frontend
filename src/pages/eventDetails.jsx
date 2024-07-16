@@ -186,10 +186,10 @@ function EventDetails() {
   if (error) return <div>Error loading event details</div>;
   if (!eventDetails) return <div>No event details found</div>;
 
-  const isEventPast = (endDate) => {
+  const isEventPast = (startDate) => {
     const currentDateTime = new Date();
-    const eventEndDate = new Date(endDate);
-    return currentDateTime > eventEndDate;
+    const eventstartDate = new Date(startDate);
+    return currentDateTime > eventstartDate;
   };
 
   return (

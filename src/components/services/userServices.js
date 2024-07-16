@@ -202,7 +202,7 @@ export const getEventDetailsAPI = async (eventId) => {
 export const buyTicketAPI = async (orderDetails) => {
   try {
     const response = await config.post("/ticket/BuyTicket", orderDetails);
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status === 200) {
       return response.data; // Return the created order details
     } else {
       throw new Error(`Request failed with status ${response.status}`);
