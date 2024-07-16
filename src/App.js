@@ -9,7 +9,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Cart from "./components/Cart/Cart";
 import EvOAdminHeader from "./components/EvOAdminHeader";
-import { ToastContainer } from "react-toastify";
+
 
 const ConditionalLayout = () => {
   const location = useLocation();
@@ -57,7 +57,6 @@ const ConditionalLayout = () => {
       <AppRoutes />
       {!matchPath(noHeaderFooterPaths) && !isOperatorOrAdminPath && <Footer />}
       {!matchPath(noCartPaths) && role === "VISITOR" && <Cart />}
-      <ToastContainer limit={5} autoClose={2000} /> {/* Ensure ToastContainer is present here */}
     </div>
   );
 };

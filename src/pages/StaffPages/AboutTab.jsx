@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { putUpdateProfileAPI } from "../../components/services/userServices";
-import { storage } from "../../firebase/firebase"; // import storage from your firebaseConfig
+import {
+  putUpdateProfileAPI,
+  sendconfirmEmailAPI,
+} from "../../components/services/userServices"; // Import the new service
+import { storage } from "../../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   Avatar,
@@ -11,7 +14,6 @@ import {
   Typography,
   Container,
   CircularProgress,
-  Box,
 } from "@mui/material";
 import { toast } from "react-toastify";
 
@@ -26,8 +28,9 @@ const AboutTab = ({ profile, setProfile }) => {
   const [selectedFileName, setSelectedFileName] = useState("Chưa chọn ảnh");
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [hasChanges, setHasChanges] = useState(false); // Add hasChanges state
-  const [loadingButton, setLoadingButton] = useState(false); // Add loadingButton state
+  const [hasChanges, setHasChanges] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [loadingEmailButton, setLoadingEmailButton] = useState(false);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -40,7 +43,7 @@ const AboutTab = ({ profile, setProfile }) => {
       ...prevFormData,
       [name]: value,
     }));
-    setHasChanges(true); // Update hasChanges state
+    setHasChanges(true);
   };
 
   const handleImageChange = (e) => {
@@ -53,20 +56,20 @@ const AboutTab = ({ profile, setProfile }) => {
         setSelectedImage(e.target.result);
       };
       reader.readAsDataURL(file);
-      setHasChanges(true); // Update hasChanges state
+      setHasChanges(true);
     } else {
       setSelectedFileName("Chưa chọn ảnh");
       setSelectedImage(null);
       setSelectedFile(null);
-      setHasChanges(false); // Update hasChanges state
+      setHasChanges(false);
     }
   };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setLoadingButton(true); // Start loading
+    setLoadingButton(true);
     try {
-      let imageUrl = formData.avatar; // Default to current avatar URL
+      let imageUrl = formData.avatar;
       if (selectedFile) {
         const storageRef = ref(storage, `avatars/${selectedFile.name}`);
         await uploadBytes(storageRef, selectedFile);
@@ -79,8 +82,8 @@ const AboutTab = ({ profile, setProfile }) => {
       };
 
       await putUpdateProfileAPI(updatedProfile, token);
-      setProfile(updatedProfile); // Update profile in parent state
-      setHasChanges(false); // Reset hasChanges state
+      setProfile(updatedProfile);
+      setHasChanges(false);
       toast.success("Hồ sơ đã được cập nhật thành công!", {
         toastId: successToastId,
       });
@@ -90,12 +93,34 @@ const AboutTab = ({ profile, setProfile }) => {
         toastId: errorToastId,
       });
     } finally {
-      setLoadingButton(false); // Stop loading
+      setLoadingButton(false);
+    }
+  };
+
+  const handleSendConfirmationEmail = async () => {
+    setLoadingEmailButton(true);
+    try {
+      await sendconfirmEmailAPI();
+      toast.success("Email xác nhận đã được gửi thành công!", {
+        toastId: successToastId,
+      });
+    } catch (error) {
+      console.error("Error sending confirmation email:", error);
+      toast.error("Failed to send confirmation email.", {
+        toastId: errorToastId,
+      });
+    } finally {
+      setLoadingEmailButton(false);
     }
   };
 
   return (
-    <div className="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
+    <div
+      className="tab-pane fade show active"
+      id="about"
+      role="tabpanel"
+      aria-labelledby="about-tab"
+    >
       <div className="main-card mt-4">
         <Container component="main" maxWidth="sm">
           <Typography component="h1" variant="h5" align="center" marginTop={4}>
@@ -134,7 +159,28 @@ const AboutTab = ({ profile, setProfile }) => {
               placeholder={formData.email}
               onChange={handleChange}
               required
+              disabled={profile.emailConfirmed} // Disable the email field if emailConfirmed is true
             />
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                onClick={handleSendConfirmationEmail}
+                sx={{
+                  backgroundColor: "#450b00",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#ff7f50",
+                  },
+                }}
+                disabled={loadingEmailButton || profile.emailConfirmed} // Disable the button if emailConfirmed is true
+              >
+                {loadingEmailButton ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  "GỬI EMAIL XÁC NHẬN"
+                )}
+              </Button>
+            </Stack>
             <input
               accept="image/*"
               style={{ display: "none" }}
@@ -146,9 +192,12 @@ const AboutTab = ({ profile, setProfile }) => {
               <Button
                 variant="contained"
                 component="span"
+                justifyContent="center"
+                alignItems="center"
                 fullWidth
                 style={{ height: "30px" }}
                 sx={{
+                  mt: 5,
                   backgroundColor: "#450b00",
                   color: "white",
                   "&:hover": {
@@ -159,11 +208,25 @@ const AboutTab = ({ profile, setProfile }) => {
                 CẬP NHẬT AVATAR
               </Button>
             </label>
-            <Typography variant="body2" color="textSecondary" align="center" marginTop={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              align="center"
+              marginTop={2}
+            >
               {selectedFileName}
             </Typography>
-            <Stack direction="row" justifyContent="center" alignItems="center" marginTop={2}>
-              <Avatar alt="Avatar Preview" src={selectedImage || formData.avatar} sx={{ width: 100, height: 100 }} />
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              marginTop={2}
+            >
+              <Avatar
+                alt="Avatar Preview"
+                src={selectedImage || formData.avatar}
+                sx={{ width: 100, height: 100 }}
+              />
             </Stack>
             <Button
               fullWidth
@@ -178,9 +241,13 @@ const AboutTab = ({ profile, setProfile }) => {
                   backgroundColor: "#ff7f50",
                 },
               }}
-              disabled={!hasChanges || loadingButton} // Disable the button if no changes or loading
+              disabled={!hasChanges || loadingButton}
             >
-              {loadingButton ? <CircularProgress size={24} /> : "CẬP NHẬT TÀI KHOẢN"}
+              {loadingButton ? (
+                <CircularProgress size={24} />
+              ) : (
+                "CẬP NHẬT TÀI KHOẢN"
+              )}
             </Button>
           </form>
         </Container>

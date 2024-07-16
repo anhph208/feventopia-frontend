@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { handleLogout } from "../utils/tools";
 import { getProfileAPI } from "../components/services/userServices";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { CartContext } from "../components/Cart/CartContext";
 import { useAuth } from "../context/AuthContext"; // Import the useAuth hook
 
@@ -41,17 +39,23 @@ const Header = () => {
   const handleLogoutClick = () => {
     logout(); // Use the logout function from AuthContext
     clearCart();
-    toast.success("Đăng xuât thành công.", {
-      onClose: () => setTimeout(() => navigate("/signin"), 1000),
-    });
+    if (!toast.isActive("logout-success-toast")) {
+      toast.success("Đăng xuất thành công.", {
+        toastId: "logout-success-toast",
+        onClose: () => setTimeout(() => navigate("/signin"), 1000),
+      });
+    }
   };
 
   const handleSessionExp = () => {
     logout();
     clearCart(); // Use the logout function from AuthContext
-    toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.", {
-      onClose: () => setTimeout(() => navigate("/signin"), 1000),
-    });
+    if (!toast.isActive("session-expired-toast")) {
+      toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.", {
+        toastId: "session-expired-toast",
+        onClose: () => window.location.replace("/signin"),
+      });
+    }
   };
 
   const handleClickLogo = () => {
@@ -118,7 +122,7 @@ const Header = () => {
               <div className="offcanvas-body">
                 <div className="offcanvas-top-area">
                   <div className="create-bg">
-                    <a href="create.html" className="offcanvas-create-btn">
+                    <a href="/explored" className="offcanvas-create-btn">
                       <i className="fa-solid fa-calendar-days" />
                       <span>
                         <strong>MUA VÉ NGAY</strong>
@@ -255,7 +259,7 @@ const Header = () => {
                       <img
                         src={
                           profile?.avatar ||
-                          "./assets/images/profile-imgs/img-13.jpg"
+                          "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2Flogo-fav.png?alt=media&token=1e771f4e-1d95-4b9a-a133-76bab5aad662"
                         }
                         alt="User Avatar"
                       />
@@ -271,7 +275,7 @@ const Header = () => {
                             <img
                               src={
                                 profile?.avatar ||
-                                "./assets/images/profile-imgs/img-13.jpg"
+                                "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2Flogo-fav.png?alt=media&token=1e771f4e-1d95-4b9a-a133-76bab5aad662"
                               }
                               alt="User Avatar"
                             />

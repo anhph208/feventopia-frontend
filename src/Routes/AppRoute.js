@@ -16,7 +16,6 @@ import TransactionInfo from "../pages/transaction";
 import EventDetails from "../pages/eventDetails";
 import Checkout from "../pages/checkout";
 import CheckoutStall from "../pages/checkoutStall";
-import BookingConfirm from "../pages/bookingConfirm";
 import OperatorPages from "../pages/OperatorPages/OperatorMain";
 import CreateEvent from "../pages/OperatorPages/EventType/createEvent";
 import UpdateEvent from "../pages/OperatorPages/EventType/updateEvent";
@@ -28,6 +27,7 @@ import EventSponsorship from "../pages/SponsorPages/EventSponsor";
 import SponsorProfile from "../pages/sponsorProfile";
 import StaffProfile from "../pages/StaffPages/StaffProfile";
 import Invoice from "../pages/invoice";
+import EmailConfirmation from "../pages/confirmEmail"
 
 const AppRoutes = () => {
   const { role } = useAuth();
@@ -44,10 +44,17 @@ const AppRoutes = () => {
       <Route path="/helpCenter" element={<HelpCenter />} />
       <Route path="/helpCenterKnowledgeBase" element={<HelpCenterKnowledgeBase />} />
       <Route path="/helpArticleDetailView" element={<HelpArticleDetailView />} />
+      <Route path="/confirmEmail" element={<EmailConfirmation />} />
       <Route path="/transactioninfo" element={<TransactionInfo />} />
       <Route path="/event/:eventId" element={<EventDetails />} />
       <Route path="/Contact" element={<ContactUs />} />
-      <Route path="/" element={<Home />} />
+
+      {/* Home Route */}
+      <Route path="/" element={
+        (!role || role === "VISITOR" || role === "SPONSOR" || role === "ADMIN")
+          ? <Home />
+          : <Navigate to="/signin" />
+      } />
 
       {/* Routes for Visitors */}
       {(!role || role === "VISITOR" || role === "SPONSOR" || role === "ADMIN") && (
@@ -55,7 +62,6 @@ const AppRoutes = () => {
           <Route path="/userprofile" element={<UserProfile />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/checkoutstall" element={<CheckoutStall />} />
-          <Route path="/booking_confirmed" element={<BookingConfirm />} />
           <Route path="/invoice/:ticketId" element={<Invoice />} />
         </>
       )}

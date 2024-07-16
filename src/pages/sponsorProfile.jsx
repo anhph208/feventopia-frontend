@@ -55,7 +55,7 @@ const SponsorProfile = () => {
           <div className="hero-cover">
             <div className="hero-cover-img">
               <img
-                src="./assets/images/userBackground.jpg"
+                src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2FproBanner.jpg?alt=media&token=6bf520da-4091-4615-a193-6bb8fbfb490b"
                 alt="Sponsor Background"
               />
             </div>
@@ -70,7 +70,7 @@ const SponsorProfile = () => {
                     <img
                       src={
                         profile.avatar ||
-                        "./assets/images/profile-imgs/img-13.jpg"
+                        "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2Flogo-fav.png?alt=media&token=1e771f4e-1d95-4b9a-a133-76bab5aad662"
                       }
                       alt="Sponsor Avatar"
                     />
@@ -91,7 +91,7 @@ const SponsorProfile = () => {
                     <span className="user-email">{profile.email}</span>
                   </div>
                   <div className="user-description">
-                    <p>I am {profile.name}, a proud sponsor.</p>
+                    <p>Nhà Tài trợ của FEventopia.</p>
                   </div>
                 </div>
               </div>

@@ -76,7 +76,7 @@ const UserProfile = () => {
                     <img
                       src={
                         profile.avatar ||
-                        "./assets/images/profile-imgs/img-13.jpg"
+                        "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2Flogo-fav.png?alt=media&token=1e771f4e-1d95-4b9a-a133-76bab5aad662"
                       }
                       alt="User Avatar"
                     />

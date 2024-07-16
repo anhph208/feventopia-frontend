@@ -186,10 +186,10 @@ function EventDetails() {
   if (error) return <div>Error loading event details</div>;
   if (!eventDetails) return <div>No event details found</div>;
 
-  const isEventPast = (endDate) => {
+  const isEventPast = (startDate) => {
     const currentDateTime = new Date();
-    const eventEndDate = new Date(endDate);
-    return currentDateTime > eventEndDate;
+    const eventstartDate = new Date(startDate);
+    return currentDateTime > eventstartDate;
   };
 
   return (
@@ -255,138 +255,172 @@ function EventDetails() {
                       </div>
                       {!isEventPast(eventDetail.endDate) && (
                         <div className="select-tickets-block">
-                          <div className="select-ticket-action">
-                            <div className="ticket-price">
-                              <h5>Giá vé</h5>
-                              <strong>
-                                <PriceFormat price={eventDetail.ticketPrice} />
-                                <div className="ticket-remaining">
-                                  <p>
-                                    Vé còn lại:{" "}
-                                    {eventDetail.ticketForSaleInventory}
-                                  </p>
+                          {eventDetail.stallForSaleInventory !== 0 && (
+                            <div>
+                              <div className="select-ticket-action">
+                                <div className="ticket-price">
+                                  <h5>Giá vé</h5>
+                                  <strong>
+                                    <PriceFormat
+                                      price={eventDetail.ticketPrice}
+                                    />
+                                    <div className="ticket-remaining">
+                                      <p>
+                                        Vé còn lại:{" "}
+                                        {eventDetail.ticketForSaleInventory}
+                                      </p>
+                                    </div>
+                                  </strong>
                                 </div>
-                              </strong>
-                            </div>
-                            <div className="quantity">
-                              <div className="counter">
-                                <span
-                                  className="down"
-                                  onClick={() => decreaseCount(eventDetail.id)}
+                                <div className="quantity">
+                                  <div className="counter">
+                                    <span
+                                      className="down"
+                                      onClick={() =>
+                                        decreaseCount(eventDetail.id)
+                                      }
+                                    >
+                                      -
+                                    </span>
+                                    <input
+                                      type="text"
+                                      value={ticketCounts[eventDetail.id] || 0}
+                                      readOnly
+                                    />
+                                    <span
+                                      className="up"
+                                      onClick={() =>
+                                        increaseCount(eventDetail.id)
+                                      }
+                                    >
+                                      +
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="xtotel-tickets-count">
+                                <div className="x-title">
+                                  {ticketCounts[eventDetail.id] || 0}x Ticket(s)
+                                </div>
+                                <h4>
+                                  <span>
+                                    <PriceFormat
+                                      price={
+                                        (ticketCounts[eventDetail.id] || 0) *
+                                        eventDetail.ticketPrice
+                                      }
+                                    />
+                                  </span>
+                                </h4>
+                              </div>
+
+                              <div className="booking-btn d-flex justify-content-between mt-4">
+                                <button
+                                  className="main-btn btn-hover w-50 me-1"
+                                  type="button"
+                                  onClick={() =>
+                                    handleAction(handleBookNow, eventDetail.id)
+                                  }
                                 >
-                                  -
-                                </span>
-                                <input
-                                  type="text"
-                                  value={ticketCounts[eventDetail.id] || 0}
-                                  readOnly
-                                />
-                                <span
-                                  className="up"
-                                  onClick={() => increaseCount(eventDetail.id)}
+                                  <strong>Mua Vé!</strong>
+                                </button>
+                                <button
+                                  className="main-btn btn-hover w-50 ms-1"
+                                  type="button"
+                                  onClick={() =>
+                                    handleAction(
+                                      handleAddToCart,
+                                      eventDetail.id
+                                    )
+                                  }
                                 >
-                                  +
-                                </span>
+                                  <strong>Thêm giỏ hàng</strong>
+                                </button>
                               </div>
                             </div>
-                          </div>
-                          <div className="xtotel-tickets-count">
-                            <div className="x-title">
-                              {ticketCounts[eventDetail.id] || 0}x Ticket(s)
+                          )}
+                          {eventDetail.ticketForSaleInventory === 0 && (
+                            <div className="booking-btn mt-2">
+                              <button
+                                className="main-end-btn w-100"
+                                type="button"
+                                disabled
+                              >
+                                <strong>Đã hết Vé</strong>
+                              </button>
                             </div>
-                            <h4>
-                              <span>
-                                <PriceFormat
-                                  price={
-                                    (ticketCounts[eventDetail.id] || 0) *
-                                    eventDetail.ticketPrice
-                                  }
-                                />
-                              </span>
-                            </h4>
-                          </div>
-
-                          <div className="booking-btn d-flex justify-content-between mt-4">
-                            <button
-                              className="main-btn btn-hover w-50 me-1"
-                              type="button"
-                              onClick={() =>
-                                handleAction(handleBookNow, eventDetail.id)
-                              }
-                              disabled={
-                                eventDetail.ticketForSaleInventory === 0
-                              }
-                            >
-                              <strong>Mua Vé!</strong>
-                            </button>
-                            <button
-                              className="main-btn btn-hover w-50 ms-1"
-                              type="button"
-                              onClick={() =>
-                                handleAction(handleAddToCart, eventDetail.id)
-                              }
-                              disabled={
-                                eventDetail.ticketForSaleInventory === 0
-                              }
-                            >
-                              <strong>Thêm giỏ hàng</strong>
-                            </button>
-                          </div>
-
-                          <div className="select-ticket-action">
-                            <div className="ticket-price mt-4">
-                              <h5>Giá gian hàng</h5>
-                              <strong>
-                                <PriceFormat price={eventDetail.stallPrice} />
-                                <div className="stall-remaining">
-                                  <p>
-                                    Gian hàng còn lại:{" "}
-                                    {eventDetail.stallForSaleInventory}
-                                  </p>
+                          )}
+                          {eventDetail.stallForSaleInventory !== 0 && (
+                            <div>
+                              <div className="select-ticket-action">
+                                <div className="ticket-price mt-4">
+                                  <h5>Giá gian hàng</h5>
+                                  <strong>
+                                    <PriceFormat
+                                      price={eventDetail.stallPrice}
+                                    />
+                                    <div className="stall-remaining">
+                                      <p>
+                                        Gian hàng còn lại:{" "}
+                                        {eventDetail.stallForSaleInventory}
+                                      </p>
+                                    </div>
+                                  </strong>
                                 </div>
-                              </strong>
-                            </div>
-                            <div className="quantity">
-                              <CreatableSelect
-                                isClearable
-                                onChange={(value) =>
-                                  handleStallChange(eventDetail.id, value)
-                                }
-                                placeholder="Chọn hoặc nhập gian hàng"
-                                value={selectedStalls[eventDetail.id] || null}
-                              />
-                            </div>
-                          </div>
-                          <div className="xtotel-tickets-count">
-                            <div className="x-title">
-                              {selectedStalls[eventDetail.id]?.label || "0"}x
-                              Stall
-                            </div>
-                            <h4>
-                              <span>
-                                <PriceFormat
-                                  price={
-                                    selectedStalls[eventDetail.id]
-                                      ? eventDetail.stallPrice
-                                      : 0
+                                <div className="quantity">
+                                  <CreatableSelect
+                                    isClearable
+                                    onChange={(value) =>
+                                      handleStallChange(eventDetail.id, value)
+                                    }
+                                    placeholder="Chọn hoặc nhập gian hàng"
+                                    value={
+                                      selectedStalls[eventDetail.id] || null
+                                    }
+                                  />
+                                </div>
+                              </div>
+                              <div className="xtotel-tickets-count">
+                                <div className="x-title">
+                                  {selectedStalls[eventDetail.id]?.label || "0"}
+                                  x Stall
+                                </div>
+                                <h4>
+                                  <span>
+                                    <PriceFormat
+                                      price={
+                                        selectedStalls[eventDetail.id]
+                                          ? eventDetail.stallPrice
+                                          : 0
+                                      }
+                                    />
+                                  </span>
+                                </h4>
+                              </div>
+                              <div className="booking-btn mt-2">
+                                <button
+                                  className="main-btn btn-hover w-100 mt-3"
+                                  type="button"
+                                  onClick={() =>
+                                    handleAction(handleBuyStall, eventDetail.id)
                                   }
-                                />
-                              </span>
-                            </h4>
-                          </div>
-
-                          <div className="booking-btn mt-2">
-                            <button
-                              className="main-btn btn-hover w-100 mt-3"
-                              type="button"
-                              onClick={() =>
-                                handleAction(handleBuyStall, eventDetail.id)
-                              }
-                              disabled={eventDetail.stallForSaleInventory === 0}
-                            >
-                              <strong>Mua gian hàng</strong>
-                            </button>
-                          </div>
+                                >
+                                  <strong>Mua gian hàng</strong>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          {eventDetail.stallForSaleInventory === 0 && (
+                            <div className="booking-btn mt-2">
+                              <button
+                                className="main-end-btn w-100"
+                                type="button"
+                                disabled
+                              >
+                                <strong>Đã hết Gian hàng</strong>
+                              </button>
+                            </div>
+                          )}
                         </div>
                       )}
                       {isEventPast(eventDetail.endDate) && (

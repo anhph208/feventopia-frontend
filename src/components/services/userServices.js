@@ -840,3 +840,13 @@ export const postAddFeedbackAPI = async (feedbackData) => {
     throw error;
   }
 };
+
+export const sendconfirmEmailAPI = async () => {
+  try {
+    const response = await config.post(`/auth/SendConfirmationEmail`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Staff:", error);
+    throw error;
+  }
+};

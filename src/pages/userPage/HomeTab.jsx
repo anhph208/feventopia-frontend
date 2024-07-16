@@ -5,7 +5,7 @@ import {
   rechargeAPI,
   getAllProfileTransactionAPI,
   getAllEventCheckInAPI,
-  postAddFeedbackAPI
+  postAddFeedbackAPI,
 } from "../../components/services/userServices";
 import { toast } from "react-toastify";
 import RechargeModal from "../../components/rechargeModal";
@@ -25,7 +25,7 @@ import {
   DialogActions,
   TextField,
   Button,
-  Rating
+  Rating,
 } from "@mui/material";
 import { formatDateTime, PriceFormat } from "../../utils/tools.js";
 
@@ -47,7 +47,7 @@ const HomeTab = ({ initialProfile }) => {
     eventDetailID: "",
     accountID: "",
     rate: 5,
-    description: ""
+    description: "",
   });
 
   const token = localStorage.getItem("token");
@@ -164,7 +164,7 @@ const HomeTab = ({ initialProfile }) => {
       eventDetailID: event.eventDetail.id,
       accountID: event.transaction.accountID,
       rate: 5,
-      description: ""
+      description: "",
     });
     setFeedbackDialogOpen(true);
   };
@@ -402,9 +402,7 @@ const HomeTab = ({ initialProfile }) => {
                           <div className="event-btn-group">
                             <button
                               className="esv-btn me-2"
-                              onClick={() =>
-                                navigate(`/feedback/${event.id}`)
-                              }
+                              onClick={() => navigate(`/feedback/${event.id}`)}
                             >
                               <i className="fa-solid fa-comments me-2" />
                               Xem đánh giá
@@ -492,8 +490,30 @@ const HomeTab = ({ initialProfile }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleFeedbackClose}>Cancel</Button>
-          <Button onClick={handleFeedbackSubmit}>Submit</Button>
+          <Button
+            onClick={handleFeedbackClose}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={handleFeedbackSubmit}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Gửi Đánh giá
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
