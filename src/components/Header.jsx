@@ -4,20 +4,18 @@ import { handleLogout } from "../utils/tools";
 import { getProfileAPI } from "../components/services/userServices";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { CartContext } from '../components/Cart/CartContext';
+import { CartContext } from "../components/Cart/CartContext";
+import { useAuth } from "../context/AuthContext"; // Import the useAuth hook
 
 const Header = () => {
-  const [isLogged, setIsLogged] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { clearCart } = useContext(CartContext);
+  const { token, logout } = useAuth(); // Use the useAuth hook
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isLogged") === "true";
-    setIsLogged(loggedIn);
-
-    if (loggedIn) {
+    if (token) {
       const fetchUserProfile = async () => {
         try {
           const profileData = await getProfileAPI();
@@ -26,10 +24,9 @@ const Header = () => {
           console.error("Error fetching user profile:", error);
           if (error.response && error.response.status === 401) {
             // Handle session expiration
-            handleLogoutClick();
-            toast.error("Session expired. Please log in again.");
+            handleSessionExp();
           } else {
-            toast.error("Failed to fetch user profile.");
+            console.error("Trang người dùng hết hạn.");
           }
         } finally {
           setLoading(false);
@@ -39,13 +36,22 @@ const Header = () => {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
   const handleLogoutClick = () => {
-    handleLogout(navigate('/signin'));
-    setIsLogged(false);
+    logout(); // Use the logout function from AuthContext
     clearCart();
-    localStorage.setItem("isLogged", "false");
+    toast.success("Đăng xuât thành công.", {
+      onClose: () => setTimeout(() => navigate("/signin"), 1000),
+    });
+  };
+
+  const handleSessionExp = () => {
+    logout();
+    clearCart(); // Use the logout function from AuthContext
+    toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.", {
+      onClose: () => setTimeout(() => navigate("/signin"), 1000),
+    });
   };
 
   const handleClickLogo = () => {
@@ -235,7 +241,7 @@ const Header = () => {
                     </span>
                   </a>
                 </li>
-                {isLogged ? (
+                {token ? (
                   <li className="dropdown account-dropdown">
                     <a
                       href="#"
@@ -274,13 +280,17 @@ const Header = () => {
                       </li>
                       <li className="profile-link">
                         <Link
-                          to="my_organisation_dashboard.html"
+                          to="/userprofile?activeTab=orders"
                           className="link-item"
                         >
                           Vé đã mua
                         </Link>
                         <Link
-                          to={profile?.role === "SPONSOR" ? "/sponsorProfile" : "/userprofile"}
+                          to={
+                            profile?.role === "SPONSOR"
+                              ? "/sponsorProfile"
+                              : "/userprofile"
+                          }
                           className="link-item"
                         >
                           Trang cá nhân

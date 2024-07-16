@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getProfileAPI } from "../components/services/userServices";
 import HomeTab from "../pages/userPage/HomeTab";
 import AboutTab from "../pages/userPage/AboutTab";
@@ -11,6 +11,7 @@ import queryString from "query-string";
 
 const UserProfile = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("feed");
@@ -39,6 +40,11 @@ const UserProfile = () => {
 
     fetchUserProfile();
   }, []);
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    navigate(`?activeTab=${tab}`);
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -74,7 +80,6 @@ const UserProfile = () => {
                       }
                       alt="User Avatar"
                     />
-                    
                   </div>
                   <div className="user-dts">
                     <h4 className="user-name">
@@ -104,7 +109,7 @@ const UserProfile = () => {
                             activeTab === "feed" ? "active" : ""
                           }`}
                           id="feed-tab"
-                          onClick={() => setActiveTab("feed")}
+                          onClick={() => handleTabClick("feed")}
                         >
                           <i className="fa-solid fa-house" />
                           <strong>Trang cá nhân</strong>
@@ -116,7 +121,7 @@ const UserProfile = () => {
                             activeTab === "about" ? "active" : ""
                           }`}
                           id="about-tab"
-                          onClick={() => setActiveTab("about")}
+                          onClick={() => handleTabClick("about")}
                         >
                           <i className="fa-solid fa-circle-info" />
                           <strong>Thông tin tài khoản</strong>
@@ -128,7 +133,7 @@ const UserProfile = () => {
                             activeTab === "setting" ? "active" : ""
                           }`}
                           id="setting-tab"
-                          onClick={() => setActiveTab("setting")}
+                          onClick={() => handleTabClick("setting")}
                         >
                           <i className="fa-solid fa-gear" />
                           <strong>Cài đặt mật khẩu</strong>
@@ -140,10 +145,10 @@ const UserProfile = () => {
                             activeTab === "orders" ? "active" : ""
                           }`}
                           id="orders-tab"
-                          onClick={() => setActiveTab("orders")}
+                          onClick={() => handleTabClick("orders")}
                         >
                           <i className="fa-solid fa-box" />
-                          <strong>Vé của tôi</strong>
+                          <strong>Đơn mua</strong>
                         </button>
                       </li>
                     </ul>

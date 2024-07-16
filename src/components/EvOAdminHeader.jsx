@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getProfileAPI } from "../components/services/userServices";
 import { toast } from "react-toastify";
-import { handleLogout } from "../utils/tools";
+import { useAuth } from "../context/AuthContext"; // Import the useAuth hook
+import { CartContext } from "../components/Cart/CartContext";
 import "react-toastify/dist/ReactToastify.css";
 import {
   AppBar,
@@ -16,28 +17,29 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import {
-  Menu as MenuIcon,
-  AccountCircle,
-  CalendarToday,
-} from "@mui/icons-material";
+import { Menu as MenuIcon, CalendarToday } from "@mui/icons-material";
 
 const EvOAdminHeader = () => {
-  const loggedIn = localStorage.getItem("isLogged") === "true";
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const { token, logout } = useAuth(); // Use the useAuth hook
 
   useEffect(() => {
-    if (loggedIn) {
+    if (token) {
       const fetchUserProfile = async () => {
         try {
           const profileData = await getProfileAPI();
           setProfile(profileData);
         } catch (error) {
           console.error("Error fetching user profile:", error);
-          toast.error("Failed to fetch user profile.");
+          if (error.response && error.response.status === 401) {
+            // Handle session expiration
+            handleSessionExp();
+          } else {
+            console.error("Failed to fetch user profile.");
+          }
         } finally {
           setLoading(false);
         }
@@ -46,10 +48,19 @@ const EvOAdminHeader = () => {
     } else {
       setLoading(false);
     }
-  }, [loggedIn]);
+  }, [token]);
 
   const handleLogoutClick = () => {
-    handleLogout(navigate('/signin'));
+    logout(); // Use the logout function from AuthContext
+    toast.success("Đăng xuất thành công.", {
+      onClose: () => setTimeout(() => navigate("/signin"), 1000),
+    });
+  };
+  const handleSessionExp = () => {
+    logout(); // Use the logout function from AuthContext
+    toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.", {
+      onClose: () => setTimeout(() => navigate("/signin"), 1000),
+    });
   };
 
   const handleMenu = (event) => {
@@ -114,7 +125,7 @@ const EvOAdminHeader = () => {
         >
           TẠO SỰ KIỆN
         </Button>
-        {loggedIn ? (
+        {token ? (
           <div>
             <IconButton
               size="large"

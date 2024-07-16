@@ -15,17 +15,13 @@ export const AuthProvider = ({ children }) => {
     const decoded = jwtDecode(jwtToken);
     const username =
       decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-    const userEmail =
-      decoded[
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-      ];
+
     const role =
       decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
     localStorage.setItem("token", jwtToken);
     localStorage.setItem("role", role);
     localStorage.setItem("username", username);
-    localStorage.setItem("email", userEmail);
     localStorage.setItem("isLogged", "true");
 
     setToken(jwtToken);
@@ -36,7 +32,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("username");
-    localStorage.removeItem("email");
     localStorage.removeItem("isLogged");
     setToken(null);
     setRole(null);

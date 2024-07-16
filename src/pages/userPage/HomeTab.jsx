@@ -5,6 +5,7 @@ import {
   rechargeAPI,
   getAllProfileTransactionAPI,
   getAllEventCheckInAPI,
+  postAddFeedbackAPI
 } from "../../components/services/userServices";
 import { toast } from "react-toastify";
 import RechargeModal from "../../components/rechargeModal";
@@ -18,6 +19,13 @@ import {
   Paper,
   Pagination,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Rating
 } from "@mui/material";
 import { formatDateTime, PriceFormat } from "../../utils/tools.js";
 
@@ -33,6 +41,15 @@ const HomeTab = ({ initialProfile }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [ticketPage, setTicketPage] = useState(1);
   const [totalTicketPages, setTotalTicketPages] = useState(1);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [feedback, setFeedback] = useState({
+    eventDetailID: "",
+    accountID: "",
+    rate: 5,
+    description: ""
+  });
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -57,10 +74,7 @@ const HomeTab = ({ initialProfile }) => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const { transactions, pagination } = await getAllProfileTransactionAPI(
-          page,
-          10
-        ); // Fetch 10 transactions per page
+        const { transactions, pagination } = await getAllProfileTransactionAPI(page, 10); // Fetch 10 transactions per page
         setTransactions(transactions);
         setTotalPages(pagination.TotalPages);
         setLoadingTransactions(false);
@@ -77,10 +91,7 @@ const HomeTab = ({ initialProfile }) => {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const { tickets, pagination } = await getAllEventCheckInAPI(
-          ticketPage,
-          5
-        );
+        const { tickets, pagination } = await getAllEventCheckInAPI(ticketPage, 5);
         // Create a map to store unique events
         const eventMap = new Map();
         tickets.forEach((ticket) => {
@@ -141,18 +152,56 @@ const HomeTab = ({ initialProfile }) => {
     setTicketPage(newPage);
   };
 
+  const handleFeedbackOpen = (event) => {
+    setSelectedEvent(event);
+    setFeedback({
+      eventDetailID: event.eventDetail.id,
+      accountID: event.transaction.accountID,
+      rate: 5,
+      description: ""
+    });
+    setFeedbackDialogOpen(true);
+  };
+
+  const handleFeedbackClose = () => {
+    setFeedbackDialogOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleFeedbackChange = (e) => {
+    const { name, value } = e.target;
+    setFeedback((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRatingChange = (event, newValue) => {
+    setFeedback((prev) => ({ ...prev, rate: newValue }));
+  };
+
+  const handleFeedbackSubmit = async () => {
+    try {
+      await postAddFeedbackAPI(feedback);
+      toast.success("Feedback submitted successfully");
+      handleFeedbackClose();
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      toast.error("Error submitting feedback");
+    }
+  };
+
+  const isFeedbackAllowed = (event) => {
+    const eventEndDate = new Date(event.eventDetail.endDate);
+    const currentDate = new Date();
+    const fiveDaysAfterEventEnd = new Date(eventEndDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+    return currentDate <= fiveDaysAfterEventEnd;
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="tab-content" id="myTabContent">
-      <div
-        className="tab-pane fade active show"
-        id="feed"
-        role="tabpanel"
-        aria-labelledby="feed-tab"
-      >
+      <div className="tab-pane fade active show" id="feed" role="tabpanel" aria-labelledby="feed-tab">
         <div className="nav my-event-tabs mt-4" role="tablist">
           <button
             className="event-link active"
@@ -189,11 +238,7 @@ const HomeTab = ({ initialProfile }) => {
           </button>
         </div>
         <div className="tab-content">
-          <div
-            className="tab-pane fade show active"
-            id="wallet"
-            role="tabpanel"
-          >
+          <div className="tab-pane fade show active" id="wallet" role="tabpanel">
             <div className="row">
               <div className="col-md-12">
                 <div className="main-card mt-4">
@@ -228,166 +273,156 @@ const HomeTab = ({ initialProfile }) => {
               </div>
             </div>
           </div>
-
           <div className="tab-pane fade" id="allTransactions" role="tabpanel">
             <div className="row">
               <div className="col-md-12">
                 <div className="main-card mt-4">
                   <div className="card-top p-4">
-                    <div className="card-event-dt">
-                      <h5>TẤT CẢ GIAO DỊCH</h5>
-                      {loadingTransactions ? (
-                        <div>Loading transactions...</div>
-                      ) : transactions.length > 0 ? (
-                        <TableContainer component={Paper}>
-                          <Table
-                            sx={{ minWidth: 750 }}
-                            aria-label="transactions table"
-                          >
-                            <TableHead>
-                              <TableRow>
-                                <TableCell>MÃ GD</TableCell>
-                                <TableCell>LOẠI GD</TableCell>
-                                <TableCell>SỐ TIỀN</TableCell>
-                                <TableCell>CHI TIẾT</TableCell>
-                                <TableCell>NGÀY THỰC HIỆN</TableCell>
-                                <TableCell>TRẠNG THÁI</TableCell>
+                    <h5 className="mb-0">Tất cả Giao dịch</h5>
+                  </div>
+                  <div className="transaction-table">
+                    {loadingTransactions ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <TableContainer component={Paper}>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Ngày</TableCell>
+                              <TableCell>Mô tả</TableCell>
+                              <TableCell align="right">Số tiền</TableCell>
+                              <TableCell align="right">Trạng thái</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {transactions.map((transaction) => (
+                              <TableRow key={transaction.id}>
+                                <TableCell>{formatDateTime(transaction.createdAt)}</TableCell>
+                                <TableCell>{transaction.description}</TableCell>
+                                <TableCell align="right">
+                                  <PriceFormat price={transaction.amount} />
+                                </TableCell>
+                                <TableCell align="right">
+                                  {transaction.status}
+                                </TableCell>
                               </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {transactions.map((transaction) => (
-                                <TableRow key={transaction.id}>
-                                  <TableCell>{transaction.id}</TableCell>
-                                  <TableCell>
-                                    {transaction.transactionType}
-                                  </TableCell>
-                                  <TableCell>
-                                    <PriceFormat price={transaction.amount} />
-                                  </TableCell>
-                                  <TableCell>
-                                    {transaction.description}
-                                  </TableCell>
-                                  <TableCell>
-                                    {formatDateTime(
-                                      transaction.transactionDate
-                                    )}
-                                  </TableCell>
-                                  <TableCell>
-                                    {transaction.status
-                                      ? "Completed"
-                                      : "Pending"}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                          <Stack
-                            spacing={2}
-                            sx={{ mt: 2 }}
-                            className="pagination-controls mt-2 mb-2"
-                          >
-                            <Pagination
-                              count={totalPages}
-                              page={page}
-                              onChange={handleChangePage}
-                              variant="outlined"
-                              shape="rounded"
-                              sx={{
-                                "& .MuiPaginationItem-root": {
-                                  color: "white",
-                                  backgroundColor: "#450b00",
-                                  "&.Mui-selected": {
-                                    backgroundColor: "#ff7f50",
-                                  },
-                                  "&:hover": {
-                                    backgroundColor: "#450b00",
-                                  },
-                                },
-                              }}
-                            />
-                          </Stack>
-                        </TableContainer>
-                      ) : (
-                        <div>Không có giao dịch nào.</div>
-                      )}
-                    </div>
+                            ))}
+                          </TableBody>
+                        </Table>
+                        <Stack spacing={2} sx={{ padding: 2 }}>
+                          <Pagination
+                            count={totalPages}
+                            page={page}
+                            onChange={handleChangePage}
+                          />
+                        </Stack>
+                      </TableContainer>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
           <div className="tab-pane fade" id="feedback" role="tabpanel">
             <div className="row">
-              {loadingTickets ? (
-                <div>Loading tickets...</div>
-              ) : events.length > 0 ? (
-                events.map((event) => (
-                  <div className="col-md-12" key={event.id}>
-                    <div className="main-card mt-4">
-                      <div className="card-top p-4">
-                        <div className="card-event-img">
-                          <img
-                            src={event.event.banner}
-                            alt={event.event.eventName}
-                          />
-                        </div>
-                        <div className="card-event-dt">
-                          <h5>{event.event.eventName}</h5>
-                          <div className="evnt-time">
-                            {formatDateTime(event.eventDetail.startDate)}
-                          </div>
-                          <div className="event-btn-group">
-                            <button
-                              className="esv-btn me-2"
-                              onClick={() => navigate(`/feedback/${event.id}`)}
-                            >
-                              <i className="fa-solid fa-comments me-2" />
-                              View Feedback
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+              <div className="col-md-12">
+                <div className="main-card mt-4">
+                  <div className="card-top p-4">
+                    <h5 className="mb-0">Đánh giá sự kiện đã tham gia</h5>
                   </div>
-                ))
-              ) : (
-                <div>Không có vé nào.</div>
-              )}
-              <Stack
-                spacing={2}
-                sx={{ mt: 2 }}
-                className="pagination-controls mt-2 mb-2"
-              >
-                <Pagination
-                  count={totalTicketPages}
-                  page={ticketPage}
-                  onChange={handleChangeTicketPage}
-                  variant="outlined"
-                  shape="rounded"
-                  sx={{
-                    "& .MuiPaginationItem-root": {
-                      color: "white",
-                      backgroundColor: "#450b00",
-                      "&.Mui-selected": {
-                        backgroundColor: "#ff7f50",
-                      },
-                      "&:hover": {
-                        backgroundColor: "#450b00",
-                      },
-                    },
-                  }}
-                />
-              </Stack>
+                  <div className="ticket-table">
+                    {loadingTickets ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <TableContainer component={Paper}>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Sự kiện</TableCell>
+                              <TableCell>Ngày</TableCell>
+                              <TableCell>Địa điểm</TableCell>
+                              <TableCell>Thời gian kết thúc</TableCell>
+                              <TableCell align="right">Thao tác</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {events.map((event) => (
+                              <TableRow key={event.eventDetail.id}>
+                                <TableCell>{event.eventDetail.eventName}</TableCell>
+                                <TableCell>{formatDateTime(event.eventDetail.startDate)}</TableCell>
+                                <TableCell>{event.eventDetail.location}</TableCell>
+                                <TableCell>{formatDateTime(event.eventDetail.endDate)}</TableCell>
+                                <TableCell align="right">
+                                  {isFeedbackAllowed(event) && (
+                                    <button
+                                      className="esv-btn"
+                                      onClick={() => handleFeedbackOpen(event)}
+                                    >
+                                      Đánh giá
+                                    </button>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                        <Stack spacing={2} sx={{ padding: 2 }}>
+                          <Pagination
+                            count={totalTicketPages}
+                            page={ticketPage}
+                            onChange={handleChangeTicketPage}
+                          />
+                        </Stack>
+                      </TableContainer>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      {/* Recharge Modal */}
       <RechargeModal
-        show={showModal}
+        showModal={showModal}
         handleClose={handleClose}
         handleRecharge={handleRecharge}
       />
+      {/* Feedback Dialog */}
+      <Dialog open={feedbackDialogOpen} onClose={handleFeedbackClose}>
+        <DialogTitle>Đánh giá sự kiện</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Đánh giá"
+            type="number"
+            inputProps={{ min: 1, max: 5 }}
+            fullWidth
+            name="rate"
+            value={feedback.rate}
+            onChange={handleFeedbackChange}
+          />
+          <Rating
+            name="rate"
+            value={feedback.rate}
+            onChange={handleRatingChange}
+          />
+          <TextField
+            label="Mô tả"
+            fullWidth
+            multiline
+            rows={4}
+            name="description"
+            value={feedback.description}
+            onChange={handleFeedbackChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleFeedbackClose}>Hủy</Button>
+          <Button onClick={handleFeedbackSubmit} color="primary">
+            Gửi
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

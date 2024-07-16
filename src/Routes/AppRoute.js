@@ -18,7 +18,6 @@ import Checkout from "../pages/checkout";
 import CheckoutStall from "../pages/checkoutStall";
 import BookingConfirm from "../pages/bookingConfirm";
 import OperatorPages from "../pages/OperatorPages/OperatorMain";
-import CreateEventType from "../pages/OperatorPages/EventType/createEventType";
 import CreateEvent from "../pages/OperatorPages/EventType/createEvent";
 import UpdateEvent from "../pages/OperatorPages/EventType/updateEvent";
 import EventDetailsEdit from "../pages/OperatorPages/EventDetail-Editmode";
@@ -28,12 +27,17 @@ import EventAssignees from "../pages/OperatorPages/EventAssignee";
 import EventSponsorship from "../pages/SponsorPages/EventSponsor";
 import SponsorProfile from "../pages/sponsorProfile";
 import StaffProfile from "../pages/StaffPages/StaffProfile";
+import Invoice from "../pages/invoice";
 
 const AppRoutes = () => {
   const { role } = useAuth();
 
-  const publicRoutes = (
-    <>
+  return (
+    <Routes>
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/signup" element={<SignUp />} />
+      
+      {/* Public Routes */}
       <Route path="/explored" element={<ExploreEvent />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/helpSectionDetailView" element={<HelpSectionDetailView />} />
@@ -44,55 +48,50 @@ const AppRoutes = () => {
       <Route path="/event/:eventId" element={<EventDetails />} />
       <Route path="/Contact" element={<ContactUs />} />
       <Route path="/" element={<Home />} />
-    </>
-  );
 
-  return (
-    <>
-      <Routes>
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        
-        {(!role || role === "VISITOR" || role === "SPONSOR" || role === "ADMIN") && publicRoutes}
-        
-        {role === "VISITOR" && (
-          <>
-            <Route path="/userprofile" element={<UserProfile />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/checkoutstall" element={<CheckoutStall />} />
-            <Route path="/booking_confirmed" element={<BookingConfirm />} />
-          </>
-        )}
+      {/* Routes for Visitors */}
+      {(!role || role === "VISITOR" || role === "SPONSOR" || role === "ADMIN") && (
+        <>
+          <Route path="/userprofile" element={<UserProfile />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkoutstall" element={<CheckoutStall />} />
+          <Route path="/booking_confirmed" element={<BookingConfirm />} />
+          <Route path="/invoice/:ticketId" element={<Invoice />} />
+        </>
+      )}
 
-        {role === "SPONSOR" && (
-          <>
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/sponsorProfile" element={<SponsorProfile />} />
-            <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
-          </>
-        )}
+      {/* Routes for Sponsors */}
+      {role === "SPONSOR" && (
+        <>
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/sponsorProfile" element={<SponsorProfile />} />
+          <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
+        </>
+      )}
 
-        {role === "CHECKINGSTAFF" && (
-          <>
-            <Route path="/staffprofile" element={<StaffProfile />} />
-            <Route path="/*" element={<Navigate to="/staffprofile" />} />
-          </>
-        )}
+      {/* Routes for Checking Staff */}
+      {role === "CHECKINGSTAFF" && (
+        <>
+          <Route path="/staffprofile" element={<StaffProfile />} />
+          <Route path="/*" element={<Navigate to="/staffprofile" />} />
+        </>
+      )}
 
-        {role === "EVENTOPERATOR" && (
-          <>
-            <Route path="/operatorPages" element={<OperatorPages />} />
-            <Route path="/createEventType" element={<CreateEventType />} />
-            <Route path="/create-event" element={<CreateEvent />} />
-            <Route path="/update-event/:eventId" element={<UpdateEvent />} />
-            <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
-            <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
-            <Route path="/*" element={<Navigate to="/operatorPages" />} />
-          </>
-        )}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </>
+      {/* Routes for Event Operators */}
+      {role === "EVENTOPERATOR" && (
+        <>
+          <Route path="/operatorPages" element={<OperatorPages />} />
+          <Route path="/create-event" element={<CreateEvent />} />
+          <Route path="/update-event/:eventId" element={<UpdateEvent />} />
+          <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
+          <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
+          <Route path="/*" element={<Navigate to="/operatorPages" />} />
+        </>
+      )}
+
+      {/* Fallback Route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

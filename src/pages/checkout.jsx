@@ -99,7 +99,7 @@ function Checkout() {
           if (checkoutMode === "cart") {
             sessionStorage.removeItem("cart"); // Clear the cart after successful booking
           }
-          navigate("/transactioninfo", { state: { activeTab: "orders" } });
+          navigate("/userprofile?activeTab=orders");
         }
       });
     } catch (error) {

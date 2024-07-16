@@ -1,162 +1,208 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import QRCode from "qrcode.react";
+import { getProfileAPI, getTicketInforAPI } from "../components/services/userServices";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useParams } from "react-router-dom";
+import {
+  Container,
+  Paper,
+  Typography,
+  Grid,
+  Button,
+  Box,
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Card,
+  CardMedia,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import { formatDateTime, PriceFormat } from "../utils/tools";
 
-function invoice() {
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  marginTop: theme.spacing(4),
+  backgroundColor: "#f5f5f5",
+}));
+
+const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(4),
+  backgroundColor: "#ffffff",
+}));
+
+const TicketPage = () => {
+  const { ticketId } = useParams();
+  const [profile, setProfile] = useState(null);
+  const [ticketInfo, setTicketInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const profileData = await getProfileAPI();
+        setProfile(profileData);
+        const ticketData = await getTicketInforAPI(ticketId);
+        setTicketInfo(ticketData);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, [ticketId]);
+
+  const generatePDF = () => {
+    const input = document.getElementById("ticket");
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [canvas.width, canvas.height],
+      });
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save("ticket.pdf");
+    });
+  };
+
+  if (!profile || !ticketInfo) {
+    return <Typography variant="h5" align="center">Loading...</Typography>;
+  }
+
+  const { event, eventDetail, transaction } = ticketInfo;
+
   return (
-    <div>
-      <div className="invoice clearfix">
-        <div className="container">
-          <div className="row justify-content-md-center">
-            <div className="col-lg-8 col-md-10">
-              <div className="invoice-header justify-content-between">
-                <div className="invoice-header-logo">
-                  <img src="./assets/images/dark-logo.svg" alt="invoice-logo" />
-                </div>
-                <div className="invoice-header-text">
-                  <a href="#" className="download-link">
-                    Download
-                  </a>
-                </div>
-              </div>
-              <div className="invoice-body">
-                <div className="invoice_dts">
-                  <div className="row">
-                    <div className="col-md-12">
-                      <h2 className="invoice_title">Invoice</h2>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="vhls140">
-                        <ul>
-                          <li>
-                            <div className="vdt-list">Invoice to John Doe</div>
-                          </li>
-                          <li>
-                            <div className="vdt-list">140 St Kilda Rd</div>
-                          </li>
-                          <li>
-                            <div className="vdt-list">Melbourne, Victoria</div>
-                          </li>
-                          <li>
-                            <div className="vdt-list">3000, Australia</div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="vhls140">
-                        <ul>
-                          <li>
-                            <div className="vdt-list">
-                              Invoice ID : YCCURW-000000
-                            </div>
-                          </li>
-                          <li>
-                            <div className="vdt-list">
-                              Order Date : 10/05/2022
-                            </div>
-                          </li>
-                          <li>
-                            <div className="vdt-list">Near MBD Mall,</div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="main-table bt_40">
-                  <div className="table-responsive">
-                    <table className="table">
-                      <thead className="thead-dark">
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Event Details</th>
-                          <th scope="col">Type</th>
-                          <th scope="col">Qty</th>
-                          <th scope="col">Unit Price</th>
-                          <th scope="col">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>
-                            <a href="#" target="_blank">
-                              Tutorial on Canvas Painting for Beginners
-                            </a>
-                          </td>
-                          <td>Online</td>
-                          <td>1</td>
-                          <td>$75.00</td>
-                          <td>$75.00</td>
-                        </tr>
-                        <tr>
-                          <td colSpan={1} />
-                          <td colSpan={5}>
-                            <div className="user_dt_trans text-end pe-xl-4">
-                              <div className="totalinv2">
-                                Invoice Total : USD $36.00
-                              </div>
-                              <p>Paid via Paypal</p>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className="invoice_footer">
-                  <div className="cut-line">
-                    <i className="fa-solid fa-scissors" />
-                  </div>
-                  <div className="main-card">
-                    <div className="row g-0">
-                      <div className="col-lg-7">
-                        <div className="event-order-dt p-4">
-                          <div className="event-thumbnail-img">
-                            <img src="./assets/images/event-imgs/img-7.jpg" alt />
-                          </div>
-                          <div className="event-order-dt-content">
-                            <h5>Tutorial on Canvas Painting for Beginners</h5>
-                            <span>Wed, Jun 01, 2022 5:30 AM. Duration 1h</span>
-                            <div className="buyer-name">John Doe</div>
-                            <div className="booking-total-tickets">
-                              <i className="fa-solid fa-ticket rotate-icon" />
-                              <span className="booking-count-tickets mx-2">
-                                1
-                              </span>
-                              x Ticket
-                            </div>
-                            <div className="booking-total-grand">
-                              Total : <span>$75.00</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-lg-5">
-                        <div className="QR-dt p-4">
-                          <ul className="QR-counter-type">
-                            <li>Online</li>
-                            <li>Counter</li>
-                            <li>0000000001</li>
-                          </ul>
-                          <div className="QR-scanner">
-                            <img src="./assets/images/qr.png" alt="QR-Ticket-Scanner" />
-                          </div>
-                          <p>Powered by Barren</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="cut-line">
-                    <i className="fa-solid fa-scissors" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Container>
+      <StyledPaper elevation={3} id="ticket">
+        <Grid container justifyContent="center">
+          <Grid item xs={12} md={8}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+              <img
+                src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/logo%2Flogo.svg?alt=media&token=6e50aaa8-2c91-4596-9b11-e407bb6694e3"
+                alt="invoice-logo"
+                style={{ maxHeight: 50 }}
+              />
+            </Box>
+            <Box mb={4}>
+              <Typography variant="h4" align="center" gutterBottom>
+                HÓA ĐƠN THANH TOÁN
+              </Typography>
+              <Divider />
+              <Grid container spacing={2} mt={2}>
+                <Grid item xs={6}>
+                  <Typography variant="h6">Thông tin người mua</Typography>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary={profile.name} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText primary={`Email: ${profile.email}`} />
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="h6">Thông tin hóa đơn</Typography>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary={`Số Hóa đơn: ${transaction.id}`} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText primary={`Ngày đặt: ${formatDateTime(transaction.transactionDate)}`} />
+                    </ListItem>
+                  </List>
+                </Grid>
+              </Grid>
+            </Box>
+            <StyledTableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>#</TableCell>
+                    <TableCell>Thông tin sự kiện</TableCell>
+                    <TableCell>Loại</TableCell>
+                    <TableCell>Số lượng</TableCell>
+                    <TableCell>Đơn giá</TableCell>
+                    <TableCell>Tổng</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>1</TableCell>
+                    <TableCell>{event.eventName}</TableCell>
+                    <TableCell>{event.category}</TableCell>
+                    <TableCell>1</TableCell>
+                    <TableCell><PriceFormat price={eventDetail.ticketPrice}/></TableCell>
+                    <TableCell><PriceFormat price={eventDetail.ticketPrice}/></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={1} />
+                    <TableCell colSpan={5}>
+                      <Box textAlign="right" pr={4}>
+                        <Typography variant="h6">Tổng hóa đơn: <PriceFormat price={eventDetail.ticketPrice}/></Typography>
+                        <Typography>Thanh toán qua FEventWallet</Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </StyledTableContainer>
+            <Box mb={4}>
+              <Divider />
+              <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+                <Card sx={{ width: '100%', backgroundColor: '#fafafa', marginBottom: 2 }}>
+                  <CardMedia
+                    component="img"
+                    height="300"
+                    image={event.banner}
+                    alt="Event Thumbnail"
+                  />
+                </Card>
+              </Box>
+              <Box mb={4}>
+                <Typography variant="h5" align="center">{event.eventName}</Typography>
+                <Typography variant="subtitle1" align="center" color="text.secondary">
+                  {formatDateTime(eventDetail.startDate)} - {formatDateTime(eventDetail.endDate)}
+                </Typography>
+                <Typography align="center">{profile.name}</Typography>
+                <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
+                  <Typography><i className="fa-solid fa-ticket rotate-icon"></i></Typography>
+                  <Typography mx={2}>1 x Ticket</Typography>
+                </Box>
+                <Typography align="center">Tổng: <PriceFormat price={eventDetail.ticketPrice}/></Typography>
+              </Box>
+              <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" mt={4}>
+                <QRCode value={transaction.id} size={200} />
+                <Typography mt={2} align="center">
+                  Mã QR code được sử dụng để check in tại sự kiện, vui lòng không chia sẻ mã này cho người khác
+                </Typography>
+                <Typography align="center">Ghế ngồi ngẫu nhiên.</Typography>
+              </Box>
+              <Divider />
+            </Box>
+            <Box display="flex" justifyContent="center" mt={2}>
+              <Button variant="contained" color="primary" onClick={generatePDF} sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}>
+                Tải xuống vé PDF
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+      </StyledPaper>
+    </Container>
   );
-}
+};
 
-export default invoice;
+export default TicketPage;

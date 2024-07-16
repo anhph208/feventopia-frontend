@@ -95,7 +95,7 @@ function CheckoutStall() {
       // Navigate after the toast disappears
       toast.onChange((payload) => {
         if (payload.status === "removed" && payload.id === toastId) {
-          navigate("/userprofile", { state: { activeTab: "orders" } });
+          navigate("/userprofile?activeTab=orders");
         }
       });
     } catch (error) {
