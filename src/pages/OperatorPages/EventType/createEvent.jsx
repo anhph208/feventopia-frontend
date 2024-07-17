@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createEventAPI } from "../../../components/services/userServices";
 import {
@@ -15,51 +15,16 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // import styles for react-quill
-import { formatDateTime, PriceFormat } from "../../../utils/tools";// Assuming this is the correct path
+import { formatDateTime, PriceFormat } from "../../../utils/tools"; // Assuming this is the correct path
 
 const Input = styled("input")({
   display: "none",
 });
 
 // Custom toolbar options
-const modules = {
-  toolbar: [
-    [{ font: [] }],
-    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
-    ["bold", "underline", "strike"], // toggled buttons
-    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-    [{ script: "sub" }, { script: "super" }], // superscript/subscript
-    [{ header: "1" }, { header: "2" }, "blockquote", "code-block"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ direction: "rtl" }, { align: [] }],
-    ["link", "image", "video"],
-    ["clean"], // remove formatting button
-  ],
-};
-
-const formats = [
-  "font",
-  "size",
-  "bold",
-  "underline",
-  "strike",
-  "color",
-  "background",
-  "script",
-  "header",
-  "blockquote",
-  "code-block",
-  "list",
-  "bullet",
-  "direction",
-  "align",
-  "link",
-  "image",
-  "video",
-];
-
-function CreateEvent() {
+const CreateEvent = () => {
   const navigate = useNavigate();
+  const quillRef = useRef(null);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [formData, setFormData] = useState({
     eventName: "",
@@ -69,7 +34,9 @@ function CreateEvent() {
     category: "",
   });
 
-  const [errors, setErrors] = useState({initialCapital :false});
+  const [errors, setErrors] = useState({
+    initialCapital: false,
+  });
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleChange = (e) => {
@@ -102,6 +69,64 @@ function CreateEvent() {
     });
   };
 
+  const modules = {
+    toolbar: {
+      container: [
+        [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+        [{size: []}],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{'list': 'ordered'}, {'list': 'bullet'}, 
+         {'indent': '-1'}, {'indent': '+1'}],
+        ['link', 'image', 'video'],
+        ['clean']                                         
+      ],
+      handlers: {
+        image: function() {
+          const input = document.createElement('input');
+          input.setAttribute('type', 'file');
+          input.setAttribute('accept', 'image/*');
+          input.click();
+  
+          input.onchange = async () => {
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+  
+            // Perform the image upload logic here, for example, uploading to Firebase
+            const storageRef = ref(storage, `event-images/${file.name}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const imageUrl = await getDownloadURL(snapshot.ref);
+  
+            // Insert the image into the editor
+            const quill = this.quill;
+            const range = quill.getSelection();
+            quill.insertEmbed(range.index, 'image', imageUrl);
+          };
+        }
+      }
+    }}
+
+  const formats = [
+    "font",
+    "size",
+    "bold",
+    "underline",
+    "strike",
+    "color",
+    "background",
+    "script",
+    "header",
+    "blockquote",
+    "code-block",
+    "list",
+    "bullet",
+    "direction",
+    "align",
+    "link",
+    "image",
+    "video",
+  ];
+
   const validateForm = () => {
     let tempErrors = {};
     tempErrors.eventName = formData.eventName ? "" : "Tên sự kiện là bắt buộc";
@@ -110,14 +135,14 @@ function CreateEvent() {
         ? ""
         : "Vốn sự kiện không thể là số âm";
     tempErrors.category = formData.category ? "" : "Danh mục là bắt buộc";
-    tempErrors.eventDescription = formData.eventDescription ? "" : "Mô tả sự kiện là bắt buộc";
+    tempErrors.eventDescription = formData.eventDescription
+      ? ""
+      : "Mô tả sự kiện là bắt buộc";
     tempErrors.banner = formData.banner ? "" : "Banner sự kiện là bắt buộc";
 
     setErrors(tempErrors);
     return Object.values(tempErrors).every((x) => x === "");
   };
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -236,8 +261,13 @@ function CreateEvent() {
                                     <Typography className="form-label fs-16">
                                       Vốn Sự kiện*
                                     </Typography>
-                                    <Typography className="mt-2 fs-14 d-block mb-3">
-                                      Nhập số vốn ban đầu cần thiết cho Sự kiện.
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                      className="mt-2 d-block fs-14 mb-3"
+                                    >
+                                      Hãy nhập số vốn dự tính cần thiết cho Sự
+                                      kiện.
                                     </Typography>
                                     <TextField
                                       fullWidth
@@ -254,7 +284,10 @@ function CreateEvent() {
                                     <Typography variant="body2">
                                       Số tiền nhập:{" "}
                                       <PriceFormat
-                                        price={parseInt(formData.initialCapital, 10)}
+                                        price={parseInt(
+                                          formData.initialCapital,
+                                          10
+                                        )}
                                       />
                                     </Typography>
                                   </Box>
@@ -303,11 +336,15 @@ function CreateEvent() {
                                       </Typography>
                                     )}
                                   </Box>
-                                  <Box className="form-group border_bottom pb_30" style={{ height: 400 }}>
+                                  <Box
+                                    className="form-group border_bottom pb_30"
+                                    style={{ height: 400 }}
+                                  >
                                     <Typography className="form-label fs-16">
                                       Chi tiết Sự kiện*
                                     </Typography>
                                     <ReactQuill
+                                      ref={quillRef}
                                       value={formData.eventDescription}
                                       onChange={handleDescriptionChange}
                                       modules={modules}
@@ -360,6 +397,6 @@ function CreateEvent() {
       </Box>
     </Box>
   );
-}
+};
 
 export default CreateEvent;

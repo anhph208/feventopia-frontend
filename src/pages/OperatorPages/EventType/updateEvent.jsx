@@ -17,19 +17,41 @@ const Input = styled("input")({
 
 // Custom toolbar options
 const modules = {
-  toolbar: [
-    [{ 'font': [] }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-    [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-    [{ 'header': '1'}, { 'header': '2' }, 'blockquote', 'code-block'],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'direction': 'rtl' }, { 'align': [] }],
-    ['link', 'image', 'video'],
-    ['clean'],                                         // remove formatting button
-  ],
-};
+  toolbar: {
+    container: [
+      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+      [{size: []}],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, 
+       {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image', 'video'],
+      ['clean']                                         
+    ],
+    handlers: {
+      image: function() {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+          const file = input.files[0];
+          const formData = new FormData();
+          formData.append('image', file);
+
+          // Perform the image upload logic here, for example, uploading to Firebase
+          const storageRef = ref(storage, `event-images/${file.name}`);
+          const snapshot = await uploadBytes(storageRef, file);
+          const imageUrl = await getDownloadURL(snapshot.ref);
+
+          // Insert the image into the editor
+          const quill = this.quill;
+          const range = quill.getSelection();
+          quill.insertEmbed(range.index, 'image', imageUrl);
+        };
+      }
+    }
+  }}
 
 const formats = [
   'font',
