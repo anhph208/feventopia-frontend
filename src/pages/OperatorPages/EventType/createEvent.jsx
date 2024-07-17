@@ -20,6 +20,55 @@ import { formatDateTime, PriceFormat } from "../../../utils/tools"; // Assuming 
 const Input = styled("input")({
   display: "none",
 });
+const modules = {
+  toolbar: {
+    container: [
+      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+      [{size: []}],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, 
+       {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image', 'video'],
+      ['clean']                                         
+    ],
+    handlers: {
+      image: function() {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+          const file = input.files[0];
+          const formData = new FormData();
+          formData.append('image', file);
+
+          // Perform the image upload logic here, for example, uploading to Firebase
+          const storageRef = ref(storage, `event-images/${file.name}`);
+          const snapshot = await uploadBytes(storageRef, file);
+          const imageUrl = await getDownloadURL(snapshot.ref);
+
+          // Insert the image into the editor
+          const quill = this.quill;
+          const range = quill.getSelection();
+          quill.insertEmbed(range.index, 'image', imageUrl);
+        };
+      }
+    }
+  }}
+
+const formats = [
+  'font',
+  'size',
+  'bold', 'italic', 'underline', 'strike',
+  'color', 'background',
+  'script',
+  'header', 'blockquote', 'code-block',
+  'list', 'bullet',
+  'direction', 'align',
+  'link', 'image', 'video'
+];
+
 
 // Custom toolbar options
 const CreateEvent = () => {
@@ -68,64 +117,6 @@ const CreateEvent = () => {
       eventDescription: value,
     });
   };
-
-  const modules = {
-    toolbar: {
-      container: [
-        [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-        [{size: []}],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{'list': 'ordered'}, {'list': 'bullet'}, 
-         {'indent': '-1'}, {'indent': '+1'}],
-        ['link', 'image', 'video'],
-        ['clean']                                         
-      ],
-      handlers: {
-        image: function() {
-          const input = document.createElement('input');
-          input.setAttribute('type', 'file');
-          input.setAttribute('accept', 'image/*');
-          input.click();
-  
-          input.onchange = async () => {
-            const file = input.files[0];
-            const formData = new FormData();
-            formData.append('image', file);
-  
-            // Perform the image upload logic here, for example, uploading to Firebase
-            const storageRef = ref(storage, `event-images/${file.name}`);
-            const snapshot = await uploadBytes(storageRef, file);
-            const imageUrl = await getDownloadURL(snapshot.ref);
-  
-            // Insert the image into the editor
-            const quill = this.quill;
-            const range = quill.getSelection();
-            quill.insertEmbed(range.index, 'image', imageUrl);
-          };
-        }
-      }
-    }}
-
-  const formats = [
-    "font",
-    "size",
-    "bold",
-    "underline",
-    "strike",
-    "color",
-    "background",
-    "script",
-    "header",
-    "blockquote",
-    "code-block",
-    "list",
-    "bullet",
-    "direction",
-    "align",
-    "link",
-    "image",
-    "video",
-  ];
 
   const validateForm = () => {
     let tempErrors = {};
