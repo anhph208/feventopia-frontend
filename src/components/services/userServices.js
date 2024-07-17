@@ -488,6 +488,24 @@ export const CancelEventAPI = async (eventId) => {
   }
 };
 
+export const DeleteEventAPI = async (eventDetailsId) => {
+  try {
+    const response = await config.delete("/event-details/DeleteEventDetail", {
+      params: {
+        id: eventDetailsId,
+      },
+    });
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    throw error;
+  }
+};
+
 export const getAllEventCheckInAPI = async (pageNumber = 1, pageSize = 5) => {
   try {
     const response = await config.get(
@@ -847,6 +865,62 @@ export const sendconfirmEmailAPI = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching Staff:", error);
+    throw error;
+  }
+};
+
+export const getAllStafflAPI = async () => {
+  try {
+    const response = await config.get(`/user/management/GetAllStaffAccount`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Staff:", error);
+    throw error;
+  }
+};
+
+
+export const getSponsoredCurrentEventAPI = async (eventId,
+  pageNumber = 1,
+  pageSize = 5
+) => {
+  try {
+    const response = await config.get("/agreement/GetAllAgreementCurrentEvent", {
+      params: {
+        eventId,
+        PageNumber: pageNumber,
+        PageSize: pageSize,
+      },
+    });
+
+    if (response.status === 200) {
+      const pagination = JSON.parse(response.headers["x-pagination"]);
+      return {
+        data: response.data,
+        pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
+      };
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching sponsored events:", error);
+    throw error;
+  }
+};
+
+export const postRangeEventAssignee = async (accountData, eventDetailId) => {
+  try {
+    const response = await config.post(`/eventassignee/AddRangeEventAssignee`, accountData, {
+      params: {eventDetailId}
+    });
+
+    if (response.status === 200) {
+      return response.data; // Return the created order details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error creating event order:", error);
     throw error;
   }
 };

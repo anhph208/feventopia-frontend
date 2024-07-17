@@ -321,52 +321,60 @@ const DashBoardTab = () => {
             </div>
             <h5 className="mb-4">Trạng thái Sự kiện</h5>
             <div className="nav custom2-tabs btn-group" role="tablist">
-              <button
-                className={`tab-link ${status === null ? "active" : ""}`}
-                onClick={() => handleStatusChange(null)}
-              >
-                Tất cả
-              </button>
-              <button
-                className={`tab-link ${status === "INITIAL" ? "active" : ""}`}
-                onClick={() => handleStatusChange("INITIAL")}
-              >
-                INITIAL
-              </button>
-              <button
-                className={`tab-link ${
-                  status === "FUNDRAISING" ? "active" : ""
-                }`}
-                onClick={() => handleStatusChange("FUNDRAISING")}
-              >
-                FUNDRAISING
-              </button>
-              <button
-                className={`tab-link ${
-                  status === "PREPARATION" ? "active" : ""
-                }`}
-                onClick={() => handleStatusChange("PREPARATION")}
-              >
-                PREPARATION
-              </button>
-              <button
-                className={`tab-link ${status === "EXECUTE" ? "active" : ""}`}
-                onClick={() => handleStatusChange("EXECUTE")}
-              >
-                EXECUTE
-              </button>
-              <button
-                className={`tab-link ${status === "POST" ? "active" : ""}`}
-                onClick={() => handleStatusChange("POST")}
-              >
-                POST
-              </button>
-              <button
-                className={`tab-link ${status === "CANCELED" ? "active" : ""}`}
-                onClick={() => handleStatusChange("CANCELED")}
-              >
-                CANCELED
-              </button>
+            <button
+                      className={`tab-link ${status === null ? "active" : ""}`}
+                      onClick={() => handleStatusChange(null)}
+                    >
+                      Tất cả
+                    </button>
+                    <button
+                      className={`tab-link ${
+                        status === "INITIAL" ? "active" : ""
+                      }`}
+                      onClick={() => handleStatusChange("INITIAL")}
+                    >
+                      KHỞI ĐỘNG
+                    </button>
+                    <button
+                      className={`tab-link ${
+                        status === "FUNDRAISING" ? "active" : ""
+                      }`}
+                      onClick={() => handleStatusChange("FUNDRAISING")}
+                    >
+                      GỌI TÀI TRỢ
+                    </button>
+                    <button
+                      className={`tab-link ${
+                        status === "PREPARATION" ? "active" : ""
+                      }`}
+                      onClick={() => handleStatusChange("PREPARATION")}
+                    >
+                      CHUẨN BỊ
+                    </button>
+                    <button
+                      className={`tab-link ${
+                        status === "EXECUTE" ? "active" : ""
+                      }`}
+                      onClick={() => handleStatusChange("EXECUTE")}
+                    >
+                      TRIỂN KHAI
+                    </button>
+                    <button
+                      className={`tab-link ${
+                        status === "POST" ? "active" : ""
+                      }`}
+                      onClick={() => handleStatusChange("POST")}
+                    >
+                      HOÀN THÀNH
+                    </button>
+                    <button
+                      className={`tab-link ${
+                        status === "CANCELED" ? "active" : ""
+                      }`}
+                      onClick={() => handleStatusChange("CANCELED")}
+                    >
+                      ĐÃ HỦY
+                    </button>
             </div>
           </div>
         </div>

@@ -104,7 +104,7 @@ function Checkout() {
       });
     } catch (error) {
       console.error("Error creating order:", error);
-      toast.error("Error creating order");
+      toast.error("Lỗi mua vé. Vui lòng Tải lại trang");
     } finally {
       setIsSubmitting(false);
     }

@@ -52,15 +52,13 @@ const EvOAdminHeader = () => {
 
   const handleLogoutClick = () => {
     logout(); // Use the logout function from AuthContext
-    toast.success("Đăng xuất thành công.", {
-      onClose: () => setTimeout(() => navigate("/signin"), 1000),
-    });
+    toast.success("Đăng xuất thành công.");
+    navigate("/signin")
   };
   const handleSessionExp = () => {
     logout(); // Use the logout function from AuthContext
-    toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.", {
-      onClose: () => setTimeout(() => navigate("/signin"), 1000),
-    });
+    toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.")
+    navigate("/signin")
   };
 
   const handleMenu = (event) => {
@@ -171,7 +169,7 @@ const EvOAdminHeader = () => {
             className="create-btn btn-hover"
             style={{ color: "inherit", textDecoration: "none" }}
           >
-            Login
+            ĐĂNG NHẬP
           </Link>
         )}
       </Toolbar>

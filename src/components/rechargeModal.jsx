@@ -13,7 +13,6 @@ import {
 import { PriceFormat } from "../utils/tools"; // Import the PriceFormat component
 import { toast } from "react-toastify";
 
-
 const RechargeModal = ({ show, handleClose, handleRecharge }) => {
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
@@ -25,18 +24,26 @@ const RechargeModal = ({ show, handleClose, handleRecharge }) => {
 
     // Validate the amount
     if (isNaN(amountValue) || amountValue < 10000 || amountValue > 999999999) {
-      toast.error("Vui lòng nhập số tiền từ 10.000đ");
+      setError("Vui lòng nhập số tiền từ 10.000đ đến 999.999.999đ.");
+      toast.error("Vui lòng nhập số tiền từ 10.000đ đến 999.999.999đ.");
       return;
     }
 
-    handleRecharge(amount);
+    handleRecharge(amountValue);
     setAmount(""); // Reset amount after submission
-    setError("");  // Reset error after successful submission
+    setError(""); // Reset error after successful submission
     setTermsAccepted(false); // Reset terms accepted after submission
   };
 
   const handleAmountChange = (e) => {
     setAmount(e.target.value);
+    if (e.target.value < 10000) {
+      setError("Số tiền không được nhỏ hơn 10.000đ.");
+    } else if (e.target.value > 999999999) {
+      setError("Số tiền không được lớn hơn 999.999.999đ.");
+    } else {
+      setError("");
+    }
   };
 
   const handleTermsChange = (e) => {
@@ -55,17 +62,18 @@ const RechargeModal = ({ show, handleClose, handleRecharge }) => {
             onChange={handleAmountChange}
             fullWidth
             margin="normal"
+            error={!!error}
+            helperText={error}
+            InputProps={{
+              inputProps: {
+                min: 0,
+              },
+            }}
             required
           />
           {amount && !error && (
             <Typography variant="body2">
-              Sô tiền nhập:{" "}
-              <PriceFormat price={parseInt(amount, 10)} />
-            </Typography>
-          )}
-          {error && (
-            <Typography color="error" variant="body2">
-              {error}
+              Số tiền nhập: <PriceFormat price={parseInt(amount, 10)} />
             </Typography>
           )}
           <FormControlLabel
@@ -78,20 +86,24 @@ const RechargeModal = ({ show, handleClose, handleRecharge }) => {
             }
             label="Tôi đồng ý với Điều khoản sử dụng của"
           />
-          <img src="https://pay.vnpay.vn/images/brands/logo-en.svg" alt="VNPay" style={{ width: '18%', marginTop: 5 }} />
-          <p>
-            Bằng cách xác nhận Điều khoản Sử dụng, bạn đồng ý 
-            và tuân thủ các Điều khoản và điều kiện đi kèm.
-          </p>
+          <img
+            src="https://pay.vnpay.vn/images/brands/logo-en.svg"
+            alt="VNPay"
+            style={{ width: "18%", marginTop: 5 }}
+          />
+          <Typography variant="body2" style={{ marginTop: 10 }}>
+            Bằng cách xác nhận Điều khoản Sử dụng, bạn đồng ý và tuân thủ các
+            Điều khoản và điều kiện đi kèm.
+          </Typography>
           <DialogActions>
             <Button
               variant="contained"
               type="submit"
               disabled={!termsAccepted}
               sx={{
-                backgroundColor: '#450b00',
-                '&:hover': {
-                  backgroundColor: '#ff7f50',
+                backgroundColor: "#450b00",
+                "&:hover": {
+                  backgroundColor: "#ff7f50",
                 },
               }}
             >
@@ -101,11 +113,11 @@ const RechargeModal = ({ show, handleClose, handleRecharge }) => {
               variant="outlined"
               onClick={handleClose}
               sx={{
-                borderColor: '#450b00',
-                color: '#450b00',
-                '&:hover': {
-                  borderColor: '#ff7f50',
-                  color: '#ff7f50',
+                borderColor: "#450b00",
+                color: "#450b00",
+                "&:hover": {
+                  borderColor: "#ff7f50",
+                  color: "#ff7f50",
                 },
               }}
             >

@@ -73,39 +73,24 @@ const sponsorItems = [
 // Define feature items for the home page
 const featureItems = [
   {
-    image: "./assets/images/icons/venue-events.png",
-    altText: "Venue Events",
-    title: "Venue Events",
-    description:
-      "Create outstanding event page for your venue events, attract attendees and sell more tickets.",
-  },
-  {
     image: "./assets/images/icons/webinar.png",
     altText: "Webinar",
-    title: "Webinar",
-    description:
-      "Webinars tend to be one-way events. Barren helps to make them more engaging.",
+    title: "Dễ dàng nắm bắt",
   },
   {
     image: "./assets/images/icons/training-workshop.png",
     altText: "Training & Workshop",
-    title: "Training & Workshop",
-    description:
-      "Create and host profitable workshops and training sessions online, sell tickets and earn money.",
+    title: "Dễ dàng thanh toán",
   },
   {
     image: "./assets/images/icons/online-class.png",
     altText: "Online Class",
-    title: "Online Class",
-    description:
-      "Try our e-learning template to create a fantastic e-learning event page and drive engagement.",
+    title: "Dễ dàng chia sẻ",
   },
   {
     image: "./assets/images/icons/talk-show.png",
     altText: "Talk Show",
-    title: "Talk Show",
-    description:
-      "Use our intuitive built-in event template to create and host an engaging Talk Show.",
+    title: "Dễ dàng đánh giá",
   },
 ];
 
@@ -288,7 +273,6 @@ function Home() {
                                 alt={event.eventName}
                               />
                             </Link>
-                            <span className="bookmark-icon" title="Bookmark" />
                           </div>
                           <div className="event-content">
                             <Link
@@ -303,7 +287,7 @@ function Home() {
                             </Link>
                             {event.status === "POST" ? (
                               <div className="event-ended">
-                                <strong>Sự kiện đã kết thúc</strong>
+                                <strong>SỰ KIỆN ĐÃ KẾT THÚC</strong>
                               </div>
                             ) : (
                               <div className="duration-price-remaining">
@@ -370,12 +354,8 @@ function Home() {
           <div className="row">
             <div className="col-lg-10">
               <div className="main-title">
-                <h3>Host Engaging Online and Venue Events with Barren</h3>
-                <p>
-                  Organise venue events and host online events with unlimited
-                  possibilities using our built-in virtual event platform. Build
-                  a unique event experience for you and your attendees.
-                </p>
+                <h3>FEVENTOPIA - BÙNG NỔ SỰ KIỆN CÙNG ĐẠI HỌC FPT</h3>
+                <p>Giao diện thân thiện, dễ sử dụng và tối ưu hóa.</p>
               </div>
             </div>
             <div className="col-lg-12">

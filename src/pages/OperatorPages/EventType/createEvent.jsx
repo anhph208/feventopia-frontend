@@ -15,6 +15,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // import styles for react-quill
+import { formatDateTime, PriceFormat } from "../../../utils/tools";// Assuming this is the correct path
 
 const Input = styled("input")({
   display: "none",
@@ -23,29 +24,38 @@ const Input = styled("input")({
 // Custom toolbar options
 const modules = {
   toolbar: [
-    [{ 'font': [] }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-    ['bold', 'underline', 'strike'],        // toggled buttons
-    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-    [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-    [{ 'header': '1'}, { 'header': '2' }, 'blockquote', 'code-block'],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'direction': 'rtl' }, { 'align': [] }],
-    ['link', 'image', 'video'],
-    ['clean'],                                         // remove formatting button
+    [{ font: [] }],
+    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+    ["bold", "underline", "strike"], // toggled buttons
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    [{ header: "1" }, { header: "2" }, "blockquote", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ direction: "rtl" }, { align: [] }],
+    ["link", "image", "video"],
+    ["clean"], // remove formatting button
   ],
 };
 
 const formats = [
-  'font',
-  'size',
-  'bold', 'underline', 'strike',
-  'color', 'background',
-  'script',
-  'header', 'blockquote', 'code-block',
-  'list', 'bullet',
-  'direction', 'align',
-  'link', 'image', 'video'
+  "font",
+  "size",
+  "bold",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "script",
+  "header",
+  "blockquote",
+  "code-block",
+  "list",
+  "bullet",
+  "direction",
+  "align",
+  "link",
+  "image",
+  "video",
 ];
 
 function CreateEvent() {
@@ -56,9 +66,10 @@ function CreateEvent() {
     eventDescription: "",
     banner: "",
     initialCapital: "",
-    category: 0,
+    category: "",
   });
 
+  const [errors, setErrors] = useState({initialCapital :false});
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleChange = (e) => {
@@ -91,8 +102,27 @@ function CreateEvent() {
     });
   };
 
+  const validateForm = () => {
+    let tempErrors = {};
+    tempErrors.eventName = formData.eventName ? "" : "Tên sự kiện là bắt buộc";
+    tempErrors.initialCapital =
+      formData.initialCapital && formData.initialCapital >= 0
+        ? ""
+        : "Vốn sự kiện không thể là số âm";
+    tempErrors.category = formData.category ? "" : "Danh mục là bắt buộc";
+    tempErrors.eventDescription = formData.eventDescription ? "" : "Mô tả sự kiện là bắt buộc";
+    tempErrors.banner = formData.banner ? "" : "Banner sự kiện là bắt buộc";
+
+    setErrors(tempErrors);
+    return Object.values(tempErrors).every((x) => x === "");
+  };
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     setSubmitLoading(true);
     try {
       let bannerUrl = formData.banner;
@@ -106,20 +136,18 @@ function CreateEvent() {
       const eventData = {
         ...formData,
         banner: bannerUrl,
-        eventDescription: formData.eventDescription,
       };
 
       const response = await createEventAPI(eventData, formData.category);
-      console.log("Event created successfully:", response);
       toast.success("Sự kiện được tạo thành công", {
         onClose: () => {
           navigate(`/edit-eventdetails/${response.id}`);
         },
-        autoClose: 1000,
+        autoClose: 2000,
       });
     } catch (error) {
       console.error("Error creating event:", error);
-      toast.error("Failed to create event");
+      toast.error("Tạo sự kiện thất bại, vui lòng thử lại");
     } finally {
       setSubmitLoading(false);
     }
@@ -175,6 +203,8 @@ function CreateEvent() {
                                       onChange={handleChange}
                                       placeholder="Nhập tên Sự kiện"
                                       required
+                                      error={!!errors.eventName}
+                                      helperText={errors.eventName}
                                     />
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
@@ -193,11 +223,13 @@ function CreateEvent() {
                                       value={formData.category}
                                       onChange={handleChange}
                                       required
+                                      error={!!errors.category}
+                                      helperText={errors.category}
                                     >
                                       <MenuItem value="0">TALKSHOW</MenuItem>
-                                      <MenuItem value="1">ÂM NHẠC</MenuItem>
+                                      <MenuItem value="1">CUỘC THI</MenuItem>
                                       <MenuItem value="2">FESTIVAL</MenuItem>
-                                      <MenuItem value="3">CUỘC THI</MenuItem>
+                                      <MenuItem value="3">ÂM NHẠC</MenuItem>
                                     </TextField>
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
@@ -216,7 +248,15 @@ function CreateEvent() {
                                       onChange={handleChange}
                                       placeholder="Nhập Vốn Sự kiện"
                                       required
+                                      error={!!errors.initialCapital}
+                                      helperText={errors.initialCapital}
                                     />
+                                    <Typography variant="body2">
+                                      Số tiền nhập:{" "}
+                                      <PriceFormat
+                                        price={parseInt(formData.initialCapital, 10)}
+                                      />
+                                    </Typography>
                                   </Box>
                                   <Box className="form-group pt_30 pb_30">
                                     <Typography className="form-label fs-16">
@@ -257,6 +297,11 @@ function CreateEvent() {
                                         )}
                                       </Box>
                                     </Box>
+                                    {errors.banner && (
+                                      <Typography color="error">
+                                        {errors.banner}
+                                      </Typography>
+                                    )}
                                   </Box>
                                   <Box className="form-group border_bottom pb_30" style={{ height: 400 }}>
                                     <Typography className="form-label fs-16">
@@ -269,6 +314,11 @@ function CreateEvent() {
                                       formats={formats}
                                       style={{ height: "300px" }}
                                     />
+                                    {errors.eventDescription && (
+                                      <Typography color="error">
+                                        {errors.eventDescription}
+                                      </Typography>
+                                    )}
                                   </Box>
                                 </Box>
                               </Box>

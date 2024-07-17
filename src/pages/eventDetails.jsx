@@ -166,6 +166,14 @@ function EventDetails() {
     }));
   };
 
+  const generateStallOptions = (stallCount) => {
+    const options = [];
+    for (let i = 1; i <= stallCount; i++) {
+      options.push({ value: `A${i}`, label: `A${i}` });
+    }
+    return options;
+  };
+
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -373,6 +381,7 @@ function EventDetails() {
                                     onChange={(value) =>
                                       handleStallChange(eventDetail.id, value)
                                     }
+                                    options={generateStallOptions(eventDetail.stallForSaleInventory)}
                                     placeholder="Chọn hoặc nhập gian hàng"
                                     value={
                                       selectedStalls[eventDetail.id] || null
@@ -383,7 +392,7 @@ function EventDetails() {
                               <div className="xtotel-tickets-count">
                                 <div className="x-title">
                                   {selectedStalls[eventDetail.id]?.label || "0"}
-                                  x Stall
+                                  x Gian Hàng
                                 </div>
                                 <h4>
                                   <span>

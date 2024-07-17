@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Drawer,
   List,
@@ -22,6 +22,9 @@ import {
 import OverAll from "../OperatorPages/OverAllDashBoard";
 import EventTab from "../OperatorPages/EventTab";
 import MyTeamTab from "../OperatorPages/MyTeamTab";
+import AccountInfo from "../OperatorPages/AccountInfo";
+import StaffInfo from "../OperatorPages/ViewStaff";
+import EventSponsor from "../OperatorPages/EventSponsor";
 import queryString from "query-string";
 import EvOAdminHeader from "../../components/EvOAdminHeader"; // Import the header
 
@@ -29,6 +32,7 @@ const drawerWidth = 240;
 
 const OperatorMain = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -46,6 +50,7 @@ const OperatorMain = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setMobileOpen(false); // Close drawer on mobile after selecting an item
+    navigate(`?activeTab=${tab}`);
   };
 
   const drawer = (
@@ -82,8 +87,31 @@ const OperatorMain = () => {
           </ListItemIcon>
           <ListItemText primary="Nhân sự Sự kiện" />
         </ListItem>
+        <ListItem
+          button
+          selected={activeTab === "staffInfo"}
+          onClick={() => handleTabChange("staffInfo")}
+        >
+          <ListItemIcon>
+            <GroupIcon />
+          </ListItemIcon>
+          <ListItemText primary="Thông tin Nhân sự" />
+        </ListItem>
       </List>
+
       <Divider />
+
+      <ListItem
+        button
+        selected={activeTab === "sponsor"}
+        onClick={() => handleTabChange("sponsor")}
+      >
+        <ListItemIcon>
+          <AccountCircleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Danh sách nhà tài trợ" />
+      </ListItem>
+
       <ListItem
         button
         selected={activeTab === "account"}
@@ -92,7 +120,7 @@ const OperatorMain = () => {
         <ListItemIcon>
           <AccountCircleIcon />
         </ListItemIcon>
-        <ListItemText primary="Account Info" />
+        <ListItemText primary="Thông tin Tài khoản" />
       </ListItem>
     </div>
   );
@@ -148,7 +176,10 @@ const OperatorMain = () => {
           {activeTab === "dashboard" && <OverAll />}
           {activeTab === "event" && <EventTab />}
           {activeTab === "myTeam" && <MyTeamTab />}
-          {activeTab === "account" && <div>Account Info Content</div>}
+          {activeTab === "staffInfo" && <StaffInfo />}
+
+          {activeTab === "sponsor" && <EventSponsor />}
+          {activeTab === "account" && <AccountInfo />}
         </Container>
       </Box>
     </Box>

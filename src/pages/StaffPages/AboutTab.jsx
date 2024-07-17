@@ -84,12 +84,12 @@ const AboutTab = ({ profile, setProfile }) => {
       await putUpdateProfileAPI(updatedProfile, token);
       setProfile(updatedProfile);
       setHasChanges(false);
-      toast.success("Hồ sơ đã được cập nhật thành công!", {
+      toast.success("Tài khoản đã được cập nhật thành công!", {
         toastId: successToastId,
       });
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("Failed to update profile.", {
+      toast.error("Cập nhật tài khoản thất bại. Vui lòng thử lại sau", {
         toastId: errorToastId,
       });
     } finally {
@@ -106,7 +106,7 @@ const AboutTab = ({ profile, setProfile }) => {
       });
     } catch (error) {
       console.error("Error sending confirmation email:", error);
-      toast.error("Failed to send confirmation email.", {
+      toast.error("Chưa gửi được Email xác nhận. Vui lòng thử lại", {
         toastId: errorToastId,
       });
     } finally {

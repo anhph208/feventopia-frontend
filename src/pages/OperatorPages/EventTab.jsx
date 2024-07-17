@@ -31,7 +31,7 @@ import {
   CancelEventAPI,
   getTasksByEventDetailIdAPI,
 } from "../../components/services/userServices";
-import { formatDateTime, PriceFormat } from "../../utils/tools";
+import { formatDateTime, PriceFormat, StatusSub } from "../../utils/tools";
 
 const EventTab = ({ onViewChart }) => {
   const [events, setEvents] = useState([]);
@@ -125,6 +125,8 @@ const EventTab = ({ onViewChart }) => {
   const handleTermsChange = (e) => {
     setTermsAccepted(e.target.checked);
   };
+
+  
 
   const handleConfirmUpdateNextPhase = async () => {
     try {
@@ -264,7 +266,7 @@ const EventTab = ({ onViewChart }) => {
                       }`}
                       onClick={() => handleStatusChange("INITIAL")}
                     >
-                      INITIAL
+                      KHỞI ĐỘNG
                     </button>
                     <button
                       className={`tab-link ${
@@ -272,7 +274,7 @@ const EventTab = ({ onViewChart }) => {
                       }`}
                       onClick={() => handleStatusChange("FUNDRAISING")}
                     >
-                      FUNDRAISING
+                      GỌI TÀI TRỢ
                     </button>
                     <button
                       className={`tab-link ${
@@ -280,7 +282,7 @@ const EventTab = ({ onViewChart }) => {
                       }`}
                       onClick={() => handleStatusChange("PREPARATION")}
                     >
-                      PREPARATION
+                      CHUẨN BỊ
                     </button>
                     <button
                       className={`tab-link ${
@@ -288,7 +290,7 @@ const EventTab = ({ onViewChart }) => {
                       }`}
                       onClick={() => handleStatusChange("EXECUTE")}
                     >
-                      EXECUTE
+                      TRIỂN KHAI
                     </button>
                     <button
                       className={`tab-link ${
@@ -296,7 +298,7 @@ const EventTab = ({ onViewChart }) => {
                       }`}
                       onClick={() => handleStatusChange("POST")}
                     >
-                      POST
+                      HOÀN THÀNH
                     </button>
                     <button
                       className={`tab-link ${
@@ -304,7 +306,7 @@ const EventTab = ({ onViewChart }) => {
                       }`}
                       onClick={() => handleStatusChange("CANCELED")}
                     >
-                      CANCELED
+                      ĐÃ HỦY
                     </button>
                   </div>
                 </div>
@@ -401,7 +403,9 @@ const EventTab = ({ onViewChart }) => {
                               <i className="fa-solid fa-location-dot" />
                             </span>
                             <p>Trạng thái</p>
-                            <h6 className="coupon-status">{event.status}</h6>
+                            <h6 className="coupon-status">
+                              {StatusSub(event.status)}
+                            </h6>
                           </div>
                           {event.analysis && (
                             <>
@@ -463,7 +467,7 @@ const EventTab = ({ onViewChart }) => {
                                 <p>Dòng tiền Tài trợ</p>
                                 <h6 className="coupon-status">
                                   <PriceFormat
-                                    price={event.analysis.sponsorCapital}
+                                    price={event.analysis.sponsorCaptital}
                                   />
                                 </h6>
                               </div>
@@ -487,27 +491,22 @@ const EventTab = ({ onViewChart }) => {
                                 onClick={() =>
                                   handleUpdateNextPhaseClick(event.id)
                                 }
-                                disabled={
-                                  event.status ===
-                                  "POST"}
+                                disabled={event.status === "POST"}
                                 sx={{
                                   mt: 3,
-                                  color: event.status !==
-                                  "POST"
-                                    ? "white"
-                                    : "gray",
-                                  backgroundColor: event.status !==
-                                  "POST"
-                                    ? "#450b00"
-                                    : "#cccccc",
+                                  color:
+                                    event.status !== "POST" ? "white" : "gray",
+                                  backgroundColor:
+                                    event.status !== "POST"
+                                      ? "#450b00"
+                                      : "#cccccc",
                                   "&:hover": {
-                                    backgroundColor: event.status !==
-                                    "POST"
-                                      ? "#ff7f50"
-                                      : "#aaaaaa",
+                                    backgroundColor:
+                                      event.status !== "POST"
+                                        ? "#ff7f50"
+                                        : "#aaaaaa",
                                   },
                                 }}
-                                
                               >
                                 CẬP NHẬT TRẠNG THÁI SỰ KIỆN
                               </Button>

@@ -26,6 +26,7 @@ import {
   Select,
   MenuItem,
   TextField,
+  Checkbox,
 } from "@mui/material";
 import {
   getAllEventForOtherAPI,
@@ -33,12 +34,17 @@ import {
   getAllEventAssigneeAPI,
   getAccountById,
   getAccountStaffAPI,
-  postAddEventAssignee,
+  postRangeEventAssignee,
   getTasksByEventDetailIdAPI,
   postAddTaskAPI,
   putUpdateTaskAPI,
 } from "../../components/services/userServices";
-import { formatDateTime, PriceFormat, formatDate } from "../../utils/tools";
+import {
+  formatDateTime,
+  PriceFormat,
+  formatDate,
+  StatusSub,
+} from "../../utils/tools";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import TaskIcon from "@mui/icons-material/Task";
 import { toast } from "react-toastify";
@@ -47,6 +53,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 
 const AssigneeTab = () => {
   const [events, setEvents] = useState([]);
+  const [filteredAccounts, setFilteredAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -58,7 +65,7 @@ const AssigneeTab = () => {
   const [openAddAssigneeDialog, setOpenAddAssigneeDialog] = useState(false);
   const [selectedEventDetail, setSelectedEventDetail] = useState(null);
   const [accounts, setAccounts] = useState([]);
-  const [selectedAccountId, setSelectedAccountId] = useState("");
+  const [selectedAccountIds, setSelectedAccountIds] = useState([]);
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
   const [taskPlanCost, setTaskPlanCost] = useState("");
@@ -161,21 +168,20 @@ const AssigneeTab = () => {
   };
 
   const handleAddAssignee = async () => {
-    if (!selectedAccountId) {
-      toast.warn("Please select an account.");
+    if (selectedAccountIds.length === 0) {
+      toast.warn("Please select at least one account.");
       return;
     }
 
     try {
-      await postAddEventAssignee(selectedAccountId, selectedEventDetail.id);
-      toast.success("Assignee added successfully!");
+      await postRangeEventAssignee(selectedAccountIds, selectedEventDetail.id);
+      toast.success("Thêm Nhân sự Thành công!");
       handleCloseAddAssignee();
       await fetchAssignees(selectedEventDetail.id);
-      // Re-fetch data for the specific event detail
       await fetchEvents(pageNumber, category, status);
     } catch (error) {
-      console.error("Failed to add assignee:", error);
-      toast.error("Failed to add assignee.");
+      console.error("Failed to add assignees:", error);
+      toast.error("Failed to add assignees.");
     }
   };
 
@@ -199,7 +205,6 @@ const AssigneeTab = () => {
       toast.success("Thêm Nhiệm Vụ mới thành công!");
       handleCloseAddTask();
       await fetchTasks(selectedEventDetail.id);
-      // Re-fetch data for the specific event detail
       await fetchEvents(pageNumber, category, status);
     } catch (error) {
       console.error("Failed to add task:", error);
@@ -239,9 +244,24 @@ const AssigneeTab = () => {
 
   const handleClickOpenAddAssignee = async (eventDetail) => {
     setSelectedEventDetail(eventDetail);
-    setCurrentEventDetailId(eventDetail.id);
     setOpenAddAssigneeDialog(true);
-    fetchAccounts();
+
+    try {
+      await fetchAccounts();
+      const assigneesForEventDetail = await fetchAssignees(eventDetail.id);
+
+      const filtered = accounts.filter(
+        (account) =>
+          !assigneesForEventDetail.some(
+            (assignee) => assignee.accountId === account.id
+          )
+      );
+
+      setFilteredAccounts(filtered);
+    } catch (error) {
+      console.error("Failed to prepare add assignee dialog:", error);
+      toast.error("Failed to prepare add assignee dialog.");
+    }
   };
 
   const handleClickOpenAddTask = async (eventDetail) => {
@@ -260,11 +280,12 @@ const AssigneeTab = () => {
     }));
     setTaskToUpdate(task);
     setOpenUpdateTaskDialog(true);
-    fetchAccounts();
+    await fetchAccounts();
   };
 
   const handleCloseAddAssignee = () => {
     setOpenAddAssigneeDialog(false);
+    setSelectedAccountIds([]);
   };
 
   const handleCloseAddTask = () => {
@@ -273,6 +294,14 @@ const AssigneeTab = () => {
 
   const handleCloseUpdateTask = () => {
     setOpenUpdateTaskDialog(false);
+  };
+
+  const handleSelectAccount = (accountId) => {
+    setSelectedAccountIds((prev) =>
+      prev.includes(accountId)
+        ? prev.filter((id) => id !== accountId)
+        : [...prev, accountId]
+    );
   };
 
   useEffect(() => {
@@ -383,7 +412,7 @@ const AssigneeTab = () => {
                 className={`tab-link ${status === "INITIAL" ? "active" : ""}`}
                 onClick={() => handleStatusChange("INITIAL")}
               >
-                INITIAL
+                KHỞI ĐỘNG
               </button>
               <button
                 className={`tab-link ${
@@ -391,7 +420,7 @@ const AssigneeTab = () => {
                 }`}
                 onClick={() => handleStatusChange("FUNDRAISING")}
               >
-                FUNDRAISING
+                GỌI TÀI TRỢ
               </button>
               <button
                 className={`tab-link ${
@@ -399,25 +428,25 @@ const AssigneeTab = () => {
                 }`}
                 onClick={() => handleStatusChange("PREPARATION")}
               >
-                PREPARATION
+                CHUẨN BỊ
               </button>
               <button
                 className={`tab-link ${status === "EXECUTE" ? "active" : ""}`}
                 onClick={() => handleStatusChange("EXECUTE")}
               >
-                EXECUTE
+                TRIỂN KHAI
               </button>
               <button
                 className={`tab-link ${status === "POST" ? "active" : ""}`}
                 onClick={() => handleStatusChange("POST")}
               >
-                POST
+                HOÀN THÀNH
               </button>
               <button
                 className={`tab-link ${status === "CANCELED" ? "active" : ""}`}
                 onClick={() => handleStatusChange("CANCELED")}
               >
-                CANCELED
+                ĐÃ HỦY
               </button>
             </div>
           </div>
@@ -472,7 +501,9 @@ const AssigneeTab = () => {
                           </div>
                           <Box>
                             <Typography variant="h7">Trạng thái</Typography>
-                            <Typography variant="h6">{event.status}</Typography>
+                            <Typography variant="h6">
+                              {StatusSub(event.status)}
+                            </Typography>
                           </Box>
                         </Stack>
                       </CardContent>
@@ -568,7 +599,9 @@ const AssigneeTab = () => {
                                               {assignee.role}
                                             </TableCell>
                                             <TableCell>
-                                              {formatDateTime(assignee.createdDate)}
+                                              {formatDateTime(
+                                                assignee.createdDate
+                                              )}
                                             </TableCell>
                                           </TableRow>
                                         ))
@@ -625,7 +658,9 @@ const AssigneeTab = () => {
                                       <TableRow>
                                         <TableCell>Nhiệm vụ</TableCell>
                                         <TableCell>Họ Tên</TableCell>
-                                        <TableCell>Trạng thái Nhiệm vụ</TableCell>
+                                        <TableCell>
+                                          Trạng thái Nhiệm vụ
+                                        </TableCell>
                                         <TableCell>Ngày Giao</TableCell>
                                         <TableCell>Ngày Cập nhật</TableCell>
                                         <TableCell>Hành động</TableCell>
@@ -761,19 +796,31 @@ const AssigneeTab = () => {
       <Dialog open={openAddAssigneeDialog} onClose={handleCloseAddAssignee}>
         <DialogTitle>Thêm Nhân sự mới</DialogTitle>
         <DialogContent>
-          <FormControl fullWidth>
-            <InputLabel>Chọn Nhân sự</InputLabel>
-            <Select
-              value={selectedAccountId}
-              onChange={(e) => setSelectedAccountId(e.target.value)}
-            >
-              {accounts.map((account) => (
-                <MenuItem key={account.id} value={account.id}>
-                  {account.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <TableContainer component={Paper}>
+            <Table aria-label="account table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Chọn</TableCell>
+                  <TableCell>Họ Tên</TableCell>
+                  <TableCell>Email</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredAccounts.map((account) => (
+                  <TableRow key={account.id}>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selectedAccountIds.includes(account.id)}
+                        onChange={() => handleSelectAccount(account.id)}
+                      />
+                    </TableCell>
+                    <TableCell>{account.name}</TableCell>
+                    <TableCell>{account.email}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAddAssignee}>Hủy</Button>
@@ -814,14 +861,14 @@ const AssigneeTab = () => {
           </FormControl>
           <TextField
             margin="normal"
-            label="Description"
+            label="Nhiệm vụ"
             fullWidth
             value={taskDescription}
             onChange={(e) => setTaskDescription(e.target.value)}
           />
           <TextField
             margin="normal"
-            label="Planned Cost"
+            label="Chi phí Dự kiến"
             fullWidth
             type="number"
             value={taskPlanCost}
@@ -829,7 +876,7 @@ const AssigneeTab = () => {
           />
           <TextField
             margin="normal"
-            label="Actual Cost"
+            label="Chi phí thực tế"
             fullWidth
             type="number"
             value={taskActualCost}

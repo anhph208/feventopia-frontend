@@ -8,7 +8,8 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import DOMPurify from "dompurify";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import styles for react-quill
+import "react-quill/dist/quill.snow.css";
+import { formatDateTime, PriceFormat } from "../../../utils/tools"; // Import styles for react-quill
 
 const Input = styled("input")({
   display: "none",
@@ -67,6 +68,7 @@ function UpdateEvent() {
   const [error, setError] = useState(null);
 
   const [eventDescription, setEventDescription] = useState("");
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchEventInfo = async () => {
@@ -125,9 +127,24 @@ function UpdateEvent() {
     setEventDescription(value);
   };
 
+  const validateForm = () => {
+    let tempErrors = {};
+    tempErrors.eventName = formData.eventName ? "" : "Tên sự kiện là bắt buộc";
+    tempErrors.initialCapital =
+      formData.initialCapital && formData.initialCapital >= 0
+        ? ""
+        : "Vốn sự kiện không thể là số âm";
+    tempErrors.category = formData.category ? "" : "Danh mục là bắt buộc";
+    tempErrors.eventDescription = eventDescription ? "" : "Chi tiết sự kiện là bắt buộc";
+    setErrors(tempErrors);
+    return Object.values(tempErrors).every((x) => x === "");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitLoading(true); 
+    if (!validateForm()) return;
+    
+    setSubmitLoading(true);
     try {
       let bannerUrl = formData.banner;
 
@@ -204,6 +221,8 @@ function UpdateEvent() {
                                       onChange={handleChange}
                                       placeholder={placeholders.eventName}
                                       required
+                                      error={!!errors.eventName}
+                                      helperText={errors.eventName}
                                     />
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
@@ -218,6 +237,8 @@ function UpdateEvent() {
                                       value={formData.category}
                                       onChange={handleChange}
                                       required
+                                      error={!!errors.category}
+                                      helperText={errors.category}
                                     >
                                       <MenuItem value="0">TALKSHOW</MenuItem>
                                       <MenuItem value="1">ÂM NHẠC</MenuItem>
@@ -238,7 +259,15 @@ function UpdateEvent() {
                                       onChange={handleChange}
                                       placeholder={placeholders.initialCapital}
                                       required
+                                      error={!!errors.initialCapital}
+                                      helperText={errors.initialCapital}
                                     />
+                                    <Typography variant="body2">
+                                      Số tiền nhập:{" "}
+                                      <PriceFormat
+                                        price={parseInt(formData.initialCapital, 10)}
+                                      />
+                                    </Typography>
                                   </Box>
                                   <Box className="form-group pt_30 pb_30">
                                     <Typography className="form-label fs-16">
@@ -291,6 +320,11 @@ function UpdateEvent() {
                                       formats={formats}
                                       style={{ height: "350px" }}
                                     />
+                                    {errors.eventDescription && (
+                                      <Typography color="error">
+                                        {errors.eventDescription}
+                                      </Typography>
+                                    )}
                                   </Box>
                                 </Box>
                               </Box>

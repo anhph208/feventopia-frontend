@@ -42,8 +42,8 @@ const Header = () => {
     if (!toast.isActive("logout-success-toast")) {
       toast.success("Đăng xuất thành công.", {
         toastId: "logout-success-toast",
-        onClose: () => setTimeout(() => navigate("/signin"), 1000),
       });
+      window.location.replace("/signin");
     }
   };
 
@@ -53,8 +53,8 @@ const Header = () => {
     if (!toast.isActive("session-expired-toast")) {
       toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.", {
         toastId: "session-expired-toast",
-        onClose: () => window.location.replace("/signin"),
       });
+      window.location.replace("/signin");
     }
   };
 

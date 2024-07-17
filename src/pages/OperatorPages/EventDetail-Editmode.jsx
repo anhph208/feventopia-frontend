@@ -4,11 +4,11 @@ import {
   createEventDetailsAPI,
   putUpdateEventDetailsAPI,
   getLocationAPI,
+  DeleteEventAPI,
 } from "../../components/services/userServices";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { formatDateTime, PriceFormat } from "../../utils/tools";
-import Select from "react-select";
 import {
   Button,
   TextField,
@@ -17,10 +17,18 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  DialogContentText,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import Datetime from "react-datetime";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import "react-datetime/css/react-datetime.css";
 
 function EventDetailsOperator() {
   const { eventId } = useParams();
@@ -31,35 +39,45 @@ function EventDetailsOperator() {
   const [locationCapacity, setLocationCapacity] = useState(0);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [eventDetailToDelete, seteventDetailToDelete] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const navigate = useNavigate();
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [newEventDetails, setNewEventDetails] = useState({
     eventID: eventId,
     locationID: "",
-    startDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
-    endDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
-    ticketForSaleInventory: 0,
-    stallForSaleInventory: 0,
-    stallPrice: 0,
-    ticketPrice: 0,
+    startDate: dayjs(),
+    endDate: dayjs(),
+    ticketForSaleInventory: "",
+    stallForSaleInventory: "",
+    stallPrice: "",
+    ticketPrice: "",
     processModel: "", // Ensure processModel is included
   });
   const [updateEventDetails, setUpdateEventDetails] = useState({
     id: "",
     eventID: eventId,
     locationID: "",
-    startDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
-    endDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
-    ticketForSaleInventory: 0,
-    stallForSaleInventory: 0,
-    stallPrice: 0,
-    ticketPrice: 0,
+    startDate: dayjs(),
+    endDate: dayjs(),
+    ticketForSaleInventory: "",
+    stallForSaleInventory: "",
+    stallPrice: "",
+    ticketPrice: "",
     processModel: "", // Ensure processModel is included
   });
   const [originalUpdateDetails, setOriginalUpdateDetails] = useState(null);
+  const [errors, setErrors] = useState({
+    ticketForSaleInventory: false,
+    stallForSaleInventory: false,
+    stallPrice: false,
+    ticketPrice: false,
+  });
 
   const handleClickOpenAdd = () => {
     if (eventDetails.status !== "PREPARATION") {
       toast.error(
-        "Sự kiện chỉ có thể thêm Chi tiết khi chuyển sang trạng thái PREPARATION."
+        "Sự kiện chỉ có thể thêm Chi tiết khi chuyển sang  GIAI ĐOẠN CHUẨN BỊ."
       );
       return;
     }
@@ -70,7 +88,7 @@ function EventDetailsOperator() {
   const handleClickOpenUpdate = (eventDetail) => {
     if (eventDetails.status !== "PREPARATION") {
       toast.error(
-        "Sự kiện chỉ có thể Cập nhật chi tiết khi ở trạng thái PREPARATION."
+        "Sự kiện chỉ có thể Cập nhật chi tiết khi ở GIAI ĐOẠN CHUẨN BỊ."
       );
       return;
     }
@@ -78,8 +96,8 @@ function EventDetailsOperator() {
       id: eventDetail.id,
       eventID: eventId,
       locationID: eventDetail.location.id,
-      startDate: dayjs(eventDetail.startDate).format("YYYY-MM-DDTHH:mm:ss"),
-      endDate: dayjs(eventDetail.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+      startDate: dayjs(eventDetail.startDate),
+      endDate: dayjs(eventDetail.endDate),
       ticketForSaleInventory: eventDetail.ticketForSaleInventory,
       stallForSaleInventory: eventDetail.stallForSaleInventory,
       stallPrice: eventDetail.stallPrice,
@@ -94,6 +112,20 @@ function EventDetailsOperator() {
 
   const handleChange = (e, isUpdate = false) => {
     const { name, value } = e.target;
+
+    if (value < 0) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: true,
+      }));
+      return;
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: false,
+      }));
+    }
+
     if (isUpdate) {
       setUpdateEventDetails((prevDetails) => ({
         ...prevDetails,
@@ -107,21 +139,21 @@ function EventDetailsOperator() {
     }
   };
 
-  const handleLocationChange = (selectedOption, isUpdate = false) => {
+  const handleLocationChange = (e, isUpdate = false) => {
     const selectedLocation = locations.find(
-      (location) => location.value === selectedOption.value
+      (location) => location.id === e.target.value
     );
     setLocationCapacity(selectedLocation.capacity || 0);
     if (isUpdate) {
       setUpdateEventDetails((prevDetails) => ({
         ...prevDetails,
-        locationID: selectedOption.value,
+        locationID: selectedLocation.id,
         ticketForSaleInventory: selectedLocation.capacity || 0,
       }));
     } else {
       setNewEventDetails((prevDetails) => ({
         ...prevDetails,
-        locationID: selectedOption.value,
+        locationID: selectedLocation.id,
         ticketForSaleInventory: selectedLocation.capacity || 0,
       }));
     }
@@ -132,10 +164,17 @@ function EventDetailsOperator() {
       return;
     }
 
+    const formattedNewEventDetails = {
+      ...newEventDetails,
+      startDate: newEventDetails.startDate.format("YYYY-MM-DDTHH:mm:ss"),
+      endDate: newEventDetails.endDate.format("YYYY-MM-DDTHH:mm:ss"),
+    };
+
     try {
-      await createEventDetailsAPI(newEventDetails);
-      toast.success("Event details added successfully!");
+      await createEventDetailsAPI(formattedNewEventDetails);
+      toast.success("Thêm Chi tiết Sự kiện Thành công!");
       handleCloseAdd();
+      navigate(0);
     } catch (error) {
       toast.error("Failed to add event details.");
     }
@@ -156,10 +195,20 @@ function EventDetailsOperator() {
       return;
     }
 
+    const formattedUpdateEventDetails = {
+      ...updateEventDetails,
+      startDate: updateEventDetails.startDate.format("YYYY-MM-DDTHH:mm:ss"),
+      endDate: updateEventDetails.endDate.format("YYYY-MM-DDTHH:mm:ss"),
+    };
+
     try {
-      await putUpdateEventDetailsAPI(updateEventDetails.id, updateEventDetails);
-      toast.success("Event details updated successfully!");
+      await putUpdateEventDetailsAPI(
+        updateEventDetails.id,
+        formattedUpdateEventDetails
+      );
+      toast.success("Cập nhật Chi tiết Sự kiện Thành công!!");
       handleCloseUpdate();
+      navigate(0);
     } catch (error) {
       toast.error("Failed to update event details.");
     }
@@ -167,15 +216,12 @@ function EventDetailsOperator() {
 
   const validateDates = (startDate, endDate) => {
     const now = dayjs();
-    const start = dayjs(startDate);
-    const end = dayjs(endDate);
-
-    if (start.isBefore(now)) {
+    if (startDate.isBefore(now)) {
       toast.error("Ngày Bắt đầu phải từ hôm nay.");
       return false;
     }
 
-    if (end.isBefore(start)) {
+    if (endDate.isBefore(startDate)) {
       toast.error("Ngày Kết thúc phải sau ngày bắt đầu.");
       return false;
     }
@@ -199,13 +245,7 @@ function EventDetailsOperator() {
     const fetchLocations = async () => {
       try {
         const locationData = await getLocationAPI();
-        setLocations(
-          locationData.map((loc) => ({
-            value: loc.id,
-            label: loc.locationName,
-            capacity: loc.capacity,
-          }))
-        );
+        setLocations(locationData);
       } catch (error) {
         console.error("Failed to fetch locations", error);
       }
@@ -216,18 +256,38 @@ function EventDetailsOperator() {
   }, [eventId]);
 
   const handleDateChange = (date, isUpdate = false, field) => {
-    const formattedDate = dayjs(date).format("YYYY-MM-DDTHH:mm:ss");
     if (isUpdate) {
       setUpdateEventDetails((prevDetails) => ({
         ...prevDetails,
-        [field]: formattedDate,
+        [field]: date,
       }));
     } else {
       setNewEventDetails((prevDetails) => ({
         ...prevDetails,
-        [field]: formattedDate,
+        [field]: date,
       }));
     }
+  };
+
+  const handleDeleteClick = (eventDetail) => {
+    seteventDetailToDelete(eventDetail);
+    setDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await DeleteEventAPI(eventDetailToDelete.id);
+      setDeleteOpen(false);
+      seteventDetailToDelete(null);
+      toast.success("Xóa Chi tiết Sự kiện Thành công!!");
+      navigate(0);
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
+  };
+
+  const handleTermsChange = (e) => {
+    setTermsAccepted(e.target.checked);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -357,6 +417,15 @@ function EventDetailsOperator() {
                               <strong>Cập nhật Chi tiết Sự kiện</strong>
                             </button>
                           </div>
+                          <div className="booking-btn mt-2">
+                            <button
+                              className="main-btn btn-hover w-100 mt-3"
+                              type="button"
+                              onClick={() => handleDeleteClick(eventDetail)}
+                            >
+                              <strong>Xóa Chi tiết Sự kiện</strong>
+                            </button>
+                          </div>
                         </div>
                       )}
                       {isEventPast(eventDetail.endDate) && (
@@ -384,43 +453,47 @@ function EventDetailsOperator() {
       <Dialog open={openAddDialog} onClose={handleCloseAdd}>
         <DialogTitle>THÊM MỚI CHI TIẾT SỰ KIỆN</DialogTitle>
         <DialogContent>
-          <Grid container spacing={2}>
+          <Grid container spacing={2}
+          marginTop={2}>
             <Grid item xs={12}>
-              <Select
-                options={locations}
-                onChange={(option) => handleLocationChange(option, false)}
-                value={locations.find(
-                  (option) => option.value === newEventDetails.locationID
-                )}
-                placeholder="Select Location"
-                required
-                styles={{
-                  control: (base) => ({
-                    ...base,
-                    marginTop: "16px",
-                  }),
-                }}
-              />
+              <FormControl fullWidth>
+
+                <TextField
+                  select
+                  value={newEventDetails.locationID}
+                  onChange={(e) => handleLocationChange(e, false)}
+                  label="Chọn Địa điểm tổ chức"
+                  required
+                >
+                  {locations.map((location) => (
+                    <MenuItem key={location.id} value={location.id}>
+                      {location.locationName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <Datetime
-                value={dayjs(newEventDetails.startDate).toDate()}
-                onChange={(date) => handleDateChange(date, false, "startDate")}
-                dateFormat="DD/MM/YYYY"
-                timeFormat="HH:mm"
-                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
-                closeOnSelect
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Ngày bắt đầu"
+                  value={newEventDetails.startDate}
+                  onChange={(date) => handleDateChange(date, false, "startDate")}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  minDate={dayjs()} // Prevent selecting past dates
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12}>
-              <Datetime
-                value={dayjs(newEventDetails.endDate).toDate()}
-                onChange={(date) => handleDateChange(date, false, "endDate")}
-                dateFormat="DD/MM/YYYY"
-                timeFormat="HH:mm"
-                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
-                closeOnSelect
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Ngày kết thúc"
+                  value={newEventDetails.endDate}
+                  onChange={(date) => handleDateChange(date, false, "endDate")}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  minDate={newEventDetails.startDate} // Ensure end date is after start date
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -429,9 +502,15 @@ function EventDetailsOperator() {
                 label="Số lượng vé mở bán"
                 type="number"
                 fullWidth
-                variant="standard"
+                variant="outlined"
                 value={newEventDetails.ticketForSaleInventory}
                 onChange={(e) => handleChange(e, false)}
+                error={errors.ticketForSaleInventory}
+                helperText={
+                  errors.ticketForSaleInventory
+                    ? "Số lượng vé mở bán không thể là số âm"
+                    : ""
+                }
                 InputProps={{
                   inputProps: {
                     max: locationCapacity,
@@ -439,6 +518,29 @@ function EventDetailsOperator() {
                 }}
                 required
               />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin="dense"
+                name="ticketPrice"
+                label="Giá bán vé"
+                type="number"
+                fullWidth
+                variant="outlined"
+                value={newEventDetails.ticketPrice}
+                onChange={(e) => handleChange(e, false)}
+                error={errors.ticketPrice}
+                helperText={
+                  errors.ticketPrice ? "Giá bán vé không thể là số âm" : ""
+                }
+                required
+              />
+              <Typography variant="body2">
+                Sô tiền nhập:{" "}
+                <PriceFormat
+                  price={parseInt(newEventDetails.ticketPrice, 10)}
+                />
+              </Typography>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -447,9 +549,15 @@ function EventDetailsOperator() {
                 label="Số lượng gian hàng mở bán"
                 type="number"
                 fullWidth
-                variant="standard"
+                variant="outlined"
                 value={newEventDetails.stallForSaleInventory}
                 onChange={(e) => handleChange(e, false)}
+                error={errors.stallForSaleInventory}
+                helperText={
+                  errors.stallForSaleInventory
+                    ? "Số lượng gian hàng mở bán không thể là số âm"
+                    : ""
+                }
                 required
               />
             </Grid>
@@ -460,30 +568,49 @@ function EventDetailsOperator() {
                 label="Giá bán Gian hàng"
                 type="number"
                 fullWidth
-                variant="standard"
+                variant="outlined"
                 value={newEventDetails.stallPrice}
                 onChange={(e) => handleChange(e, false)}
+                error={errors.stallPrice}
+                helperText={
+                  errors.stallPrice
+                    ? "Giá bán Gian hàng không thể là số âm"
+                    : ""
+                }
                 required
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                margin="dense"
-                name="ticketPrice"
-                label="Giá bán vé"
-                type="number"
-                fullWidth
-                variant="standard"
-                value={newEventDetails.ticketPrice}
-                onChange={(e) => handleChange(e, false)}
-                required
-              />
+              <Typography variant="body2">
+                Sô tiền nhập:{" "}
+                <PriceFormat price={parseInt(newEventDetails.stallPrice, 10)} />
+              </Typography>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAdd}>HỦY</Button>
-          <Button onClick={handleAddNewEventDetails}>THÊM MỚI</Button>
+          <Button
+            onClick={handleCloseAdd}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            HỦY
+          </Button>
+          <Button
+            onClick={handleAddNewEventDetails}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            THÊM MỚI
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -492,41 +619,43 @@ function EventDetailsOperator() {
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Select
-                options={locations}
-                onChange={(option) => handleLocationChange(option, true)}
-                value={locations.find(
-                  (option) => option.value === updateEventDetails.locationID
-                )}
-                placeholder="Select Location"
-                required
-                styles={{
-                  control: (base) => ({
-                    ...base,
-                    marginTop: "16px",
-                  }),
-                }}
-              />
+              <FormControl fullWidth>
+                
+                <Select
+                  value={updateEventDetails.locationID}
+                  onChange={(e) => handleLocationChange(e, true)}
+                  label="Chọn Địa điểm tổ chức"
+                  required
+                >
+                  {locations.map((location) => (
+                    <MenuItem key={location.id} value={location.id}>
+                      {location.locationName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <Datetime
-                value={dayjs(updateEventDetails.startDate).toDate()}
-                onChange={(date) => handleDateChange(date, true, "startDate")}
-                dateFormat="DD/MM/YYYY"
-                timeFormat="HH:mm"
-                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
-                closeOnSelect
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Ngày bắt đầu"
+                  value={updateEventDetails.startDate}
+                  onChange={(date) => handleDateChange(date, true, "startDate")}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  minDate={dayjs()} // Prevent selecting past dates
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12}>
-              <Datetime
-                value={dayjs(updateEventDetails.endDate).toDate()}
-                onChange={(date) => handleDateChange(date, true, "endDate")}
-                dateFormat="DD/MM/YYYY"
-                timeFormat="HH:mm"
-                inputProps={{ placeholder: "HH:mm DD/MM/YYYY" }}
-                closeOnSelect
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Ngày kết thúc"
+                  value={updateEventDetails.endDate}
+                  onChange={(date) => handleDateChange(date, true, "endDate")}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  minDate={updateEventDetails.startDate} // Ensure end date is after start date
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -535,9 +664,15 @@ function EventDetailsOperator() {
                 label="Số lượng vé mở bán"
                 type="number"
                 fullWidth
-                variant="standard"
+                variant="outlined"
                 value={updateEventDetails.ticketForSaleInventory}
                 onChange={(e) => handleChange(e, true)}
+                error={errors.ticketForSaleInventory}
+                helperText={
+                  errors.ticketForSaleInventory
+                    ? "Số lượng vé mở bán không thể là số âm"
+                    : ""
+                }
                 InputProps={{
                   inputProps: {
                     max: locationCapacity,
@@ -549,13 +684,42 @@ function EventDetailsOperator() {
             <Grid item xs={12}>
               <TextField
                 margin="dense"
+                name="ticketPrice"
+                label="Giá bán vé"
+                type="number"
+                fullWidth
+                variant="outlined"
+                value={updateEventDetails.ticketPrice}
+                onChange={(e) => handleChange(e, true)}
+                error={errors.ticketPrice}
+                helperText={
+                  errors.ticketPrice ? "Giá bán vé không thể là số âm" : ""
+                }
+                required
+              />
+              <Typography variant="body2">
+                Sô tiền nhập:{" "}
+                <PriceFormat
+                  price={parseInt(updateEventDetails.ticketPrice, 10)}
+                />
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin="dense"
                 name="stallForSaleInventory"
                 label="Số lượng Gian hàng mở bán"
                 type="number"
                 fullWidth
-                variant="standard"
+                variant="outlined"
                 value={updateEventDetails.stallForSaleInventory}
                 onChange={(e) => handleChange(e, true)}
+                error={errors.stallForSaleInventory}
+                helperText={
+                  errors.stallForSaleInventory
+                    ? "Số lượng gian hàng mở bán không thể là số âm"
+                    : ""
+                }
                 required
               />
             </Grid>
@@ -566,30 +730,106 @@ function EventDetailsOperator() {
                 label="Giá bán Gian hàng"
                 type="number"
                 fullWidth
-                variant="standard"
+                variant="outlined"
                 value={updateEventDetails.stallPrice}
                 onChange={(e) => handleChange(e, true)}
+                error={errors.stallPrice}
+                helperText={
+                  errors.stallPrice
+                    ? "Giá bán Gian hàng không thể là số âm"
+                    : ""
+                }
                 required
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                margin="dense"
-                name="ticketPrice"
-                label="Giá bán vé"
-                type="number"
-                fullWidth
-                variant="standard"
-                value={updateEventDetails.ticketPrice}
-                onChange={(e) => handleChange(e, true)}
-                required
-              />
+              <Typography variant="body2">
+                Sô tiền nhập:{" "}
+                <PriceFormat
+                  price={parseInt(updateEventDetails.stallPrice, 10)}
+                />
+              </Typography>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseUpdate}>HỦY</Button>
-          <Button onClick={handleUpdateEventDetails}>CẬP NHẬT</Button>
+          <Button
+            onClick={handleCloseUpdate}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            HỦY
+          </Button>
+          <Button
+            onClick={handleUpdateEventDetails}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            CẬP NHẬT
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Xác nhận Hủy sự kiện</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-title">
+            Bạn có chắc chắn muốn hủy sự kiện này?
+          </DialogContentText>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={termsAccepted}
+                onChange={handleTermsChange}
+                color="primary"
+              />
+            }
+            label="Tôi đồng ý xóa Chi tiết Sự kiện này"
+          />
+          
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            type="submit"
+            disabled={!termsAccepted}
+            sx={{
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+            onClick={handleConfirmDelete}
+          >
+            Xác nhận
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setDeleteOpen(false)}
+            sx={{
+              borderColor: "#450b00",
+              color: "#450b00",
+              "&:hover": {
+                borderColor: "#ff7f50",
+                color: "#ff7f50",
+              },
+            }}
+          >
+            Đóng
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

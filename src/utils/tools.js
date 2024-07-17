@@ -1,18 +1,17 @@
 import React, { useContext } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from 'react-router-dom';
-import { CartContext } from '../components/Cart/CartContext';
-
-
-
+import { useNavigate } from "react-router-dom";
+import { CartContext } from "../components/Cart/CartContext";
 
 export const convertToGMT7 = (dateTimeString) => {
-  const [datePart, timePart] = decodeURIComponent(dateTimeString).split(' ');
-  const [month, day, year] = datePart.split('/');
-  const [hours, minutes, seconds] = timePart.split(':');
-  const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+  const [datePart, timePart] = decodeURIComponent(dateTimeString).split(" ");
+  const [month, day, year] = datePart.split("/");
+  const [hours, minutes, seconds] = timePart.split(":");
+  const date = new Date(
+    Date.UTC(year, month - 1, day, hours, minutes, seconds)
+  );
   date.setHours(date.getHours() + 7);
-  const formattedDate = date.toISOString().replace('T', ' ').substring(0, 19);
+  const formattedDate = date.toISOString().replace("T", " ").substring(0, 19);
   return formattedDate;
 };
 
@@ -38,7 +37,6 @@ export const PriceFormat = ({ price }) => {
   });
 
   return <span>{formattedPrice}</span>;
-
 };
 
 export const formatTime = (date) => {
@@ -78,7 +76,6 @@ export const calculateTimeAgo = (datetime) => {
 };
 
 export const handleLogout = (navigate, clearCart) => {
-  
   localStorage.removeItem("isLogged");
   localStorage.removeItem("username");
   localStorage.removeItem("phoneNumber");
@@ -88,4 +85,30 @@ export const handleLogout = (navigate, clearCart) => {
   localStorage.removeItem("role");
   localStorage.removeItem("token");
   toast.success("Đăng xuất thành công!");
+};
+
+export const rankSub = (rank) => {
+  if (rank === "BRONZE") {
+    return "Hạng Đồng";
+  } else if (rank === "GOLD") {
+    return "Hạng Vàng";
+  } else if (rank === "PLANTIUM") {
+    return "Hạng Bạch Kim";
+  }
+};
+
+export const StatusSub = (status) => {
+  if (status === "INITIAL") {
+    return "GIAI ĐOẠN KHỞI ĐỘNG";
+  } else if (status === "FUNDRAISING") {
+    return "GIAI ĐOẠN GỌI TÀI TRỢ";
+  } else if (status === "PREPARATION") {
+    return "GIAI ĐOẠN CHUẨN BỊ";
+  } else if (status === "EXECUTE") {
+    return "TRIỂN KHAI SỰ KIỆN";
+  } else if (status === "POST") {
+    return "HOÀN THÀNH";
+  } else if (status === "CANCELLED") {
+    return "ĐÃ HỦY";
+  }
 };
