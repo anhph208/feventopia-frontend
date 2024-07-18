@@ -24,7 +24,7 @@ function EventDetails() {
   const [error, setError] = useState(null);
   const [ticketCounts, setTicketCounts] = useState({});
   const [selectedStalls, setSelectedStalls] = useState({});
-  const [soldStalls, setSoldStalls] = useState([]);
+  const [soldStalls, setSoldStalls] = useState({});
 
   const decreaseCount = (id) => {
     setTicketCounts((prevCounts) => ({
@@ -175,25 +175,20 @@ function EventDetails() {
         setLoading(true);
 
         const details = await getEventDetailsAPI(eventId);
-
         setEventDetails(details);
 
         if (details?.eventDetail && details.eventDetail.length > 0) {
+          const newSoldStalls = {};
           for (const eventDetailItem of details.eventDetail) {
             const stallsData = await getAllStallCurrentEvent(
               eventDetailItem.id
             );
-
             const soldStallNumbers = stallsData.map(
               (stall) => stall.stallNumber
             );
-
-            setSoldStalls((prevSoldStalls) => [
-              ...prevSoldStalls,
-              ...soldStallNumbers,
-            ]);
+            newSoldStalls[eventDetailItem.id] = soldStallNumbers;
           }
-        } else {
+          setSoldStalls(newSoldStalls);
         }
       } catch (error) {
         setError(error);
@@ -212,28 +207,30 @@ function EventDetails() {
     }));
   };
 
-  const generateStallOptions = (stallCount, eventId) => {
+  const generateStallOptions = (stallCount, eventDetailId) => {
     console.log("Generating stall options:", {
       stallCount,
-      eventId,
+      eventDetailId,
       soldStalls,
     });
     const options = [];
     let currentStallNumber = 1;
 
+    const soldStallsForThisEvent = soldStalls[eventDetailId] || [];
+
     while (options.length < stallCount) {
       const stallValue = `A${currentStallNumber}`;
       if (
-        !soldStalls.includes(stallValue) &&
-        (!globalSelectedStalls[eventId] ||
-          globalSelectedStalls[eventId] === stallValue)
+        !soldStallsForThisEvent.includes(stallValue) &&
+        (!globalSelectedStalls[eventDetailId] ||
+          globalSelectedStalls[eventDetailId] === stallValue)
       ) {
         options.push({ value: stallValue, label: stallValue });
       }
       currentStallNumber++;
 
       // Safety check to prevent infinite loop
-      if (currentStallNumber > stallCount + soldStalls.length + 5) {
+      if (currentStallNumber > stallCount + soldStallsForThisEvent.length + 5) {
         console.error("Failed to generate enough stall options");
         break;
       }
