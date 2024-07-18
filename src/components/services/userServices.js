@@ -608,11 +608,11 @@ export const DeleteEventAPI = async (eventDetailsId) => {
   }
 };
 
-export const getAllStallCurrentEvent = async (eventDetailsId) => {
+export const getAllStallCurrentEvent = async (eventDetailId) => {
   try {
     const response = await config.get("/eventstall/GetAllStallCurrentEvent", {
       params: {
-        id: eventDetailsId,
+        eventDetailId,
       },
     });
     if (response.status === 200) {
@@ -1182,6 +1182,39 @@ export const getAllUserTransactionAPI = async (
           PageNumber: pageNumber,
           PageSize: pageSize,
           id: accountId,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      const pagination = JSON.parse(response.headers["x-pagination"]);
+      return {
+        data: response.data,
+        pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
+      };
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching sponsored events:", error);
+    throw error;
+  }
+};
+
+export const getAllEventFeedBackAPI = async (
+  eventDetailID,
+  pageNumber,
+  pageSize
+) => {
+  try {
+    const response = await config.get(
+      "/feedback/GetByEventDetail",
+      {
+        params: {
+          eventDetailID,
+          PageNumber: pageNumber,
+          PageSize: pageSize,
+          
         },
       }
     );

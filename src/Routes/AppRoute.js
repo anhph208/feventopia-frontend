@@ -28,6 +28,7 @@ import StaffProfile from "../pages/StaffPages/StaffProfile";
 import Invoice from "../pages/invoice";
 import EmailConfirmation from "../pages/confirmEmail";
 import AdminPages from "../pages/AdminPages/AdminMain";
+import Feedback from "../pages/eventFbDetails";
 
 const AppRoutes = () => {
   const { role } = useAuth();
@@ -47,6 +48,7 @@ const AppRoutes = () => {
       <Route path="/transactioninfo" element={<TransactionInfo />} />
       <Route path="/event/:eventId" element={<EventDetails />} />
       <Route path="/Contact" element={<ContactUs />} />
+      <Route path="/feedback/:eventId" element={<Feedback />} />
 
       {/* Home Route with Redirection */}
       <Route

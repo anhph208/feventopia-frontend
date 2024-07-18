@@ -1,27 +1,30 @@
 import React, { useState, useEffect, useContext } from "react";
-import { getEventDetailsAPI, getAllStallCurrentEvent } from "../components/services/userServices";
+import {
+  getEventDetailsAPI,
+  getAllStallCurrentEvent,
+} from "../components/services/userServices";
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../components/Cart/CartContext";
-import { useAuth } from "../context/AuthContext"; // Use the useAuth hook from AuthContext
+import { useAuth } from "../context/AuthContext";
 import Cart from "../components/Cart/Cart";
 import { toast } from "react-toastify";
 import { formatDateTime, PriceFormat } from "../utils/tools";
-import Select from "react-select"; // Import Select instead of CreatableSelect
+import Select from "react-select";
 
-const globalSelectedStalls = {}; // Global state to keep track of selected stalls
+const globalSelectedStalls = {};
 
 function EventDetails() {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
-  const { token } = useAuth(); // Using useAuth hook to get authentication state
+  const { token } = useAuth();
 
   const [eventDetails, setEventDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [ticketCounts, setTicketCounts] = useState({});
   const [selectedStalls, setSelectedStalls] = useState({});
-  const [soldStalls, setSoldStalls] = useState([]); // State to track sold stalls
+  const [soldStalls, setSoldStalls] = useState([]);
 
   const decreaseCount = (id) => {
     setTicketCounts((prevCounts) => ({
@@ -39,7 +42,7 @@ function EventDetails() {
 
   const handleAction = (action, eventId, additionalData = {}) => {
     if (!token) {
-      toast.error("Vui lòng Đăng Nhập để tiếp tục!", {
+      toast.error("Please log in to continue!", {
         onClose: () => navigate("/signin"),
       });
       return;
@@ -53,16 +56,16 @@ function EventDetails() {
     );
 
     if (!selectedEventDetail) {
-      console.error("Không tìm thấy sự kiện.");
+      console.error("Event not found.");
       return;
     }
 
     const ticketCount = ticketCounts[id] || 0;
     if (ticketCount === 0) {
-      toast.error("Hãy chọn ít nhất 1 vé!");
+      toast.error("Please select at least 1 ticket!");
       return;
     } else if (ticketCount > 3) {
-      toast.error("Bạn chỉ được mua tối đa 3 vé!");
+      toast.error("You can only buy a maximum of 3 tickets!");
       return;
     }
 
@@ -76,7 +79,7 @@ function EventDetails() {
       ticketPrice: selectedEventDetail.ticketPrice,
     };
 
-    toast.success("Đang chuyển đến trang thanh toán...", {
+    toast.success("Redirecting to checkout page...", {
       onClose: () => {
         navigate("/checkout", {
           state: {
@@ -96,13 +99,13 @@ function EventDetails() {
     );
 
     if (!selectedEventDetail) {
-      console.error("Không tìm thấy sự kiện.");
+      console.error("Event not found.");
       return;
     }
 
     const selectedStall = selectedStalls[id];
     if (!selectedStall) {
-      toast.error("Hãy chọn một gian hàng!");
+      toast.error("Please select a stall!");
       return;
     }
 
@@ -118,7 +121,7 @@ function EventDetails() {
 
     globalSelectedStalls[id] = selectedStall.value;
 
-    toast.success("Đang chuyển đến trang thanh toán...", {
+    toast.success("Redirecting to checkout page...", {
       onClose: () => {
         navigate("/checkoutStall", {
           state: {
@@ -138,16 +141,16 @@ function EventDetails() {
     );
 
     if (!selectedEventDetail) {
-      console.error("Không tìm thấy sự kiện.");
+      console.error("Event not found.");
       return;
     }
 
     const ticketCount = ticketCounts[id] || 0;
     if (ticketCount === 0) {
-      toast.error("Hãy chọn ít nhất 1 vé!");
+      toast.error("Please select at least 1 ticket!");
       return;
     } else if (ticketCount > 3) {
-      toast.error("Bạn chỉ được mua tối đa 3 vé!");
+      toast.error("You can only buy a maximum of 3 tickets!");
       return;
     }
 
@@ -165,6 +168,43 @@ function EventDetails() {
     addToCart(cartItem);
   };
 
+  useEffect(() => {
+    const fetchEventDetails = async () => {
+      console.log("Fetching event details...");
+      try {
+        setLoading(true);
+
+        const details = await getEventDetailsAPI(eventId);
+
+        setEventDetails(details);
+
+        if (details?.eventDetail && details.eventDetail.length > 0) {
+          for (const eventDetailItem of details.eventDetail) {
+            const stallsData = await getAllStallCurrentEvent(
+              eventDetailItem.id
+            );
+
+            const soldStallNumbers = stallsData.map(
+              (stall) => stall.stallNumber
+            );
+
+            setSoldStalls((prevSoldStalls) => [
+              ...prevSoldStalls,
+              ...soldStallNumbers,
+            ]);
+          }
+        } else {
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEventDetails();
+  }, [eventId]);
+
   const handleStallChange = (eventId, value) => {
     setSelectedStalls((prevStalls) => ({
       ...prevStalls,
@@ -173,42 +213,35 @@ function EventDetails() {
   };
 
   const generateStallOptions = (stallCount, eventId) => {
+    console.log("Generating stall options:", {
+      stallCount,
+      eventId,
+      soldStalls,
+    });
     const options = [];
-    for (let i = 1; i <= stallCount; i++) {
-      const stallValue = `A${i}`;
-      if (!soldStalls.includes(stallValue) && (!globalSelectedStalls[eventId] || globalSelectedStalls[eventId] === stallValue)) {
+    let currentStallNumber = 1;
+
+    while (options.length < stallCount) {
+      const stallValue = `A${currentStallNumber}`;
+      if (
+        !soldStalls.includes(stallValue) &&
+        (!globalSelectedStalls[eventId] ||
+          globalSelectedStalls[eventId] === stallValue)
+      ) {
         options.push({ value: stallValue, label: stallValue });
       }
+      currentStallNumber++;
+
+      // Safety check to prevent infinite loop
+      if (currentStallNumber > stallCount + soldStalls.length + 5) {
+        console.error("Failed to generate enough stall options");
+        break;
+      }
     }
+
+    console.log("Generated options:", options);
     return options;
   };
-
-  useEffect(() => {
-    const fetchEventDetails = async () => {
-      try {
-        setLoading(true);
-        const details = await getEventDetailsAPI(eventId);
-        setEventDetails(details);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchSoldStalls = async () => {
-      try {
-        const stalls = await getAllStallCurrentEvent(eventId);
-        const soldStallNumbers = stalls.map(stall => stall.stallNumber);
-        setSoldStalls(soldStallNumbers);
-      } catch (error) {
-        console.error("Error fetching sold stalls:", error);
-      }
-    };
-
-    fetchEventDetails();
-    fetchSoldStalls();
-  }, [eventId]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading event details</div>;

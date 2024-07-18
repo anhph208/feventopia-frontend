@@ -262,6 +262,7 @@ function Home() {
                                   ? `/sponsor-event/${event.id}`
                                   : `/event/${event.id}`
                               }
+
                               className="thumbnail-img"
                             >
                               <img
