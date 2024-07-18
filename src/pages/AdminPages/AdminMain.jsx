@@ -22,7 +22,7 @@ import {
   LocationOn as LocationIcon,
 } from "@mui/icons-material";
 
-import OverAll from "../AdminPages/OverAll";
+import OverAll from "../AdminPages/OverAllDashBoard";
 import UserTab from "../AdminPages/UserTab";
 import EventTab from "../AdminPages/EventTab";
 import TransactionTab from "../AdminPages/TransactionTab";
@@ -36,7 +36,7 @@ const drawerWidth = 240;
 const AdminMain = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("user");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -62,6 +62,16 @@ const AdminMain = () => {
       <List>
         <ListItem
           button
+          selected={activeTab === "dashboard"}
+          onClick={() => handleTabChange("dashboard")}
+        >
+          <ListItemIcon>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText primary="Tổng quan" />
+        </ListItem>
+        <ListItem
+          button
           selected={activeTab === "user"}
           onClick={() => handleTabChange("user")}
         >
@@ -80,7 +90,7 @@ const AdminMain = () => {
           </ListItemIcon>
           <ListItemText primary="Sự kiện" />
         </ListItem>
-        
+
         <ListItem
           button
           selected={activeTab === "transaction"}

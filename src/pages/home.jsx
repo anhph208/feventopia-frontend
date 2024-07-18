@@ -258,11 +258,12 @@ function Home() {
                           <div className="event-thumbnail">
                             <Link
                               to={
-                                role === "SPONSOR"
+                                event.status === "POST"
+                                  ? `/feedback/${event.id}`
+                                  : role === "SPONSOR"
                                   ? `/sponsor-event/${event.id}`
                                   : `/event/${event.id}`
                               }
-
                               className="thumbnail-img"
                             >
                               <img
@@ -278,7 +279,9 @@ function Home() {
                           <div className="event-content">
                             <Link
                               to={
-                                role === "SPONSOR"
+                                event.status === "POST"
+                                  ? `/feedback/${event.id}`
+                                  : role === "SPONSOR"
                                   ? `/sponsor-event/${event.id}`
                                   : `/event/${event.id}`
                               }
