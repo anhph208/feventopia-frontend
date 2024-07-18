@@ -25,7 +25,6 @@ import {
 import OverAll from "../AdminPages/OverAll";
 import UserTab from "../AdminPages/UserTab";
 import EventTab from "../AdminPages/EventTab";
-import TicketAndStallTab from "../AdminPages/TicketAndStallTab";
 import TransactionTab from "../AdminPages/TransactionTab";
 import LocationTab from "../AdminPages/LocationTab";
 import AccountInfo from "../AdminPages/AccountInfo";
@@ -37,7 +36,7 @@ const drawerWidth = 240;
 const AdminMain = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("user");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -63,16 +62,6 @@ const AdminMain = () => {
       <List>
         <ListItem
           button
-          selected={activeTab === "dashboard"}
-          onClick={() => handleTabChange("dashboard")}
-        >
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Tổng quan" />
-        </ListItem>
-        <ListItem
-          button
           selected={activeTab === "user"}
           onClick={() => handleTabChange("user")}
         >
@@ -91,16 +80,7 @@ const AdminMain = () => {
           </ListItemIcon>
           <ListItemText primary="Sự kiện" />
         </ListItem>
-        <ListItem
-          button
-          selected={activeTab === "ticketAndStall"}
-          onClick={() => handleTabChange("ticketAndStall")}
-        >
-          <ListItemIcon>
-            <TicketIcon />
-          </ListItemIcon>
-          <ListItemText primary="Ticket and Stall" />
-        </ListItem>
+        
         <ListItem
           button
           selected={activeTab === "transaction"}
@@ -189,7 +169,6 @@ const AdminMain = () => {
           {activeTab === "dashboard" && <OverAll />}
           {activeTab === "user" && <UserTab />}
           {activeTab === "event" && <EventTab />}
-          {activeTab === "ticketAndStall" && <TicketAndStallTab />}
           {activeTab === "transaction" && <TransactionTab />}
           {activeTab === "location" && <LocationTab />}
           {activeTab === "account" && <AccountInfo />}

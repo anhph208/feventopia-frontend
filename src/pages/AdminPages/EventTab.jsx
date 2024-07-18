@@ -225,7 +225,9 @@ const AdminEventTab = () => {
                       TRIỂN KHAI
                     </button>
                     <button
-                      className={`tab-link ${status === "POST" ? "active" : ""}`}
+                      className={`tab-link ${
+                        status === "POST" ? "active" : ""
+                      }`}
                       onClick={() => handleStatusChange("POST")}
                     >
                       HOÀN THÀNH
@@ -289,6 +291,17 @@ const AdminEventTab = () => {
                               <i className="fa-solid fa-ellipsis-vertical" />
                             </button>
                             <div className="dropdown-menu dropdown-menu-right">
+                              {(event.status === "INITIAL" ||
+                                event.status === "FUNDRAISING" ||
+                                event.status === "PREPARATION") && (
+                                <Link
+                                  to={`/update-event/${event.id}`}
+                                  className="dropdown-item"
+                                >
+                                  <i className="fa-solid fa-eye me-3" />
+                                  Cập nhật Sự kiện tổng
+                                </Link>
+                              )}
                               <Link
                                 to={`/edit-eventdetails/${event.id}`}
                                 className="dropdown-item"

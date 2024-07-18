@@ -1089,3 +1089,114 @@ export const signupInternalAPI = async (role, userData) => {
     throw error;
   }
 };
+
+export const GetAllAssigneeDetailCurrentUserAPI = async (
+  pageNumber,
+  pageSize
+) => {
+  try {
+    const response = await config.get(
+      "/eventassignee/GetAllAssigneeDetailCurrentUser",
+      {
+        params: {
+          PageNumber: pageNumber,
+          PageSize: pageSize,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      const pagination = JSON.parse(response.headers["x-pagination"]);
+      return {
+        data: response.data,
+        pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
+      };
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching sponsored events:", error);
+    throw error;
+  }
+};
+
+export const unactivateAccountAPI = async (accountId) => {
+  try {
+    const response = await config.delete("/user/management/UnactivateAccount", {
+      params: { id: accountId },
+    });
+
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error signing up:", error);
+    throw error;
+  }
+};
+
+export const reactivateAccountAPI = async (accountId) => {
+  try {
+    const response = await config.patch(`/user/management/ReactivateAccount?id=${accountId}`);
+
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error signing up:", error);
+    throw error;
+  }
+};
+
+export const updateAllAccountlAPI = async (accountId, accountData) => {
+  try {
+    const response = await config.post("/user/management/UpdateAllAccount", accountData, {
+      params: { id: accountId },
+    });
+
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error signing up:", error);
+    throw error;
+  }
+};
+
+export const getAllUserTransactionAPI = async (
+  accountId,
+  pageNumber,
+  pageSize
+) => {
+  try {
+    const response = await config.get(
+      "/payment/GetAllUserTransaction",
+      {
+        params: {
+          PageNumber: pageNumber,
+          PageSize: pageSize,
+          id: accountId,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      const pagination = JSON.parse(response.headers["x-pagination"]);
+      return {
+        data: response.data,
+        pagination, // Contains TotalCount, PageSize, CurrentPage, TotalPages, HasNext, HasPrevious
+      };
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching sponsored events:", error);
+    throw error;
+  }
+};

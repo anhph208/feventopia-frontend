@@ -128,13 +128,7 @@ const AppRoutes = () => {
           <Route path="/update-event/:eventId" element={<UpdateEvent />} />
           <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
           <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
-          <Route path="/staffprofile" element={<StaffProfile />} />
-          <Route path="/userprofile" element={<UserProfile />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkoutstall" element={<CheckoutStall />} />
-          <Route path="/invoice/:ticketId" element={<Invoice />} />
-          <Route path="/sponsorProfile" element={<SponsorProfile />} />
-          <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
+          <Route path="/*" element={<Navigate to="/AdminPages" />} />
         </>
       )}
 

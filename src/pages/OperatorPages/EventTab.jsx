@@ -126,8 +126,6 @@ const EventTab = ({ onViewChart }) => {
     setTermsAccepted(e.target.checked);
   };
 
-  
-
   const handleConfirmUpdateNextPhase = async () => {
     try {
       const eventDetails = await getEventByIdOperatorAPI(selectedEventId);
@@ -359,7 +357,9 @@ const EventTab = ({ onViewChart }) => {
                               <i className="fa-solid fa-ellipsis-vertical" />
                             </button>
                             <div className="dropdown-menu dropdown-menu-right">
-                              {event.status === "INITIAL" && (
+                              {(event.status === "INITIAL" ||
+                                event.status === "FUNDRAISING" ||
+                                event.status === "PREPARATION") && (
                                 <Link
                                   to={`/update-event/${event.id}`}
                                   className="dropdown-item"
@@ -368,6 +368,7 @@ const EventTab = ({ onViewChart }) => {
                                   Cập nhật Sự kiện tổng
                                 </Link>
                               )}
+                              
                               <Link
                                 to={`/edit-eventdetails/${event.id}`}
                                 className="dropdown-item"
@@ -375,6 +376,7 @@ const EventTab = ({ onViewChart }) => {
                                 <i className="fa-solid fa-clone me-3" />
                                 Xem Chi Tiết
                               </Link>
+                              {event.status === "PREPARATION" && (
                               <button
                                 className="dropdown-item"
                                 onClick={() =>
@@ -384,6 +386,7 @@ const EventTab = ({ onViewChart }) => {
                                 <i className="fa-solid fa-users me-3" />
                                 Xem Tất cả Nhân sự
                               </button>
+                              )}
                               {event.status !== "CANCELED" &&
                                 event.status !== "POST" && (
                                   <button
