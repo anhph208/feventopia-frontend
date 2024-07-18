@@ -1,66 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Gambolthemes" />
+    <meta name="author" content="Gambolthemes" />
+    <title>FEventopia</title>
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, shrink-to-fit=9">
-  <meta name="description" content="Gambolthemes">
-  <meta name="author" content="Gambolthemes">
-  <title>FEventopia</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/png" href="./assets/images/logo-fav.png" />
 
-  <!-- Favicon Icon -->
-  <link rel="icon" type="image/png" href="./assets/images/logo-fav.png">
+    <!-- Stylesheets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="%PUBLIC_URL%/assets/vendor/unicons-2.0.1/css/unicons.css"
+      rel="stylesheet"
+    />
+    <link href="%PUBLIC_URL%/assets/css/style.css" rel="stylesheet" />
+    <link href="%PUBLIC_URL%/assets/css/responsive.css" rel="stylesheet" />
+    <link
+      href="%PUBLIC_URL%/assets/css/vertical-responsive-menu.css"
+      rel="stylesheet"
+    />
 
-  <!-- Stylesheets -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet">
-  <link href='./assets/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
-  <link href="./assets/css/style.css" rel="stylesheet">
-  <link href="./assets/css/responsive.css" rel="stylesheet">
-  <link href="./assets/css/night-mode.css" rel="stylesheet">
+    <!-- Vendor Stylesheets -->
+    <link
+      href="%PUBLIC_URL%/assets/vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="%PUBLIC_URL%/assets/vendor/OwlCarousel/assets/owl.carousel.css"
+      rel="stylesheet"
+    />
+    <link
+      href="%PUBLIC_URL%/assets/vendor/OwlCarousel/assets/owl.theme.default.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="%PUBLIC_URL%/assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="%PUBLIC_URL%/assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="%PUBLIC_URL%/assets/vendor/chartist-plugin-tooltip/dist/chartist-plugin-tooltip.css"
+      rel="stylesheet"
+    />
+    <link
+      href="%PUBLIC_URL%/assets/vendor/chartist/dist/chartist.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-  <!-- Vendor Stylesheets -->
-  <link href="./assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-  <link href="./assets/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
-  <link href="./assets/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
-  <link href="./assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="./assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-</head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
 
-<body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
-  <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <!-- Include jQuery before other scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/OwlCarousel/owl.carousel.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/mixitup/dist/mixitup.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/js/custom.js"></script>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-
-  <script src="./assets/js/jquery.min.js"></script>
-  <script src="./assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="./assets/vendor/OwlCarousel/owl.carousel.js"></script>
-  <script src="./assets/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-  <script src="./assets/vendor/mixitup/dist/mixitup.min.js"></script>
-  <script src="./assets/js/custom.js"></script>
-  <script src="./assets/js/night-mode.js"></script>
-  <script>
-    var containerEl = document.querySelector('[data-ref~="event-filter-content"]');
-
-    var mixer = mixitup(containerEl, {
-      selectors: {
-        target: '[data-ref~="mixitup-target"]'
-      }
-    });
-  </script>
-</body>
-
+    <!-- Load bundle.js last -->
+    <script defer src="%PUBLIC_URL%/static/js/bundle.js"></script>
+  </body>
 </html>

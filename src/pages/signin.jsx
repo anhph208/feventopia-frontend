@@ -1,71 +1,40 @@
-import React, { useState }  from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import axios from "axios"; // Import axios
 import { loginAPI } from "../components/services/userServices";
-import { jwtDecode } from "jwt-decode";
-import { useAuth } from "../components/AuthContext";
+import { useAuth } from "../context/AuthContext"; // Adjust the import path as necessary
 
 const SignIn = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogged, setIsLogged] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); // Lấy hàm login từ AuthContext
+  const { login } = useAuth();
 
-  const navigateWithDelay = (path, delay) => {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        navigate(path);
-        resolve();
-      }, delay);
-    });
-  };
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await loginAPI(emailOrUsername, password);
-      const jwtToken = response.headers["json-web-token"]; // Access headers directly
+      const jwtToken = response.headers["json-web-token"];
       if (jwtToken) {
-        localStorage.setItem("token", jwtToken);
-        const decoded = jwtDecode(jwtToken);
-        const username = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-        const userEmail = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
-        const role =
-          decoded[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ];
-          login(jwtToken, role); // Gọi hàm login từ AuthContext
-          switch (role) {
-            case 'ADMIN':
-              await navigateWithDelay('/AdminDashboard', 1000);
-              break;
-            case 'CHECKINGSTAFF':
-              await navigate('/Staffprofile', 1000);
-              break;
-            case 'EVENTOPERATOR':
-              await navigate('/OperatorDashboard', 1000);
-              break;
-            case 'SPONSOR':
-            case 'VISITOR':
-              navigate('/');
-              break;
-            default:
-              navigate('/');
-              break;
-          }
-        setIsLogged(true);
-        localStorage.setItem("isLogged", isLogged);
-        localStorage.setItem("username", username);
-        localStorage.setItem("email", userEmail);
-        localStorage.setItem("role", role);
+        login(jwtToken);
+
+        const role = localStorage.getItem("role");
+        if (role === "EVENTOPERATOR") {
+          window.location.replace("/operatorPages");
+        } else if (role === "CHECKINGSTAFF") {
+          window.location.replace("/staffprofile");
+        } else if (role === "ADMIN") {
+          window.location.replace("/AdminPages");
+        } else {
+          window.location.replace("/");
+        }
+
         toast.success("Đăng nhập thành công!!!");
       }
     } catch (err) {
       if (err.response) {
-        // Request was made and server responded with a non-2xx status code
         const status = err.response.status;
         if (status === 401) {
           toast.error("Email/Tên tài khoản hoặc Mật khẩu không đúng");
@@ -75,10 +44,8 @@ const SignIn = () => {
           toast.error("Lỗi. Vui lòng thử lại");
         }
       } else if (err.request) {
-        // Request was made but no response was received
         toast.error("Sự cố kết nối. Vui lòng kiểm tra kết nối mạng!");
       } else {
-        // Something happened in setting up the request that triggered an error
         console.error("Error signing in:", err.message);
       }
       localStorage.removeItem("token");
@@ -94,7 +61,7 @@ const SignIn = () => {
       <div className="app-form">
         <div className="app-form-sidebar">
           <div className="sidebar-sign-logo">
-            <a href="/home">
+            <a href="/">
               <img src="./assets/images/logo.svg" alt="logo" />
             </a>
           </div>
@@ -107,7 +74,7 @@ const SignIn = () => {
             <div className="row justify-content-center">
               <div className="col-lg-10 col-md-10">
                 <div className="app-top-items">
-                  <a href="/home">
+                  <a href="/">
                     <div className="sign-logo" id="logo">
                       <img src="./assets/images/logo.svg" alt="logo" />
                       <img
@@ -202,4 +169,5 @@ const SignIn = () => {
     </div>
   );
 };
+
 export default SignIn;

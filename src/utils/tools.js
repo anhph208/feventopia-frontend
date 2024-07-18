@@ -1,21 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import { toast } from "react-toastify";
-// import { Navigate, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { CartContext } from "../components/Cart/CartContext";
 
 export const convertToGMT7 = (dateTimeString) => {
-  // Parse the VNPay date format
-  const [datePart, timePart] = decodeURIComponent(dateTimeString).split(' ');
-  const [month, day, year] = datePart.split('/');
-  const [hours, minutes, seconds] = timePart.split(':');
-
-  const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
-
-  // Add 7 hours to convert from GMT+0 to GMT+7
+  const [datePart, timePart] = decodeURIComponent(dateTimeString).split(" ");
+  const [month, day, year] = datePart.split("/");
+  const [hours, minutes, seconds] = timePart.split(":");
+  const date = new Date(
+    Date.UTC(year, month - 1, day, hours, minutes, seconds)
+  );
   date.setHours(date.getHours() + 7);
-
-  // Format the date to a string
-  const formattedDate = date.toISOString().replace('T', ' ').substring(0, 19);
+  const formattedDate = date.toISOString().replace("T", " ").substring(0, 19);
   return formattedDate;
 };
 
@@ -26,38 +22,40 @@ export const formatDate = (inputDate) => {
   const year = date.getFullYear();
   const formattedDay = day < 10 ? `0${day}` : day;
   const formattedMonth = month < 10 ? `0${month}` : month;
-  const formattedDate = `${formattedDay}.${formattedMonth}.${year}`;
+  const formattedDate = `${formattedDay}/${formattedMonth}/${year}`;
   return formattedDate;
 };
 
 export const PriceFormat = ({ price }) => {
+  if (price === undefined || price === null || isNaN(price)) {
+    return <span>N/A</span>; // Display a placeholder or handle as needed
+  }
+
   const formattedPrice = price.toLocaleString("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+
   return <span>{formattedPrice}</span>;
 };
 
 export const formatTime = (date) => {
   if (!date) return "";
-
   const formattedTime = new Date(date).toLocaleTimeString();
   return formattedTime;
 };
 
 export const formatDateTime = (date) => {
   const formattedDate = new Date(date);
-
   const day = formattedDate.getDate().toString().padStart(2, "0");
-  const month = (formattedDate.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
-  const year = formattedDate.getFullYear().toString().slice(2, 4);
+  const month = (formattedDate.getMonth() + 1).toString().padStart(2, "0");
+  const year = formattedDate.getFullYear();
   const hours = formattedDate.getHours().toString().padStart(2, "0");
   const minutes = formattedDate.getMinutes().toString().padStart(2, "0");
-
-  return `${day}.${month}.${year} ${hours}:${minutes}`;
+  return `${hours}:${minutes} ${day}/${month}/${year}`;
 };
 
-export const caculateTimeAgo = (datetime) => {
+export const calculateTimeAgo = (datetime) => {
   const currentDate = new Date();
   const pastDate = new Date(datetime);
   const timeDifference = currentDate - pastDate;
@@ -77,8 +75,7 @@ export const caculateTimeAgo = (datetime) => {
   }
 };
 
-export const handleLogout = (navigate) => {
-  navigate(window.location.replace("/signin"));;
+export const handleLogout = (navigate, clearCart) => {
   localStorage.removeItem("isLogged");
   localStorage.removeItem("username");
   localStorage.removeItem("phoneNumber");
@@ -88,4 +85,30 @@ export const handleLogout = (navigate) => {
   localStorage.removeItem("role");
   localStorage.removeItem("token");
   toast.success("Đăng xuất thành công!");
+};
+
+export const rankSub = (rank) => {
+  if (rank === "BRONZE") {
+    return "Hạng Đồng";
+  } else if (rank === "GOLD") {
+    return "Hạng Vàng";
+  } else if (rank === "PLANTIUM") {
+    return "Hạng Bạch Kim";
+  }
+};
+
+export const StatusSub = (status) => {
+  if (status === "INITIAL") {
+    return "GIAI ĐOẠN KHỞI ĐỘNG";
+  } else if (status === "FUNDRAISING") {
+    return "GIAI ĐOẠN GỌI TÀI TRỢ";
+  } else if (status === "PREPARATION") {
+    return "GIAI ĐOẠN CHUẨN BỊ";
+  } else if (status === "EXECUTE") {
+    return "TRIỂN KHAI SỰ KIỆN";
+  } else if (status === "POST") {
+    return "HOÀN THÀNH";
+  } else if (status === "CANCELLED") {
+    return "ĐÃ HỦY";
+  }
 };

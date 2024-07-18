@@ -1,42 +1,61 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { handleLogout } from "../utils/tools";
 import { getProfileAPI } from "../components/services/userServices";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { CartContext } from "../components/Cart/CartContext";
+import { useAuth } from "../context/AuthContext"; // Import the useAuth hook
 
 const Header = () => {
-  const logged = localStorage.getItem("isLogged") === "true";
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { clearCart } = useContext(CartContext);
+  const { token, logout } = useAuth(); // Use the useAuth hook
 
   useEffect(() => {
-    if (logged) {
-      const token = localStorage.getItem("token");
-
+    if (token) {
       const fetchUserProfile = async () => {
         try {
-          const profileData = await getProfileAPI(token);
+          const profileData = await getProfileAPI();
           setProfile(profileData);
-          setLoading(false);
         } catch (error) {
           console.error("Error fetching user profile:", error);
-          toast.error("Failed to fetch user profile.");
+          if (error.response && error.response.status === 401) {
+            // Handle session expiration
+            handleSessionExp();
+          } else {
+            console.error("Trang người dùng hết hạn.");
+          }
+        } finally {
           setLoading(false);
         }
       };
-
       fetchUserProfile();
     } else {
       setLoading(false);
     }
-  }, [logged]);
+  }, [token]);
 
   const handleLogoutClick = () => {
-    handleLogout(navigate);
+    logout(); // Use the logout function from AuthContext
+    clearCart();
+    if (!toast.isActive("logout-success-toast")) {
+      toast.success("Đăng xuất thành công.", {
+        toastId: "logout-success-toast",
+      });
+      window.location.replace("/signin");
+    }
+  };
+
+  const handleSessionExp = () => {
+    logout();
+    clearCart(); // Use the logout function from AuthContext
+    if (!toast.isActive("session-expired-toast")) {
+      toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.", {
+        toastId: "session-expired-toast",
+      });
+      window.location.replace("/signin");
+    }
   };
 
   const handleClickLogo = () => {
@@ -50,7 +69,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-inner">
-        <nav className="navbar navbar-expand-lg bg-barren barren-head navbar fixed-top justify-content-sm-start pt-0 pb-0">
+        <nav className="navbar navbar-expand-lg bg-barren barren-head navbar fixed-top pt-0 pb-0">
           <div className="container">
             <button
               className="navbar-toggler"
@@ -66,12 +85,13 @@ const Header = () => {
             <a
               className="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 me-auto"
               href="/"
+              onClick={(e) => e.preventDefault() || handleClickLogo()}
             >
-              <div className="res-main-logo">
-                <img src="./assets/images/logo-fav.png" alt="Logo" />
-              </div>
               <div className="main-logo" id="logo">
-                <img src="./assets/images/logo.svg" alt="Logo" />
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/logo%2Flogo.svg?alt=media&token=6e50aaa8-2c91-4596-9b11-e407bb6694e3"
+                  alt="Logo"
+                />
                 <img
                   className="logo-inverse"
                   src="./assets/images/dark-logo.svg"
@@ -102,7 +122,7 @@ const Header = () => {
               <div className="offcanvas-body">
                 <div className="offcanvas-top-area">
                   <div className="create-bg">
-                    <a href="/exploreEvent" className="offcanvas-create-btn">
+                    <a href="/explored" className="offcanvas-create-btn">
                       <i className="fa-solid fa-calendar-days" />
                       <span>
                         <strong>MUA VÉ NGAY</strong>
@@ -120,15 +140,15 @@ const Header = () => {
                     <a
                       className="nav-link"
                       aria-current="page"
-                      href="/exploreEvent"
+                      href="/explored"
                     >
-                      <strong>KHÁM PHÁ SỰ KIỆN</strong>
+                      <strong>TÌM KIẾM SỰ KIỆN</strong>
                     </a>
                   </li>
                   <li className="nav-item dropdown">
                     <a
                       className="nav-link dropdown-toggle"
-                      href="/exploreEvent"
+                      href="#"
                       role="button"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -137,14 +157,14 @@ const Header = () => {
                     </a>
                     <ul className="dropdown-menu dropdown-submenu">
                       <li>
-                        <a className="dropdown-item" href="/Feedback">
+                        <a className="dropdown-item" href="our_blog.html">
                           SỰ KIỆN THÚ VỊ
                         </a>
                       </li>
                       <li>
                         <a
                           className="dropdown-item"
-                          href="/FeedbackDetail"
+                          href="blog_detail_view.html"
                         >
                           TÌM KIẾM ĐÁNH GIÁ
                         </a>
@@ -173,7 +193,7 @@ const Header = () => {
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="/Contact_us">
+                        <a className="dropdown-item" href="/Contact">
                           LIÊN HỆ FEVENTOPIA
                         </a>
                       </li>
@@ -218,14 +238,14 @@ const Header = () => {
             <div className="right-header order-2">
               <ul className="align-self-stretch">
                 <li>
-                  <a href="create.html" className="create-btn btn-hover">
+                  <a href="/explored" className="create-btn btn-hover">
                     <i className="fa-solid fa-calendar-days" />
                     <span>
                       <strong>MUA VÉ NGAY</strong>
                     </span>
                   </a>
                 </li>
-                {logged ? (
+                {token ? (
                   <li className="dropdown account-dropdown">
                     <a
                       href="#"
@@ -239,7 +259,7 @@ const Header = () => {
                       <img
                         src={
                           profile?.avatar ||
-                          "./assets/images/profile-imgs/img-13.jpg"
+                          "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2Flogo-fav.png?alt=media&token=1e771f4e-1d95-4b9a-a133-76bab5aad662"
                         }
                         alt="User Avatar"
                       />
@@ -255,7 +275,7 @@ const Header = () => {
                             <img
                               src={
                                 profile?.avatar ||
-                                "./assets/images/profile-imgs/img-13.jpg"
+                                "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/avatars%2Flogo-fav.png?alt=media&token=1e771f4e-1d95-4b9a-a133-76bab5aad662"
                               }
                               alt="User Avatar"
                             />
@@ -264,12 +284,19 @@ const Header = () => {
                       </li>
                       <li className="profile-link">
                         <Link
-                          to="my_organisation_dashboard.html"
+                          to="/userprofile?activeTab=orders"
                           className="link-item"
                         >
                           Vé đã mua
                         </Link>
-                        <Link to="/userprofile" className="link-item">
+                        <Link
+                          to={
+                            profile?.role === "SPONSOR"
+                              ? "/sponsorProfile"
+                              : "/userprofile"
+                          }
+                          className="link-item"
+                        >
                           Trang cá nhân
                         </Link>
                         <button
@@ -284,7 +311,7 @@ const Header = () => {
                 ) : (
                   <li>
                     <Link to="/signin" className="create-btn btn-hover">
-                      <strong>Đăng nhập</strong>
+                      <strong>ĐĂNG NHẬP</strong>
                     </Link>
                   </li>
                 )}

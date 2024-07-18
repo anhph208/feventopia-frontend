@@ -1,16 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+const container = document.getElementById("root");
+const root = createRoot(container);
 
-
-ReactDOM.render(
+root.render(
   <React.StrictMode>
     <App />
-    <ToastContainer /> {/* Make sure to include this */}
-  </React.StrictMode>,
-  document.getElementById('root')
+    <ToastContainer limit={5} autoClose={2000} />
+  </React.StrictMode>
 );
-

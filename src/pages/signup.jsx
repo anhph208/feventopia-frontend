@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { signupAPI } from "../components/services/userServices";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
   });
-
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,11 +26,57 @@ function Signup() {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*\d)/;
+
+    if (!formData.firstName) {
+      newErrors.firstName = "Họ là bắt buộc";
+    }
+
+    if (!formData.lastName) {
+      newErrors.lastName = "Tên là bắt buộc";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email là bắt buộc";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email không hợp lệ";
+    }
+
+    if (!formData.phone) {
+      newErrors.phone = "Số điện thoại là bắt buộc";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Số điện thoại không hợp lệ";
+    }
+
+    if (!formData.username) {
+      newErrors.username = "Tên đăng nhập là bắt buộc";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Mật khẩu là bắt buộc";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    } else if (!passwordRegex.test(formData.password)) {
+      newErrors.password =
+        "Mật khẩu phải có ít nhất 1 chữ cái viết hoa, 1 ký tự đặc biệt và 1 số";
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Xác nhận mật khẩu là bắt buộc";
+    } else if (formData.confirmPassword !== formData.password) {
+      newErrors.confirmPassword = "Mật khẩu xác nhận không giống nhau";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Mật khẩu xác nhận không giống nhau!!!");
+    if (!validateForm()) {
       return;
     }
 
@@ -49,7 +95,7 @@ function Signup() {
       if (response.status >= 200 && response.status < 300) {
         toast.success("Đăng kí thành công");
         setTimeout(() => {
-          navigate(window.location.replace("/signin"));
+          navigate("/signin");
         }, 2000);
       } else {
         toast.error(response.message || "Lỗi hệ thống. Đăng kí thất bại!");
@@ -79,7 +125,7 @@ function Signup() {
             <div className="row justify-content-center">
               <div className="col-lg-10 col-md-10">
                 <div className="app-top-items">
-                  <a href="/home">
+                  <a href="/">
                     <div className="sign-logo" id="logo">
                       <img src="./assets/images/logo.svg" alt="Logo" />
                       <img
@@ -115,6 +161,9 @@ function Signup() {
                             value={formData.firstName}
                             onChange={handleChange}
                           />
+                          {errors.firstName && (
+                            <small className="text-danger">{errors.firstName}</small>
+                          )}
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-12">
@@ -128,6 +177,9 @@ function Signup() {
                             value={formData.lastName}
                             onChange={handleChange}
                           />
+                          {errors.lastName && (
+                            <small className="text-danger">{errors.lastName}</small>
+                          )}
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
@@ -141,6 +193,9 @@ function Signup() {
                             value={formData.email}
                             onChange={handleChange}
                           />
+                          {errors.email && (
+                            <small className="text-danger">{errors.email}</small>
+                          )}
                         </div>
                         <div className="form-group mt-4">
                           <label className="form-label">Số điện thoại*</label>
@@ -152,6 +207,9 @@ function Signup() {
                             value={formData.phone}
                             onChange={handleChange}
                           />
+                          {errors.phone && (
+                            <small className="text-danger">{errors.phone}</small>
+                          )}
                         </div>
                         <div className="form-group mt-4">
                           <label className="form-label">Tên đăng nhập*</label>
@@ -163,6 +221,9 @@ function Signup() {
                             value={formData.username}
                             onChange={handleChange}
                           />
+                          {errors.username && (
+                            <small className="text-danger">{errors.username}</small>
+                          )}
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
@@ -192,6 +253,9 @@ function Signup() {
                               ></i>
                             </span>
                           </div>
+                          {errors.password && (
+                            <small className="text-danger">{errors.password}</small>
+                          )}
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
@@ -207,6 +271,9 @@ function Signup() {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                           />
+                          {errors.confirmPassword && (
+                            <small className="text-danger">{errors.confirmPassword}</small>
+                          )}
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
@@ -219,7 +286,6 @@ function Signup() {
                       </div>
                     </div>
                   </form>
-                  <ToastContainer />
                   <div className="agree-text">
                     Bằng việc "Đăng kí", bạn đồng ý với FEvetopia{" "}
                     <a href="#">Điều khoản &amp; Dịch vụ</a> và{" "}

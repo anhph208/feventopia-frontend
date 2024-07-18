@@ -1,7 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
+import $ from 'jquery';
 
 const responsive = {
   0: {
@@ -15,70 +17,57 @@ const responsive = {
   },
 };
 
-const Slider = () => {
+const Slider = ({ items, autoplayTimeout, loop, margin, smartSpeed }) => {
   return (
     <div>
       <OwlCarousel
         className="owl-theme"
-        loop
-        margin={10}
+        loop={loop}
+        margin={margin}
         responsive={responsive}
         autoplay
-        autoplayTimeout={3000}
-        smartSpeed={700}
+        autoplayTimeout={autoplayTimeout}
+        smartSpeed={smartSpeed}
+        nav={false} // Disable navigation arrows
+        dots={false} // Disable dots navigation
+        mouseDrag={false} // Disable mouse drag
+        touchDrag={false} // Disable touch drag
+        pullDrag={false} // Disable pull drag
+        freeDrag={false} 
       >
-        <div className="item">
-          <div className="sponsor">
-            <a href="#">
-              <img src="./assets/images/icons/sponsor-1.png" alt="Sponsor 1" />
-            </a>
+        {items.map((item, index) => (
+          <div className="item" key={index}>
+            <div className="sponsor">
+              <a href={item.link}>
+                <img src={item.image} alt={item.altText} />
+              </a>
+            </div>
           </div>
-        </div>
-        <div className="item">
-          <div className="sponsor">
-            <a href="#">
-              <img src="./assets/images/icons/sponsor-2.png" alt="Sponsor 2" />
-            </a>
-          </div>
-        </div>
-        <div className="item">
-          <div className="sponsor">
-            <a href="#">
-              <img src="./assets/images/icons/sponsor-3.png" alt="Sponsor 3" />
-            </a>
-          </div>
-        </div>
-        <div className="item">
-          <div className="sponsor">
-            <a href="#">
-              <img src="./assets/images/icons/sponsor-4.png" alt="Sponsor 4" />
-            </a>
-          </div>
-        </div>
-        <div className="item">
-          <div className="sponsor">
-            <a href="#">
-              <img src="./assets/images/icons/sponsor-5.png" alt="Sponsor 5" />
-            </a>
-          </div>
-        </div>
-        <div className="item">
-          <div className="sponsor">
-            <a href="#">
-              <img src="./assets/images/icons/sponsor-6.png" alt="Sponsor 6" />
-            </a>
-          </div>
-        </div>
-        <div className="item">
-          <div className="sponsor">
-            <a href="#">
-              <img src="./assets/images/icons/sponsor-7.png" alt="Sponsor 7" />
-            </a>
-          </div>
-        </div>
+        ))}
       </OwlCarousel>
     </div>
   );
 }
+
+Slider.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      link: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired,
+      altText: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  autoplayTimeout: PropTypes.number,
+  loop: PropTypes.bool,
+  margin: PropTypes.number,
+  smartSpeed: PropTypes.number,
+};
+
+Slider.defaultProps = {
+  autoplayTimeout: 3000,
+  loop: true,
+  margin: 10,
+  smartSpeed: 700,
+};
 
 export default Slider;

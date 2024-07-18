@@ -41,18 +41,19 @@
 /* ================================================================================== 
  Google Fonts
 ===================================================================================== */
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap")
-    /* ================================================================================== 
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+/* ==================================================================================
 Reset Css
 ===================================================================================== */
-    html,
-  body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
-  pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd,
-  q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt,
-  dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot,
-  thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption,
-  footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark,
-  audio, video {
+html,
+body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
+pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd,
+q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt,
+dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot,
+thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption,
+footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark,
+audio, video, strong {
   margin: 0;
   padding: 0;
   border: 0;
@@ -60,6 +61,7 @@ Reset Css
   font: inherit;
   vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,
@@ -118,7 +120,7 @@ table {
   padding: 0;
 }
 a {
-  /*color: #313539 !important;*/
+  /* color: #313539 !important; */
   text-decoration: none !important;
 }
 a:focus {
@@ -385,7 +387,7 @@ body {
 .create-btn {
   font-size: 14px;
   font-weight: 400;
-  color: #000000;
+  color: #fff;
   height: 40px;
   display: inline-block;
   border: 2px solid #ff7f50;
@@ -649,23 +651,22 @@ body {
 
 .footer-content h4 {
   font-size: 18px;
-  color: #ffffff;
+  color: #fff;
   margin-bottom: 11px;
   font-weight: 400;
 }
 
-.footer-link-list li a{
+.footer-link-list li {
   display: block;
-  color : white;
   line-height: 32px;
 }
 
 .footer-link {
-  color: rgb(255, 255, 255);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .footer-link:hover {
-  color: #fd8b61 !important;
+  color: #ff7f50 !important;
 }
 
 .footer-content > .social-links {
@@ -739,11 +740,37 @@ body {
 /* --- Index Page --- */
 
 .wrapper {
-  margin-top: 60px;
+  margin-top: 30px;
+}
+/* Define the slider-container class for full-screen display */
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 580px; /* Set height to desired height */
+  overflow: hidden; /* Hide any overflow */
 }
 
+.slider-container .owl-carousel {
+  width: 100%;
+  height: 100%; /* Ensure OwlCarousel takes full height */
+}
+
+.slider-container .owl-carousel .item {
+  width: 100%;
+  height: 100%; /* Ensure each item takes full height */
+}
+
+.slider-container .owl-carousel .item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: none; /* Disable Owl Carousel transitions to prevent blur */
+}
+
+
 .hero-banner {
-  background-image: url(../images/banner.jpg);
+  background-image: url(./images/banner.jpg);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -771,10 +798,24 @@ body {
 
 .main-btn {
   font-size: 16px;
-  color: #000000;
+  color: #fff;
   font-weight: 400;
   text-align: center;
   background: #ff7f50;
+  height: 50px;
+  display: inline-block;
+  line-height: 49px;
+  padding: 0 30px;
+  border-radius: 3px;
+  border: 1px solid #ff7f50;
+}
+
+.main-end-btn {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 400;
+  text-align: center;
+  background: #262626;
   height: 50px;
   display: inline-block;
   line-height: 49px;
@@ -919,21 +960,8 @@ body {
   border-bottom-left-radius: 0;
 }
 
-.control[data-filter]:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  border-bottom: 3px solid transparent;
-  border-radius: 0;
-  background: transparent;
-  transition: background-color 150ms, border-color 150ms;
-}
-
-.mixitup-control-active[data-filter]:after {
-  background: transparent;
+.control:hover,
+.control.active {
   border-bottom: 3px solid #ff7f50;
   color: #ff7f50;
 }
@@ -1851,7 +1879,7 @@ body {
 /* --- Event Detail View Page --- */
 
 .breadcrumb-block {
-  background-image: url(../images/banner.jpg);
+  background-image: url(./images/banner.jpg);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -1977,6 +2005,9 @@ body {
 .main-event-content {
   margin-top: 37px;
 }
+.main-event-dt {
+  margin-top: 40px;
+}
 
 .main-event-content h4 {
   font-size: 18px;
@@ -1991,6 +2022,14 @@ body {
 
 .main-event-content p:last-child {
   margin-bottom: 0;
+}
+
+/* New CSS rule to handle images within .main-event-content */
+.main-event-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto; /* Center images horizontally */
 }
 
 .booking-ends h4 {
@@ -2091,7 +2130,7 @@ body {
 }
 
 .booking-btn {
-  padding: 0 20px 20px;
+  padding: 0 0 20px;
 }
 
 .add-to-calendar .dropdown-item {
@@ -2319,7 +2358,7 @@ body {
 }
 
 .select-tickets-block {
-  padding: 0 20px 40px;
+  padding: 0 20px 20px;
 }
 
 .select-ticket-action {
@@ -2341,7 +2380,33 @@ body {
 .ticket-price {
   font-size: 18px;
   font-weight: 500;
-  color: #717171;
+  color: #000000;
+}
+
+
+.select-stall-action {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.select-stall-block h6 {
+  font-size: 18px;
+  font-family: inherit;
+  color: #000;
+  font-weight: 500;
+  border-bottom: 1px solid #efefef;
+  padding-bottom: 15px;
+  margin-bottom: 27px;
+}
+
+
+
+
+.stall-price {
+  font-size: 18px;
+  font-weight: 500;
+  color: #000000;
 }
 
 .quantity {
@@ -2435,7 +2500,7 @@ body {
   background-position: center center;
   position: absolute;
   inset: 0px;
-  background-image: url(../images/banners/hero-cover-01.jpg);
+  background-image: url(./images/banners/hero-cover-01.jpg);
   filter: none;
   transition: all 0.12s ease-in-out 0s;
   opacity: 1;
@@ -3233,7 +3298,7 @@ body {
   }
 
   .wrapper-body {
-    margin-left: 254px;
+
     transition: all 0.3s ease-out;
   }
 
@@ -3971,7 +4036,7 @@ body {
 }
 
 .subscription-bg {
-  background: url(../images/banners/subscription-bg.png) no-repeat center/cover;
+  background: url(./images/banners/subscription-bg.png) no-repeat center/cover;
   margin-bottom: 16px;
   padding: 28px;
   min-height: 170px;
@@ -4208,7 +4273,7 @@ body {
   border-radius: 5px;
   text-align: center;
   padding: 75px 30px 30px 30px;
-  background-image: url(../images/banners/up-shape.png);
+  background-image: url(./images/banners/up-shape.png);
   background-repeat: no-repeat;
   background-position: 30% 1%;
   overflow-y: auto;
@@ -5356,7 +5421,7 @@ input[type="number"] {
 
 .contact-hero-banner {
   min-height: 461px;
-  background: url(../images/sign_bg.jpg);
+  background: url(./images/sign_bg.jpg);
   width: 100%;
   padding: 50px;
   border-radius: 3px;
@@ -6625,4 +6690,75 @@ ol {
 .map iframe {
   width: 100%;
   height: 250px;
+}
+
+/* POPUP-CART */
+.popup-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 250px; /* Reduced width */
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  transform: translateY(100%);
+}
+
+.popup-cart.open {
+  transform: translateY(0);
+}
+
+.popup-cart-content {
+  padding: 15px; /* Reduced padding */
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem; /* Reduced font size */
+  cursor: pointer;
+}
+
+.cart-item {
+  margin-bottom: 15px; /* Reduced margin */
+}
+
+.checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 8px; /* Reduced padding */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem; /* Reduced font size */
+}
+
+.floating-cart-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px; /* Reduced width */
+  height: 40px; /* Reduced height */
+  background-color: #ff7f50;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 1.2rem; /* Reduced font size */
+}
+
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
