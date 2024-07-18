@@ -16,18 +16,28 @@ import { formatDateTime, PriceFormat } from "../utils/tools";
 const sliderItems = [
   {
     image:
-      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-banner%2FHackAthon.jfif?alt=media&token=2beb5b41-6760-4f39-81e4-1e2e0c54d5a8",
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/banners%2FNew%20banner%201.jfif?alt=media&token=d7ab394e-13ed-47be-8a81-3cef8fbefa77",
     altText: "Hackathon 2024",
   },
   {
     image:
-      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-banner%2FTichtichtinhtang.jfif?alt=media&token=35a49e1a-67b5-4638-915d-37a7ca574932",
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/banners%2Fnew%20banner%202.jpg?alt=media&token=b65c7433-b535-473f-adee-5a777c50106e",
     altText: "TTTT 2024",
   },
   {
     image:
-      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/event-banner%2FLookOnme.jpg?alt=media&token=c2b558e1-8aa3-4ba0-99ba-d5c5b7e7da82",
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/banners%2Fnew%20banner%203.jpg?alt=media&token=639c6114-9ed7-464b-b482-51941d830fd1",
     altText: "LOOKONME 2024",
+  },
+  {
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/banners%2Fnew%20banner%204.jpg?alt=media&token=91ca9363-1a27-4b42-8faa-768e2ae48925",
+    altText: "Hackathon 2024",
+  },
+  {
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/feventopia-app.appspot.com/o/banners%2Fnew%20banner%205.jpg?alt=media&token=da475009-fadf-4ba4-a7c6-5a60cb42b091",
+    altText: "Hackathon 2024",
   },
 ];
 
@@ -186,7 +196,7 @@ function Home() {
       <div className="slider-container">
         <HomeSlider
           items={sliderItems}
-          autoplayTimeout={3000}
+          autoplayTimeout={5000}
           loop={true}
           margin={0}
           smartSpeed={700}

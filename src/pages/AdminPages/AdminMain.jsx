@@ -25,6 +25,7 @@ import {
 import OverAll from "../AdminPages/OverAllDashBoard";
 import UserTab from "../AdminPages/UserTab";
 import EventTab from "../AdminPages/EventTab";
+import MyTeamTab from "../AdminPages/MyTeamTab";
 import TransactionTab from "../AdminPages/TransactionTab";
 import LocationTab from "../AdminPages/LocationTab";
 import AccountInfo from "../AdminPages/AccountInfo";
@@ -89,6 +90,17 @@ const AdminMain = () => {
             <EventIcon />
           </ListItemIcon>
           <ListItemText primary="Sự kiện" />
+        </ListItem>
+
+        <ListItem
+          button
+          selected={activeTab === "myTeam"}
+          onClick={() => handleTabChange("myTeam")}
+        >
+          <ListItemIcon>
+            <GroupIcon />
+          </ListItemIcon>
+          <ListItemText primary="Nhân sự Sự kiện" />
         </ListItem>
 
         <ListItem
@@ -179,6 +191,7 @@ const AdminMain = () => {
           {activeTab === "dashboard" && <OverAll />}
           {activeTab === "user" && <UserTab />}
           {activeTab === "event" && <EventTab />}
+          {activeTab === "myTeam" && <MyTeamTab />}
           {activeTab === "transaction" && <TransactionTab />}
           {activeTab === "location" && <LocationTab />}
           {activeTab === "account" && <AccountInfo />}

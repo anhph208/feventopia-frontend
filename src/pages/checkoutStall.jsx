@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
   getProfileAPI,
   buyStallAPI,
+  rechargeAPI,
 } from "../components/services/userServices";
 import { formatDateTime, PriceFormat } from "../utils/tools";
 import RechargeModal from "../components/rechargeModal"; // Import the RechargeModal component
@@ -22,9 +23,11 @@ function CheckoutStall() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const [checkoutMode, setCheckoutMode] = useState(checkoutType || "buyStall");
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -106,14 +109,31 @@ function CheckoutStall() {
     }
   };
 
-  const handleRecharge = (amount) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      creditAmount: prevProfile.creditAmount + parseFloat(amount),
-    }));
-    toast.success("Nạp tiền thành công!");
-    setShowRechargeModal(false);
+  const handleRecharge = async (amount) => {
+    if (!amount) {
+      toast.error("Please enter an amount");
+      return;
+    }
+
+    try {
+      const response = await rechargeAPI({ amount }, token);
+
+      if (response.data) {
+        // Redirect to the URL provided in the API response
+        window.location.href = response.data;
+        toast.success("Redirecting to payment...");
+      } else {
+        toast.error("Unexpected response from the server");
+      }
+    } catch (error) {
+      console.error("Error during recharge:", error);
+      toast.error("Error during recharge");
+    } finally {
+      handleClose(); // Close modal after handling recharge
+    }
   };
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
 
   if (cartItems.length === 0) {
     return <div>No stall details available</div>;
