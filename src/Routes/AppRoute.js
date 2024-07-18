@@ -27,6 +27,7 @@ import SponsorProfile from "../pages/SponsorPages/sponsorProfile";
 import StaffProfile from "../pages/StaffPages/StaffProfile";
 import Invoice from "../pages/invoice";
 import EmailConfirmation from "../pages/confirmEmail";
+import AdminPages from "../pages/AdminPages/AdminMain";
 
 const AppRoutes = () => {
   const { role } = useAuth();
@@ -38,19 +39,10 @@ const AppRoutes = () => {
 
       {/* Public Routes */}
       <Route path="/faq" element={<FAQ />} />
-      <Route
-        path="/helpSectionDetailView"
-        element={<HelpSectionDetailView />}
-      />
+      <Route path="/helpSectionDetailView" element={<HelpSectionDetailView />} />
       <Route path="/helpCenter" element={<HelpCenter />} />
-      <Route
-        path="/helpCenterKnowledgeBase"
-        element={<HelpCenterKnowledgeBase />}
-      />
-      <Route
-        path="/helpArticleDetailView"
-        element={<HelpArticleDetailView />}
-      />
+      <Route path="/helpCenterKnowledgeBase" element={<HelpCenterKnowledgeBase />} />
+      <Route path="/helpArticleDetailView" element={<HelpArticleDetailView />} />
       <Route path="/confirmEmail" element={<EmailConfirmation />} />
       <Route path="/transactioninfo" element={<TransactionInfo />} />
       <Route path="/event/:eventId" element={<EventDetails />} />
@@ -64,6 +56,8 @@ const AppRoutes = () => {
             <Navigate to="/operatorPages" />
           ) : role === "CHECKINGSTAFF" ? (
             <Navigate to="/staffprofile" />
+          ) : role === "ADMIN" ? (
+            <Navigate to="/AdminPages" />
           ) : (
             <Home />
           )
@@ -77,6 +71,8 @@ const AppRoutes = () => {
             <Navigate to="/operatorPages" />
           ) : role === "CHECKINGSTAFF" ? (
             <Navigate to="/staffprofile" />
+          ) : role === "ADMIN" ? (
+            <Navigate to="/AdminPages" />
           ) : (
             <ExploreEvent />
           )
@@ -84,10 +80,7 @@ const AppRoutes = () => {
       />
 
       {/* Routes for Visitors */}
-      {(!role ||
-        role === "VISITOR" ||
-        role === "SPONSOR" ||
-        role === "ADMIN") && (
+      {(!role || role === "VISITOR" || role === "SPONSOR" || role === "ADMIN") && (
         <>
           <Route path="/userprofile" element={<UserProfile />} />
           <Route path="/checkout" element={<Checkout />} />
@@ -101,10 +94,7 @@ const AppRoutes = () => {
         <>
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/sponsorProfile" element={<SponsorProfile />} />
-          <Route
-            path="/sponsor-event/:eventId"
-            element={<EventSponsorship />}
-          />
+          <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
         </>
       )}
 
@@ -122,15 +112,29 @@ const AppRoutes = () => {
           <Route path="/operatorPages" element={<OperatorPages />} />
           <Route path="/create-event" element={<CreateEvent />} />
           <Route path="/update-event/:eventId" element={<UpdateEvent />} />
-          <Route
-            path="/edit-eventDetails/:eventId"
-            element={<EventDetailsEdit />}
-          />
-          <Route
-            path="/event-assignees/:eventId"
-            element={<EventAssignees />}
-          />
+          <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
+          <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
           <Route path="/*" element={<Navigate to="/operatorPages" />} />
+        </>
+      )}
+
+      {/* Routes for Admin */}
+      {role === "ADMIN" && (
+        <>
+          <Route path="/AdminPages" element={<AdminPages />} />
+          {/* Include all other routes accessible by admin */}
+          <Route path="/operatorPages" element={<OperatorPages />} />
+          <Route path="/create-event" element={<CreateEvent />} />
+          <Route path="/update-event/:eventId" element={<UpdateEvent />} />
+          <Route path="/edit-eventDetails/:eventId" element={<EventDetailsEdit />} />
+          <Route path="/event-assignees/:eventId" element={<EventAssignees />} />
+          <Route path="/staffprofile" element={<StaffProfile />} />
+          <Route path="/userprofile" element={<UserProfile />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkoutstall" element={<CheckoutStall />} />
+          <Route path="/invoice/:ticketId" element={<Invoice />} />
+          <Route path="/sponsorProfile" element={<SponsorProfile />} />
+          <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
         </>
       )}
 

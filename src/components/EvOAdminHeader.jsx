@@ -160,7 +160,7 @@ const EvOAdminHeader = () => {
                 {profile?.name || "User"}
               </MenuItem>
               <Divider />
-              <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+              <MenuItem onClick={handleLogoutClick}>ĐĂNG XUẤT</MenuItem>
             </Menu>
           </div>
         ) : (

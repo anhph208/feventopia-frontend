@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {
@@ -9,31 +9,21 @@ import {
   DialogActions,
   DialogContentText,
   Button,
-  TextField,
   Typography,
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
 
-import { toast } from "react-toastify";
-import {
-  Menu as MenuIcon,
-  AccountCircle,
-  CalendarToday,
-} from "@mui/icons-material";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
-import InsightsIcon from "@mui/icons-material/Insights";
 import {
   getAllEventForOtherAPI,
   getEventByIdOperatorAPI,
+  deleteEventAPI,
   getEventAnalysisAPI,
-  putEventNextPhaseAPI,
-  CancelEventAPI,
-  getTasksByEventDetailIdAPI,
 } from "../../components/services/userServices";
 import { formatDateTime, PriceFormat, StatusSub } from "../../utils/tools";
+import { toast } from "react-toastify";
 
-const EventTab = ({ onViewChart }) => {
+const AdminEventTab = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,11 +31,8 @@ const EventTab = ({ onViewChart }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
-  const navigate = useNavigate();
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const fetchEvents = async (page, category, status) => {
@@ -118,63 +105,6 @@ const EventTab = ({ onViewChart }) => {
     setPageNumber(1);
   };
 
-  const handleUpdateNextPhaseClick = (eventId) => {
-    setSelectedEventId(eventId);
-    setOpen(true);
-  };
-  const handleTermsChange = (e) => {
-    setTermsAccepted(e.target.checked);
-  };
-
-  
-
-  const handleConfirmUpdateNextPhase = async () => {
-    try {
-      const eventDetails = await getEventByIdOperatorAPI(selectedEventId);
-
-      if (eventDetails.status === "PREPARATION") {
-        if (
-          !eventDetails.eventDetail ||
-          eventDetails.eventDetail.length === 0
-        ) {
-          toast.warn(
-            "Sự kiện chưa đủ thông tin. Vui lòng Thêm Chi tiết Sự kiện"
-          );
-          setOpen(false);
-          return;
-        }
-
-        const taskPromises = eventDetails.eventDetail.map((detail) =>
-          getTasksByEventDetailIdAPI(detail.id)
-        );
-        const tasks = await Promise.all(taskPromises);
-
-        const allTasksDone = tasks.every((taskList) =>
-          taskList.every((task) => task.status === "DONE")
-        );
-
-        if (!allTasksDone) {
-          toast.warn(
-            "Có nhiệm vụ chưa hoàn thành. Không thể chuyển Trạng thái Sự kiện"
-          );
-          setOpen(false);
-          return;
-        }
-      }
-
-      await putEventNextPhaseAPI(selectedEventId);
-      toast.success("Chuyển Trạng Thái Sự kiện thành công!");
-      setOpen(false);
-      fetchEvents(pageNumber, category, status);
-    } catch (error) {
-      console.error("Error updating event to the next phase:", error);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleDeleteClick = (eventId) => {
     setEventToDelete(eventId);
     setDeleteOpen(true);
@@ -182,11 +112,13 @@ const EventTab = ({ onViewChart }) => {
 
   const handleConfirmCancellation = async () => {
     try {
-      await CancelEventAPI(eventToDelete);
+      await deleteEventAPI(eventToDelete);
       setDeleteOpen(false);
+      toast.success("Xóa Sự kiện thành công!");
       setEventToDelete(null);
       fetchEvents(pageNumber, category, status);
     } catch (error) {
+      toast.error("Xóa Sự kiện thất bại! Thử lại sau.");
       console.error("Error deleting event:", error);
     }
   };
@@ -293,9 +225,7 @@ const EventTab = ({ onViewChart }) => {
                       TRIỂN KHAI
                     </button>
                     <button
-                      className={`tab-link ${
-                        status === "POST" ? "active" : ""
-                      }`}
+                      className={`tab-link ${status === "POST" ? "active" : ""}`}
                       onClick={() => handleStatusChange("POST")}
                     >
                       HOÀN THÀNH
@@ -359,15 +289,6 @@ const EventTab = ({ onViewChart }) => {
                               <i className="fa-solid fa-ellipsis-vertical" />
                             </button>
                             <div className="dropdown-menu dropdown-menu-right">
-                              {event.status === "INITIAL" && (
-                                <Link
-                                  to={`/update-event/${event.id}`}
-                                  className="dropdown-item"
-                                >
-                                  <i className="fa-solid fa-eye me-3" />
-                                  Cập nhật Sự kiện tổng
-                                </Link>
-                              )}
                               <Link
                                 to={`/edit-eventdetails/${event.id}`}
                                 className="dropdown-item"
@@ -376,24 +297,12 @@ const EventTab = ({ onViewChart }) => {
                                 Xem Chi Tiết
                               </Link>
                               <button
-                                className="dropdown-item"
-                                onClick={() =>
-                                  navigate(`/event-assignees/${event.id}`)
-                                }
+                                className="dropdown-item delete-event"
+                                onClick={() => handleDeleteClick(event.id)}
                               >
-                                <i className="fa-solid fa-users me-3" />
-                                Xem Tất cả Nhân sự
+                                <i className="fa-solid fa-trash-can me-3" />
+                                Xóa Sự kiện
                               </button>
-                              {event.status !== "CANCELED" &&
-                                event.status !== "POST" && (
-                                  <button
-                                    className="dropdown-item delete-event"
-                                    onClick={() => handleDeleteClick(event.id)}
-                                  >
-                                    <i className="fa-solid fa-trash-can me-3" />
-                                    Hủy Sự kiện
-                                  </button>
-                                )}
                             </div>
                           </div>
                         </div>
@@ -482,36 +391,6 @@ const EventTab = ({ onViewChart }) => {
                               </div>
                             </>
                           )}
-                          {event.status !== "CANCELED" && (
-                            <>
-                              <Button
-                                variant="contained"
-                                color="secondary"
-                                startIcon={<InsightsIcon />}
-                                onClick={() =>
-                                  handleUpdateNextPhaseClick(event.id)
-                                }
-                                disabled={event.status === "POST"}
-                                sx={{
-                                  mt: 3,
-                                  color:
-                                    event.status !== "POST" ? "white" : "gray",
-                                  backgroundColor:
-                                    event.status !== "POST"
-                                      ? "#450b00"
-                                      : "#cccccc",
-                                  "&:hover": {
-                                    backgroundColor:
-                                      event.status !== "POST"
-                                        ? "#ff7f50"
-                                        : "#aaaaaa",
-                                  },
-                                }}
-                              >
-                                CẬP NHẬT TRẠNG THÁI SỰ KIỆN
-                              </Button>
-                            </>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -548,50 +427,6 @@ const EventTab = ({ onViewChart }) => {
           </div>
         </div>
       </div>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Xác nhận cập nhật trạng thái sự kiện
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Bạn có chắc chắn muốn cập nhật trạng thái sự kiện này?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            color="primary"
-            sx={{
-              color: "white",
-              backgroundColor: "#450b00",
-              "&:hover": {
-                backgroundColor: "#ff7f50",
-              },
-            }}
-          >
-            Hủy
-          </Button>
-          <Button
-            onClick={handleConfirmUpdateNextPhase}
-            color="primary"
-            autoFocus
-            sx={{
-              color: "white",
-              backgroundColor: "#450b00",
-              "&:hover": {
-                backgroundColor: "#ff7f50",
-              },
-            }}
-          >
-            Xác nhận
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       <Dialog
         open={deleteOpen}
@@ -599,25 +434,21 @@ const EventTab = ({ onViewChart }) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Xác nhận Hủy sự kiện</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Xác nhận Xóa sự kiện</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-title">
-            Bạn có chắc chắn muốn hủy sự kiện này?
+            Bạn có chắc chắn muốn xóa sự kiện này?
           </DialogContentText>
           <FormControlLabel
             control={
               <Checkbox
                 checked={termsAccepted}
-                onChange={handleTermsChange}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
                 color="primary"
               />
             }
-            label="Tôi đồng ý hủy Sự kiện này"
+            label="Tôi đồng ý xóa Sự kiện này"
           />
-          <p>
-            Bằng cách xác nhận, mọi khoản tài trợ và doanh thu Vé - Gian Hàng sẽ
-            được hoàn tiền 100% cho nhà Tài trợ và Khách Hàng
-          </p>
         </DialogContent>
         <DialogActions>
           <Button
@@ -654,4 +485,4 @@ const EventTab = ({ onViewChart }) => {
   );
 };
 
-export default EventTab;
+export default AdminEventTab;

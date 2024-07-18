@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginAPI } from "../components/services/userServices";
-import { useAuth } from '../context/AuthContext';  // Adjust the import path as necessary
+import { useAuth } from "../context/AuthContext"; // Adjust the import path as necessary
 
 const SignIn = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
@@ -25,6 +25,8 @@ const SignIn = () => {
           window.location.replace("/operatorPages");
         } else if (role === "CHECKINGSTAFF") {
           window.location.replace("/staffprofile");
+        } else if (role === "ADMIN") {
+          window.location.replace("/AdminPages");
         } else {
           window.location.replace("/");
         }

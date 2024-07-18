@@ -199,6 +199,24 @@ export const getEventDetailsAPI = async (eventId) => {
   }
 };
 
+export const getEventByIdOperatorAPI = async (eventId) => {
+  try {
+    const response = await config.get("/event/GetEventById-Operator", {
+      params: {
+        id: eventId,
+      },
+    });
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    throw error;
+  }
+};
+
 export const buyTicketAPI = async (orderDetails) => {
   try {
     const response = await config.post("/ticket/BuyTicket", orderDetails);
@@ -469,6 +487,34 @@ export const getLocationAPI = async () => {
     throw error;
   }
 };
+export const addLocationAPI = async (locationData) => {
+  try {
+    const response = await config.post(`/location/AddLocation`, locationData);
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event analysis:", error);
+    throw error;
+  }
+};
+export const updateLocationAPI = async (locationId) => {
+  try {
+    const response = await config.put(`/location/UpdateLocation`, {
+      params: { locationId },
+    });
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event analysis:", error);
+    throw error;
+  }
+};
 
 export const CancelEventAPI = async (eventId) => {
   try {
@@ -488,9 +534,83 @@ export const CancelEventAPI = async (eventId) => {
   }
 };
 
+export const removeAssigneeAPI = async (accountId, eventDetailId) => {
+  try {
+    const response = await config.delete("/eventassignee", {
+      params: {
+        eventDetailId,
+        accountId,       
+      },
+    });
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    throw error;
+  }
+};
+
+export const removeTaskAPI = async (taskId, eventDetailsId) => {
+  try {
+    const response = await config.delete("/task/DeleteTask", {
+      params: {
+        taskId,
+        eventDetailsId,
+      },
+    });
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    throw error;
+  }
+};
+
+export const deleteEventAPI = async (eventId) => {
+  try {
+    const response = await config.delete("/event/DeleteEvent", {
+      params: {
+        id: eventId,
+      },
+    });
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    throw error;
+  }
+};
+
 export const DeleteEventAPI = async (eventDetailsId) => {
   try {
     const response = await config.delete("/event-details/DeleteEventDetail", {
+      params: {
+        id: eventDetailsId,
+      },
+    });
+    if (response.status === 200) {
+      return response.data; // Return the event details
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    throw error;
+  }
+};
+
+export const getAllStallCurrentEvent = async (eventDetailsId) => {
+  try {
+    const response = await config.get("/eventstall/GetAllStallCurrentEvent", {
       params: {
         id: eventDetailsId,
       },
@@ -845,9 +965,7 @@ export const getTicketInforAPI = async (ticketId) => {
 
 export const postAddFeedbackAPI = async (feedbackData) => {
   try {
-    const response = await config.post(
-      `/feedback`, feedbackData
-    );
+    const response = await config.post(`/feedback`, feedbackData);
     if (response.status === 200) {
       return response.data;
     } else {
@@ -879,19 +997,22 @@ export const getAllStafflAPI = async () => {
   }
 };
 
-
-export const getSponsoredCurrentEventAPI = async (eventId,
+export const getSponsoredCurrentEventAPI = async (
+  eventId,
   pageNumber = 1,
   pageSize = 5
 ) => {
   try {
-    const response = await config.get("/agreement/GetAllAgreementCurrentEvent", {
-      params: {
-        eventId,
-        PageNumber: pageNumber,
-        PageSize: pageSize,
-      },
-    });
+    const response = await config.get(
+      "/agreement/GetAllAgreementCurrentEvent",
+      {
+        params: {
+          eventId,
+          PageNumber: pageNumber,
+          PageSize: pageSize,
+        },
+      }
+    );
 
     if (response.status === 200) {
       const pagination = JSON.parse(response.headers["x-pagination"]);
@@ -910,9 +1031,13 @@ export const getSponsoredCurrentEventAPI = async (eventId,
 
 export const postRangeEventAssignee = async (accountData, eventDetailId) => {
   try {
-    const response = await config.post(`/eventassignee/AddRangeEventAssignee`, accountData, {
-      params: {eventDetailId}
-    });
+    const response = await config.post(
+      `/eventassignee/AddRangeEventAssignee`,
+      accountData,
+      {
+        params: { eventDetailId },
+      }
+    );
 
     if (response.status === 200) {
       return response.data; // Return the created order details
@@ -921,6 +1046,46 @@ export const postRangeEventAssignee = async (accountData, eventDetailId) => {
     }
   } catch (error) {
     console.error("Error creating event order:", error);
+    throw error;
+  }
+};
+
+export const getAllAccountAPI = async (pageNumber, pageSize) => {
+  try {
+    const response = await config.get(`/user/management/GetAllAccount`, {
+      params: {
+        pageNumber,
+        pageSize,
+      },
+    });
+    if (response.status === 200) {
+      const pagination = JSON.parse(response.headers["x-pagination"]);
+      return {
+        data: response.data,
+        pagination,
+      };
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    throw error;
+  }
+};
+
+export const signupInternalAPI = async (role, userData) => {
+  try {
+    const response = await config.post("/auth/SignUp-Inernal", userData, {
+      params: { role },
+    });
+
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error signing up:", error);
     throw error;
   }
 };

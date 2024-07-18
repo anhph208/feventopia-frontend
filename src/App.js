@@ -36,7 +36,7 @@ const ConditionalLayout = () => {
     "/update-event/:eventId",
   ];
 
-  const adminPaths = ["/adminPages"];
+  const adminPaths = ["/AdminPages"];
 
   const matchPath = (paths) => {
     return paths.some((path) => location.pathname.startsWith(path));

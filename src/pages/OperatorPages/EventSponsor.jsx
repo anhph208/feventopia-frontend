@@ -26,7 +26,12 @@ import {
   getSponsoredCurrentEventAPI,
   getAccountById,
 } from "../../components/services/userServices";
-import { formatDateTime, PriceFormat, rankSub, StatusSub } from "../../utils/tools";
+import {
+  formatDateTime,
+  PriceFormat,
+  rankSub,
+  StatusSub,
+} from "../../utils/tools";
 
 const SponsorTab = () => {
   const [events, setEvents] = useState([]);
@@ -34,8 +39,10 @@ const SponsorTab = () => {
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [eventPageNumber, setEventPageNumber] = useState(1);
+  const [eventTotalPages, setEventTotalPages] = useState(1);
+  const [sponsorPageNumber, setSponsorPageNumber] = useState(1);
+  const [sponsorTotalPages, setSponsorTotalPages] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
@@ -45,7 +52,7 @@ const SponsorTab = () => {
       const response = await getAllEventForOtherAPI(page, 8, null, null); // Assuming 8 items per page
       const { events, pagination } = response;
       setEvents(events);
-      setTotalPages(pagination.TotalPages);
+      setEventTotalPages(pagination.TotalPages);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -72,7 +79,7 @@ const SponsorTab = () => {
       }));
 
       setSponsors(sponsorsWithDetails);
-      setTotalPages(pagination.TotalPages);
+      setSponsorTotalPages(pagination.TotalPages);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching sponsors:", error);
@@ -82,8 +89,8 @@ const SponsorTab = () => {
   };
 
   useEffect(() => {
-    fetchEvents(pageNumber);
-  }, [pageNumber]);
+    fetchEvents(eventPageNumber);
+  }, [eventPageNumber]);
 
   const handleEventSelection = (eventId) => {
     setSelectedEvent(eventId);
@@ -95,15 +102,16 @@ const SponsorTab = () => {
     setDialogOpen(false);
     setSelectedEvent(null);
     setSponsors([]);
+    setSponsorPageNumber(1); // Reset sponsor page number when dialog is closed
   };
 
-  const handlePageChange = (event, value) => {
-    setPageNumber(value);
-    if (selectedEvent) {
-      fetchSponsors(selectedEvent, value); // Fetch sponsors for the selected event and new page
-    } else {
-      fetchEvents(value); // Fetch events if no event is selected
-    }
+  const handleEventPageChange = (event, value) => {
+    setEventPageNumber(value);
+  };
+
+  const handleSponsorPageChange = (event, value) => {
+    setSponsorPageNumber(value);
+    fetchSponsors(selectedEvent, value); // Fetch sponsors for the selected event and new page
   };
 
   const handleTermsChange = (e) => {
@@ -187,9 +195,9 @@ const SponsorTab = () => {
             </div>
             <Stack spacing={2} className="pagination-controls mt-5">
               <Pagination
-                count={totalPages}
-                page={pageNumber}
-                onChange={handlePageChange}
+                count={eventTotalPages}
+                page={eventPageNumber}
+                onChange={handleEventPageChange}
                 variant="outlined"
                 shape="rounded"
                 sx={{
@@ -255,9 +263,9 @@ const SponsorTab = () => {
           </TableContainer>
           <Stack spacing={2} className="pagination-controls mt-2">
             <Pagination
-              count={totalPages}
-              page={pageNumber}
-              onChange={handlePageChange}
+              count={sponsorTotalPages}
+              page={sponsorPageNumber}
+              onChange={handleSponsorPageChange}
               variant="outlined"
               shape="rounded"
               sx={{

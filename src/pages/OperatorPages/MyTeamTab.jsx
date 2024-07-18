@@ -22,11 +22,9 @@ import {
   DialogContent,
   DialogActions,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   TextField,
   Checkbox,
+  MenuItem,
 } from "@mui/material";
 import {
   getAllEventForOtherAPI,
@@ -38,10 +36,11 @@ import {
   getTasksByEventDetailIdAPI,
   postAddTaskAPI,
   putUpdateTaskAPI,
+  removeAssigneeAPI,
+  removeTaskAPI,
 } from "../../components/services/userServices";
 import {
   formatDateTime,
-  PriceFormat,
   formatDate,
   StatusSub,
 } from "../../utils/tools";
@@ -50,6 +49,7 @@ import TaskIcon from "@mui/icons-material/Task";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import { useNavigate } from "react-router-dom";
 
 const AssigneeTab = () => {
   const [events, setEvents] = useState([]);
@@ -72,10 +72,11 @@ const AssigneeTab = () => {
   const [taskActualCost, setTaskActualCost] = useState("");
   const [taskStatus, setTaskStatus] = useState("");
   const [selectedTaskStaffId, setSelectedTaskStaffId] = useState("");
-
   const [openUpdateTaskDialog, setOpenUpdateTaskDialog] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState(null);
   const [currentEventDetailId, setCurrentEventDetailId] = useState(null);
+  const [openRemoveTaskDialog, setOpenRemoveTaskDialog] = useState(false);
+  const navigate = useNavigate();
 
   const fetchEvents = async (page, category, status) => {
     setLoading(true);
@@ -242,6 +243,36 @@ const AssigneeTab = () => {
     }
   };
 
+  const handleRemoveAssignee = async (assigneeId, eventDetailId) => {
+    const hasTasks = tasks[eventDetailId]?.[assigneeId]?.length > 0;
+    if (hasTasks) {
+      toast.warn("Cannot remove assignee with assigned tasks.");
+      return;
+    }
+
+    try {
+      await removeAssigneeAPI(assigneeId, eventDetailId);
+      toast.success("Xóa Nhân sự thành công!");
+      await fetchAssignees(eventDetailId);
+      await fetchEvents(pageNumber, category, status);
+      navigate(0);
+    } catch (error) {
+      console.error("Failed to remove assignee:", error);
+    }
+  };
+
+  const handleRemoveTask = async (taskId) => {
+    try {
+      await removeTaskAPI(taskId);
+      toast.success("Xóa Nhiệm vụ thành công!");
+      await fetchTasks(selectedEventDetail.id);
+      await fetchEvents(pageNumber, category, status);
+    } catch (error) {
+      console.error("Failed to remove task:", error);
+      toast.error("Failed to remove task.");
+    }
+  };
+
   const handleClickOpenAddAssignee = async (eventDetail) => {
     setSelectedEventDetail(eventDetail);
     setOpenAddAssigneeDialog(true);
@@ -342,9 +373,6 @@ const AssigneeTab = () => {
     setPageNumber(1);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   return (
     <Container className="wrapper wrapper-body">
       <div className="dashboard-body">
@@ -371,7 +399,7 @@ const AssigneeTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("TALKSHOW")}
                 >
-                  Talkshow
+                  TALKSHOW
                 </button>
                 <button
                   className={`tab-link ${
@@ -379,7 +407,7 @@ const AssigneeTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("COMPETITION")}
                 >
-                  Competition
+                  CUỘC THI
                 </button>
                 <button
                   className={`tab-link ${
@@ -387,7 +415,7 @@ const AssigneeTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("FESTIVAL")}
                 >
-                  Festival
+                  FESTIVAL
                 </button>
                 <button
                   className={`tab-link ${
@@ -395,7 +423,7 @@ const AssigneeTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("MUSICSHOW")}
                 >
-                  Music Show
+                  ÂM NHẠC
                 </button>
               </div>
             </div>
@@ -585,6 +613,7 @@ const AssigneeTab = () => {
                                         <TableCell>Họ Tên</TableCell>
                                         <TableCell>Vai trò</TableCell>
                                         <TableCell>Ngày Thêm</TableCell>
+                                        <TableCell>Hành động</TableCell>
                                       </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -603,11 +632,75 @@ const AssigneeTab = () => {
                                                 assignee.createdDate
                                               )}
                                             </TableCell>
+                                            <TableCell>
+                                              <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                onClick={() =>
+                                                  handleRemoveAssignee(
+                                                    assignee.id,
+                                                    detail.id
+                                                  )
+                                                }
+                                                disabled={
+                                                  event.status !== "PREPARATION" ||
+                                                  (tasks[detail.id] &&
+                                                    tasks[detail.id][
+                                                      assignee.id
+                                                    ] &&
+                                                    tasks[detail.id][
+                                                      assignee.id
+                                                    ].length > 0)
+                                                }
+                                                sx={{
+                                                  color:
+                                                    event.status ===
+                                                      "PREPARATION" &&
+                                                    !(tasks[detail.id] &&
+                                                      tasks[detail.id][
+                                                        assignee.id
+                                                      ] &&
+                                                      tasks[detail.id][
+                                                        assignee.id
+                                                      ].length > 0)
+                                                      ? "white"
+                                                      : "gray",
+                                                  backgroundColor:
+                                                    event.status ===
+                                                      "PREPARATION" &&
+                                                    !(tasks[detail.id] &&
+                                                      tasks[detail.id][
+                                                        assignee.id
+                                                      ] &&
+                                                      tasks[detail.id][
+                                                        assignee.id
+                                                      ].length > 0)
+                                                      ? "#450b00"
+                                                      : "#cccccc",
+                                                  "&:hover": {
+                                                    backgroundColor:
+                                                      event.status ===
+                                                        "PREPARATION" &&
+                                                      !(tasks[detail.id] &&
+                                                        tasks[detail.id][
+                                                          assignee.id
+                                                        ] &&
+                                                        tasks[detail.id][
+                                                          assignee.id
+                                                        ].length > 0)
+                                                        ? "#ff7f50"
+                                                        : "#aaaaaa",
+                                                  },
+                                                }}
+                                              >
+                                                Xóa Nhân sự
+                                              </Button>
+                                            </TableCell>
                                           </TableRow>
                                         ))
                                       ) : (
                                         <TableRow>
-                                          <TableCell colSpan={2}>
+                                          <TableCell colSpan={4}>
                                             Không có Nhân sự nào.
                                           </TableCell>
                                         </TableRow>
@@ -743,7 +836,7 @@ const AssigneeTab = () => {
                                         )
                                       ) : (
                                         <TableRow>
-                                          <TableCell colSpan={5}>
+                                          <TableCell colSpan={6}>
                                             Không có Nhiệm vụ nào.
                                           </TableCell>
                                         </TableRow>
@@ -1000,6 +1093,23 @@ const AssigneeTab = () => {
           )}
         </DialogContent>
         <DialogActions>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setOpenRemoveTaskDialog(true)}
+            disabled={taskToUpdate?.status === "DONE"}
+            sx={{
+              color: taskToUpdate?.status !== "DONE" ? "white" : "gray",
+              backgroundColor:
+                taskToUpdate?.status !== "DONE" ? "#450b00" : "#cccccc",
+              "&:hover": {
+                backgroundColor:
+                  taskToUpdate?.status !== "DONE" ? "#ff7f50" : "#aaaaaa",
+              },
+            }}
+          >
+            Xóa Nhiệm vụ
+          </Button>
           <Button onClick={handleCloseUpdateTask}>Hủy</Button>
           <Button
             onClick={handleUpdateTask}
@@ -1012,6 +1122,35 @@ const AssigneeTab = () => {
             }}
           >
             Cập nhật Nhiệm vụ
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openRemoveTaskDialog}
+        onClose={() => setOpenRemoveTaskDialog(false)}
+      >
+        <DialogTitle>Xác nhận Xóa Nhiệm vụ</DialogTitle>
+        <DialogContent>
+          <Typography>Bạn có chắc chắn muốn xóa Nhiệm vụ này không?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenRemoveTaskDialog(false)}>Hủy</Button>
+          <Button
+            onClick={async () => {
+              await handleRemoveTask(taskToUpdate.id);
+              setOpenRemoveTaskDialog(false);
+              handleCloseUpdateTask();
+            }}
+            sx={{
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            Xác nhận
           </Button>
         </DialogActions>
       </Dialog>

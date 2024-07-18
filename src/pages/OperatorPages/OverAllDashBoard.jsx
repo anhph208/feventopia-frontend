@@ -291,7 +291,7 @@ const DashBoardTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("TALKSHOW")}
                 >
-                  Talkshow
+                  TALKSHOW
                 </button>
                 <button
                   className={`tab-link ${
@@ -299,7 +299,7 @@ const DashBoardTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("COMPETITION")}
                 >
-                  Competition
+                  CUỘC THI
                 </button>
                 <button
                   className={`tab-link ${
@@ -307,7 +307,7 @@ const DashBoardTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("FESTIVAL")}
                 >
-                  Festival
+                  FESTIVAL
                 </button>
                 <button
                   className={`tab-link ${
@@ -315,66 +315,58 @@ const DashBoardTab = () => {
                   }`}
                   onClick={() => handleCategoryChange("MUSICSHOW")}
                 >
-                  Music Show
+                  ÂM NHẠC
                 </button>
               </div>
             </div>
             <h5 className="mb-4">Trạng thái Sự kiện</h5>
             <div className="nav custom2-tabs btn-group" role="tablist">
-            <button
-                      className={`tab-link ${status === null ? "active" : ""}`}
-                      onClick={() => handleStatusChange(null)}
-                    >
-                      Tất cả
-                    </button>
-                    <button
-                      className={`tab-link ${
-                        status === "INITIAL" ? "active" : ""
-                      }`}
-                      onClick={() => handleStatusChange("INITIAL")}
-                    >
-                      KHỞI ĐỘNG
-                    </button>
-                    <button
-                      className={`tab-link ${
-                        status === "FUNDRAISING" ? "active" : ""
-                      }`}
-                      onClick={() => handleStatusChange("FUNDRAISING")}
-                    >
-                      GỌI TÀI TRỢ
-                    </button>
-                    <button
-                      className={`tab-link ${
-                        status === "PREPARATION" ? "active" : ""
-                      }`}
-                      onClick={() => handleStatusChange("PREPARATION")}
-                    >
-                      CHUẨN BỊ
-                    </button>
-                    <button
-                      className={`tab-link ${
-                        status === "EXECUTE" ? "active" : ""
-                      }`}
-                      onClick={() => handleStatusChange("EXECUTE")}
-                    >
-                      TRIỂN KHAI
-                    </button>
-                    <button
-                      className={`tab-link ${
-                        status === "POST" ? "active" : ""
-                      }`}
-                      onClick={() => handleStatusChange("POST")}
-                    >
-                      HOÀN THÀNH
-                    </button>
-                    <button
-                      className={`tab-link ${
-                        status === "CANCELED" ? "active" : ""
-                      }`}
-                      onClick={() => handleStatusChange("CANCELED")}
-                    >
-                      ĐÃ HỦY
-                    </button>
+              <button
+                className={`tab-link ${status === null ? "active" : ""}`}
+                onClick={() => handleStatusChange(null)}
+              >
+                Tất cả
+              </button>
+              <button
+                className={`tab-link ${status === "INITIAL" ? "active" : ""}`}
+                onClick={() => handleStatusChange("INITIAL")}
+              >
+                KHỞI ĐỘNG
+              </button>
+              <button
+                className={`tab-link ${
+                  status === "FUNDRAISING" ? "active" : ""
+                }`}
+                onClick={() => handleStatusChange("FUNDRAISING")}
+              >
+                GỌI TÀI TRỢ
+              </button>
+              <button
+                className={`tab-link ${
+                  status === "PREPARATION" ? "active" : ""
+                }`}
+                onClick={() => handleStatusChange("PREPARATION")}
+              >
+                CHUẨN BỊ
+              </button>
+              <button
+                className={`tab-link ${status === "EXECUTE" ? "active" : ""}`}
+                onClick={() => handleStatusChange("EXECUTE")}
+              >
+                TRIỂN KHAI
+              </button>
+              <button
+                className={`tab-link ${status === "POST" ? "active" : ""}`}
+                onClick={() => handleStatusChange("POST")}
+              >
+                HOÀN THÀNH
+              </button>
+              <button
+                className={`tab-link ${status === "CANCELED" ? "active" : ""}`}
+                onClick={() => handleStatusChange("CANCELED")}
+              >
+                ĐÃ HỦY
+              </button>
             </div>
           </div>
         </div>

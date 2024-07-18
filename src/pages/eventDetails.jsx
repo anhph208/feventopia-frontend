@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { getEventDetailsAPI } from "../components/services/userServices";
+import { getEventDetailsAPI, getAllStallCurrentEvent } from "../components/services/userServices";
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../components/Cart/CartContext";
 import { useAuth } from "../context/AuthContext"; // Use the useAuth hook from AuthContext
 import Cart from "../components/Cart/Cart";
 import { toast } from "react-toastify";
 import { formatDateTime, PriceFormat } from "../utils/tools";
-import CreatableSelect from "react-select/creatable";
+import Select from "react-select"; // Import Select instead of CreatableSelect
+
+const globalSelectedStalls = {}; // Global state to keep track of selected stalls
 
 function EventDetails() {
   const { eventId } = useParams();
@@ -19,6 +21,7 @@ function EventDetails() {
   const [error, setError] = useState(null);
   const [ticketCounts, setTicketCounts] = useState({});
   const [selectedStalls, setSelectedStalls] = useState({});
+  const [soldStalls, setSoldStalls] = useState([]); // State to track sold stalls
 
   const decreaseCount = (id) => {
     setTicketCounts((prevCounts) => ({
@@ -112,6 +115,9 @@ function EventDetails() {
       stallNumber: selectedStall.value,
       stallPrice: selectedEventDetail.stallPrice,
     };
+
+    globalSelectedStalls[id] = selectedStall.value;
+
     toast.success("Đang chuyển đến trang thanh toán...", {
       onClose: () => {
         navigate("/checkoutStall", {
@@ -166,10 +172,13 @@ function EventDetails() {
     }));
   };
 
-  const generateStallOptions = (stallCount) => {
+  const generateStallOptions = (stallCount, eventId) => {
     const options = [];
     for (let i = 1; i <= stallCount; i++) {
-      options.push({ value: `A${i}`, label: `A${i}` });
+      const stallValue = `A${i}`;
+      if (!soldStalls.includes(stallValue) && (!globalSelectedStalls[eventId] || globalSelectedStalls[eventId] === stallValue)) {
+        options.push({ value: stallValue, label: stallValue });
+      }
     }
     return options;
   };
@@ -187,7 +196,18 @@ function EventDetails() {
       }
     };
 
+    const fetchSoldStalls = async () => {
+      try {
+        const stalls = await getAllStallCurrentEvent(eventId);
+        const soldStallNumbers = stalls.map(stall => stall.stallNumber);
+        setSoldStalls(soldStallNumbers);
+      } catch (error) {
+        console.error("Error fetching sold stalls:", error);
+      }
+    };
+
     fetchEventDetails();
+    fetchSoldStalls();
   }, [eventId]);
 
   if (loading) return <div>Loading...</div>;
@@ -263,7 +283,7 @@ function EventDetails() {
                       </div>
                       {!isEventPast(eventDetail.endDate) && (
                         <div className="select-tickets-block">
-                          {eventDetail.stallForSaleInventory !== 0 && (
+                          {eventDetail.ticketForSaleInventory !== 0 && (
                             <div>
                               <div className="select-ticket-action">
                                 <div className="ticket-price">
@@ -376,13 +396,16 @@ function EventDetails() {
                                   </strong>
                                 </div>
                                 <div className="quantity">
-                                  <CreatableSelect
+                                  <Select
                                     isClearable
                                     onChange={(value) =>
                                       handleStallChange(eventDetail.id, value)
                                     }
-                                    options={generateStallOptions(eventDetail.stallForSaleInventory)}
-                                    placeholder="Chọn hoặc nhập gian hàng"
+                                    options={generateStallOptions(
+                                      eventDetail.stallForSaleInventory,
+                                      eventDetail.id
+                                    )}
+                                    placeholder="Chọn gian hàng"
                                     value={
                                       selectedStalls[eventDetail.id] || null
                                     }

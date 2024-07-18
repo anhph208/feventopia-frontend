@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEventDetailsAPI, putUpdateEventAPI } from "../../../components/services/userServices";
-import { TextField, Button, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
+import {
+  getEventByIdOperatorAPI,
+  putUpdateEventAPI,
+} from "../../../components/services/userServices";
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Box,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import { storage } from "../../../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -19,25 +29,29 @@ const Input = styled("input")({
 const modules = {
   toolbar: {
     container: [
-      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-      [{size: []}],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, 
-       {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image', 'video'],
-      ['clean']                                         
+      [{ header: "1" }, { header: "2" }, { font: [] }],
+      [{ size: [] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image", "video"],
+      ["clean"],
     ],
     handlers: {
-      image: function() {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
+      image: function () {
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "image/*");
         input.click();
 
         input.onchange = async () => {
           const file = input.files[0];
           const formData = new FormData();
-          formData.append('image', file);
+          formData.append("image", file);
 
           // Perform the image upload logic here, for example, uploading to Firebase
           const storageRef = ref(storage, `event-images/${file.name}`);
@@ -47,23 +61,49 @@ const modules = {
           // Insert the image into the editor
           const quill = this.quill;
           const range = quill.getSelection();
-          quill.insertEmbed(range.index, 'image', imageUrl);
+          quill.insertEmbed(range.index, "image", imageUrl);
         };
-      }
-    }
-  }}
+      },
+    },
+  },
+};
 
 const formats = [
-  'font',
-  'size',
-  'bold', 'italic', 'underline', 'strike',
-  'color', 'background',
-  'script',
-  'header', 'blockquote', 'code-block',
-  'list', 'bullet',
-  'direction', 'align',
-  'link', 'image', 'video'
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "script",
+  "header",
+  "blockquote",
+  "code-block",
+  "list",
+  "bullet",
+  "direction",
+  "align",
+  "link",
+  "image",
+  "video",
 ];
+
+// Category mapping
+const categoryMapping = {
+  TALKSHOW: 0,
+  MUSICSHOW: 1,
+  FESTIVAL: 2,
+  COMPETITION: 3,
+};
+
+const reverseCategoryMapping = {
+  0: "TALKSHOW",
+  1: "MUSICSHOW",
+  2: "FESTIVAL",
+  3: "COMPETITION",
+};
 
 function UpdateEvent() {
   const { eventId } = useParams();
@@ -96,13 +136,13 @@ function UpdateEvent() {
     const fetchEventInfo = async () => {
       try {
         setLoading(true);
-        const eventInfo = await getEventDetailsAPI(eventId);
+        const eventInfo = await getEventByIdOperatorAPI(eventId);
         setFormData({
           eventName: eventInfo.eventName,
           eventDescription: eventInfo.eventDescription,
           banner: eventInfo.banner,
           initialCapital: eventInfo.initialCapital,
-          category: eventInfo.category,
+          category: categoryMapping[eventInfo.category],
         });
         setPlaceholders({
           eventName: eventInfo.eventName,
@@ -156,8 +196,10 @@ function UpdateEvent() {
       formData.initialCapital && formData.initialCapital >= 0
         ? ""
         : "Vốn sự kiện không thể là số âm";
-    tempErrors.category = formData.category ? "" : "Danh mục là bắt buộc";
-    tempErrors.eventDescription = eventDescription ? "" : "Chi tiết sự kiện là bắt buộc";
+
+    tempErrors.eventDescription = eventDescription
+      ? ""
+      : "Chi tiết sự kiện là bắt buộc";
     setErrors(tempErrors);
     return Object.values(tempErrors).every((x) => x === "");
   };
@@ -165,7 +207,7 @@ function UpdateEvent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     setSubmitLoading(true);
     try {
       let bannerUrl = formData.banner;
@@ -180,11 +222,12 @@ function UpdateEvent() {
         ...formData,
         banner: bannerUrl,
         eventDescription: DOMPurify.sanitize(eventDescription),
+        category: formData.category,
       };
 
       await putUpdateEventAPI(eventData, eventId, formData.category);
-      toast.success("Event updated successfully");
-      navigate(`/edit-eventdetails/${eventId}`);
+      toast.success("Sự kiện cập nhật thành công");
+      navigate(`/operatorPages?activeTab=event`);
     } catch (error) {
       console.error("Error updating event:", error);
       toast.error("Failed to update event");
@@ -218,7 +261,10 @@ function UpdateEvent() {
                     </Box>
                   </Box>
                   <Box className="step-content">
-                    <Box className="step-tab-panel step-tab-info active" id="tab_step1">
+                    <Box
+                      className="step-tab-panel step-tab-info active"
+                      id="tab_step1"
+                    >
                       <Box className="tab-from-content">
                         <Box className="main-card">
                           <Box className="bp-title">
@@ -262,10 +308,10 @@ function UpdateEvent() {
                                       error={!!errors.category}
                                       helperText={errors.category}
                                     >
-                                      <MenuItem value="0">TALKSHOW</MenuItem>
-                                      <MenuItem value="1">ÂM NHẠC</MenuItem>
-                                      <MenuItem value="2">FESTIVAL</MenuItem>
-                                      <MenuItem value="3">CUỘC THI</MenuItem>
+                                      <MenuItem value={0}>TALKSHOW</MenuItem>
+                                      <MenuItem value={1}>ÂM NHẠC</MenuItem>
+                                      <MenuItem value={2}>FESTIVAL</MenuItem>
+                                      <MenuItem value={3}>CUỘC THI</MenuItem>
                                     </TextField>
                                   </Box>
                                   <Box className="form-group border_bottom pt_30 pb_30">
@@ -287,7 +333,10 @@ function UpdateEvent() {
                                     <Typography variant="body2">
                                       Số tiền nhập:{" "}
                                       <PriceFormat
-                                        price={parseInt(formData.initialCapital, 10)}
+                                        price={parseInt(
+                                          formData.initialCapital,
+                                          10
+                                        )}
                                       />
                                     </Typography>
                                   </Box>
@@ -362,10 +411,16 @@ function UpdateEvent() {
                                       backgroundColor: "#ff7f50",
                                     },
                                   }}
-                                  disabled={submitLoading} 
-                                  startIcon={submitLoading && <CircularProgress size={20} />}
+                                  disabled={submitLoading}
+                                  startIcon={
+                                    submitLoading && (
+                                      <CircularProgress size={20} />
+                                    )
+                                  }
                                 >
-                                  {submitLoading ? "ĐANG CẬP NHẬT..." : "CẬP NHẬT SỰ KIỆN"}
+                                  {submitLoading
+                                    ? "ĐANG CẬP NHẬT..."
+                                    : "CẬP NHẬT SỰ KIỆN"}
                                 </Button>
                               </Box>
                             </form>

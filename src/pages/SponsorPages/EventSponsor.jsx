@@ -75,36 +75,44 @@ function EventSponsorship() {
   }, [eventId]);
 
   const handlePledgeSponsor = async () => {
+    if (amount < 10000000) {
+      toast.warning("Số tiền cam kết tối thiểu là 10 triệu!");
+      return;
+    }
+
     try {
       const requestBody = {
         eventId: eventId,
-        amount: parseInt(amount, 10), // Parse the amount to an integer
+        amount: parseInt(amount, 10),
       };
 
       await postPledgeSponsoringAPI(requestBody);
       toast.success("Tạo Cam Kết Tài Trợ Thành Công!");
+      setModalIsOpen(false);
     } catch (error) {
       console.error("Error pledging sponsorship:", error);
       toast.error("Tạo Cam Kết Tài Trợ thất bại! Hãy thử lại sau.");
-    } finally {
-      setModalIsOpen(false); // Close the modal
     }
   };
 
   const handleSponsorEvent = async () => {
+    if (amount < 10000000) {
+      toast.warning("Số tiền tài trợ tối thiểu là 10 triệu!");
+      return;
+    }
+
     try {
       const requestBody = {
         eventId: eventId,
-        amount: parseInt(amount, 10), // Parse the amount to an integer
+        amount: parseInt(amount, 10),
       };
 
       await postSposoringEventAPI(requestBody);
       toast.success("Tài Trợ Sự kiện thành công!");
+      setSponsorModalIsOpen(false);
     } catch (error) {
       console.error("Error sponsoring event:", error);
       toast.error("Tài Trợ Sự kiện thất bại! Hãy thử lại sau.");
-    } finally {
-      setSponsorModalIsOpen(false); // Close the modal
     }
   };
 
@@ -211,7 +219,7 @@ function EventSponsorship() {
       <Dialog open={modalIsOpen} onClose={closeModal}>
         <DialogTitle>TẠO CAM KẾT TÀI TRỢ</DialogTitle>
         <DialogContent>
-          <p>Vui lòng nhập số tiền bạn muốn cam kết tài trợ sự kiện:</p>
+          <p>Vui lòng nhập số tiền bạn muốn cam kết tài trợ sự kiện (tối thiểu 10 triệu):</p>
           <TextField
             autoFocus
             margin="dense"
@@ -221,10 +229,15 @@ function EventSponsorship() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          {amount && !error && (
+          {amount && (
             <Typography variant="body2">
-              Sô tiền nhập:{" "}
+              Số tiền nhập:{" "}
               <PriceFormat price={parseInt(amount, 10)} />
+            </Typography>
+          )}
+          {amount < 10000000 && (
+            <Typography variant="body2" color="error">
+              Số tiền cam kết tối thiểu là 10 triệu!
             </Typography>
           )}
           <p>
@@ -269,18 +282,22 @@ function EventSponsorship() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          {amount && !error && (
+          {amount && (
             <Typography variant="body2">
-              Sô tiền nhập:{" "}
+              Số tiền nhập:{" "}
               <PriceFormat price={parseInt(amount, 10)} />
+            </Typography>
+          )}
+          {amount < 10000000 && (
+            <Typography variant="body2" color="error">
+              Số tiền tài trợ tối thiểu là 10 triệu!
             </Typography>
           )}
           <p>
             Số dư FEventWallet hiện tại của bạn là:{" "}
             <strong>
               <PriceFormat price={walletAmount} />
-            </strong>
-            .
+            </strong>.
           </p>
           <p>
             Bằng cách xác nhận tài trợ, bạn đồng ý hỗ trợ tài chính cho sự kiện
