@@ -151,9 +151,21 @@ const EventTab = ({ onViewChart }) => {
           taskList.every((task) => task.status === "DONE")
         );
 
+        const allAssigneesExist = eventDetails.eventDetail.every(
+          (detail) => detail.assignees && detail.assignees.length > 0
+        );
+
         if (!allTasksDone) {
           toast.warn(
             "Có nhiệm vụ chưa hoàn thành. Không thể chuyển Trạng thái Sự kiện"
+          );
+          setOpen(false);
+          return;
+        }
+
+        if (!allAssigneesExist) {
+          toast.warn(
+            "Sự kiện chưa có nhân sự. Không thể chuyển Trạng thái Sự kiện"
           );
           setOpen(false);
           return;
@@ -368,7 +380,7 @@ const EventTab = ({ onViewChart }) => {
                                   Cập nhật Sự kiện tổng
                                 </Link>
                               )}
-                              
+
                               <Link
                                 to={`/edit-eventdetails/${event.id}`}
                                 className="dropdown-item"
@@ -377,15 +389,15 @@ const EventTab = ({ onViewChart }) => {
                                 Xem Chi Tiết
                               </Link>
                               {event.status === "PREPARATION" && (
-                              <button
-                                className="dropdown-item"
-                                onClick={() =>
-                                  navigate(`/event-assignees/${event.id}`)
-                                }
-                              >
-                                <i className="fa-solid fa-users me-3" />
-                                Xem Tất cả Nhân sự
-                              </button>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() =>
+                                    navigate(`/event-assignees/${event.id}`)
+                                  }
+                                >
+                                  <i className="fa-solid fa-users me-3" />
+                                  Xem Tất cả Nhân sự
+                                </button>
                               )}
                               {event.status !== "CANCELED" &&
                                 event.status !== "POST" && (
