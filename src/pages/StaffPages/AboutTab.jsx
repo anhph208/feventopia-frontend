@@ -87,6 +87,7 @@ const AboutTab = ({ profile, setProfile }) => {
       toast.success("Tài khoản đã được cập nhật thành công!", {
         toastId: successToastId,
       });
+      navigate(0);
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Cập nhật tài khoản thất bại. Vui lòng thử lại sau", {

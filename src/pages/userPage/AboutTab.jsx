@@ -104,6 +104,7 @@ const AboutTab = ({ profile, setProfile }) => {
       toast.success("Email xác nhận đã được gửi thành công!", {
         toastId: successToastId,
       });
+      navigate(0);
     } catch (error) {
       console.error("Error sending confirmation email:", error);
       toast.error("Chưa gửi được Email xác nhận. Vui lòng thử lại", {
