@@ -144,6 +144,16 @@ const EventTab = ({ onViewChart }) => {
         const tasks = await Promise.all(taskPromises);
         console.log("Tasks:", tasks);
 
+        // Check if there are no tasks at all
+        const noTasksExist = tasks.every((taskList) => taskList.length === 0);
+        if (noTasksExist) {
+          toast.warn(
+            "Không có nhiệm vụ nào. Không thể chuyển Trạng thái Sự kiện"
+          );
+          setOpen(false);
+          return;
+        }
+
         const allTasksDone = tasks.every((taskList) =>
           taskList.every((task) => task.status === "DONE")
         );
