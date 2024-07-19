@@ -47,6 +47,7 @@ const StaffHomeTab = ({ initialProfile }) => {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [planCost, setPlanCost] = useState("");
   const [actualCost, setActualCost] = useState("");
   const [status, setStatus] = useState("");
 
@@ -93,11 +94,8 @@ const StaffHomeTab = ({ initialProfile }) => {
     const fetchEvents = async () => {
       try {
         const response = await GetAllAssigneeDetailCurrentUserAPI(page, 5);
-        const result = response.data; //
-        setTotalPages(pagination.TotalPages);
-
-        console.log("API Result:", response); // Log the full API response
-        console.log("Events Data:", result); // Log the data array
+        const result = response.data;
+        setTotalPages(result.TotalPages);
 
         const tasksByEventDetailId = tasks.reduce((acc, task) => {
           if (!acc[task.eventDetailId]) {
@@ -106,7 +104,6 @@ const StaffHomeTab = ({ initialProfile }) => {
           acc[task.eventDetailId].push(task);
           return acc;
         }, {});
-        console.log("Tasks by Event Detail ID:", tasksByEventDetailId); // Log the mapping
 
         const eventsWithDetails = result.map((item) => ({
           ...item.event,
@@ -115,8 +112,6 @@ const StaffHomeTab = ({ initialProfile }) => {
             tasks: tasksByEventDetailId[assignee.eventDetail.id] || [],
           })),
         }));
-
-        console.log("Events with Details:", eventsWithDetails); // Log the final structure
 
         setEvents(eventsWithDetails);
       } catch (error) {
@@ -151,10 +146,10 @@ const StaffHomeTab = ({ initialProfile }) => {
     }
 
     try {
-      await putUpdateTaskByUsernameAPI(selectedTask.id, status, actualCost);
+      await putUpdateTaskByUsernameAPI(selectedTask.id, status, planCost, actualCost);
       setTasks(
         tasks.map((task) =>
-          task.id === selectedTask.id ? { ...task, status, actualCost } : task
+          task.id === selectedTask.id ? { ...task, status, planCost, actualCost } : task
         )
       );
       toast.success("Cập nhật trạng thái nhiệm vụ thành công!");
@@ -167,6 +162,7 @@ const StaffHomeTab = ({ initialProfile }) => {
 
   const openUpdateDialog = (task) => {
     setSelectedTask(task);
+    setPlanCost(task.planCost || "");
     setActualCost(task.actualCost || "");
     setStatus(task.status || "");
     setOpenDialog(true);
@@ -174,6 +170,7 @@ const StaffHomeTab = ({ initialProfile }) => {
 
   const closeUpdateDialog = () => {
     setSelectedTask(null);
+    setPlanCost("");
     setActualCost("");
     setStatus("");
     setOpenDialog(false);
@@ -550,12 +547,21 @@ const StaffHomeTab = ({ initialProfile }) => {
           </DialogContentText>
           <TextField
             margin="dense"
+            label="Chi phí dự kiến"
+            fullWidth
+            type="number"
+            value={planCost}
+            onChange={(e) => setPlanCost(e.target.value)}
+            disabled              
+          />
+          <TextField
+            margin="dense"
             label="Chi phí thực tế"
             fullWidth
             type="number"
             value={actualCost}
             onChange={(e) => setActualCost(e.target.value)}
-            disabled={status !== "DONE"}
+
           />
           <TextField
             margin="dense"

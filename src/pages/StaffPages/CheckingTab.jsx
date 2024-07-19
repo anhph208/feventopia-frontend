@@ -69,7 +69,6 @@ function CheckingTab() {
     setPage(newPage);
   };
 
-
   const handleCheckinClick = (eventDetailId) => {
     const selectedEvent = events.find((event) =>
       event.eventDetails.some((detail) => detail.id === eventDetailId)
@@ -90,7 +89,6 @@ function CheckingTab() {
     }
 
     const selectedEventData = {
-
       eventDetailId: selectedEventDetail.id,
       eventName: selectedEvent.eventName,
       startDate: selectedEventDetail.startDate,
@@ -145,7 +143,8 @@ function CheckingTab() {
     const now = new Date();
     const start = new Date(startDate);
     const end = new Date(endDate);
-    return now >= start && now <= end;
+    const oneHourBeforeStart = new Date(start.getTime() - 60 * 60 * 1000);
+    return now >= oneHourBeforeStart && now <= end;
   };
 
   if (loading) return <div>Loading...</div>;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import { getProfileAPI } from "../../components/services/userServices";
 import StaffHomeTab from "./StaffHomeTab";
 import AboutTab from "./AboutTab";
@@ -11,6 +11,7 @@ import CheckingTab from "./CheckingTab";
 
 const StaffProfile = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("feed");
@@ -39,6 +40,11 @@ const StaffProfile = () => {
 
     fetchUserProfile();
   }, []);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    navigate(`?activeTab=${tab}`);
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -103,7 +109,7 @@ const StaffProfile = () => {
                             activeTab === "feed" ? "active" : ""
                           }`}
                           id="feed-tab"
-                          onClick={() => setActiveTab("feed")}
+                          onClick={() => handleTabChange("feed")}
                         >
                           <i className="fa-solid fa-house" />
                           <strong>Trang cá nhân</strong>
@@ -115,7 +121,7 @@ const StaffProfile = () => {
                             activeTab === "about" ? "active" : ""
                           }`}
                           id="about-tab"
-                          onClick={() => setActiveTab("about")}
+                          onClick={() => handleTabChange("about")}
                         >
                           <i className="fa-solid fa-circle-info" />
                           <strong>Thông tin tài khoản</strong>
@@ -127,7 +133,7 @@ const StaffProfile = () => {
                             activeTab === "setting" ? "active" : ""
                           }`}
                           id="setting-tab"
-                          onClick={() => setActiveTab("setting")}
+                          onClick={() => handleTabChange("setting")}
                         >
                           <i className="fa-solid fa-gear" />
                           <strong>Cài đặt mật khẩu</strong>
@@ -136,10 +142,10 @@ const StaffProfile = () => {
                       <li className="nav-item">
                         <button
                           className={`nav-link ${
-                            activeTab === "orders" ? "active" : ""
+                            activeTab === "checkin" ? "active" : ""
                           }`}
                           id="checkin-tab"
-                          onClick={() => setActiveTab("chekin")}
+                          onClick={() => handleTabChange("checkin")}
                         >
                           <i className="fa-solid fa-box" />
                           <strong>Checkin</strong>
@@ -178,7 +184,7 @@ const StaffProfile = () => {
                         <SettingTab />
                       </div>
                     )}
-                    {activeTab === "chekin" && (
+                    {activeTab === "checkin" && (
                       <div
                         className="tab-pane fade show active"
                         id="checkin"

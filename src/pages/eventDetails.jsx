@@ -319,7 +319,7 @@ function EventDetails() {
                           </h5>
                         </div>
                       </div>
-                      {!isEventPast(eventDetail.endDate) && (
+                      {!isEventPast(eventDetail.startDate) && (
                         <div className="select-tickets-block">
                           {eventDetail.ticketForSaleInventory !== 0 && (
                             <div>
@@ -493,7 +493,7 @@ function EventDetails() {
                           )}
                         </div>
                       )}
-                      {isEventPast(eventDetail.endDate) && (
+                      {isEventPast(eventDetail.startDate) && (
                         <div className="select-tickets-block">
                           <div className="booking-btn mt-2">
                             <button
