@@ -292,11 +292,7 @@ const HomeTab = ({ initialProfile }) => {
                         <button className="esv-btn me-2" onClick={handleShow}>
                           <i className="fa-solid fa-wallet me-2" />
                           Nạp Tiền vào Ví
-<<<<<<< HEAD
                         </button>
-=======
-                        </button>    
->>>>>>> 35a90ac659ec40d8ddc722e87b05887acd3304e5
                       </div>
                     </div>
                   </div>

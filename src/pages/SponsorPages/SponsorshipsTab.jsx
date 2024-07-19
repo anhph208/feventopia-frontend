@@ -85,6 +85,10 @@ const SponsoredEvent = () => {
     setPage(newPage);
   };
 
+  const handleViewInvoice = (eventId) => {
+    navigate(`/analysis/${eventId}`);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
