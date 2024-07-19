@@ -98,6 +98,7 @@ const EvOAdminHeader = () => {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
+
           onClick={() => navigate(getHomePath())}
         >
           <MenuIcon />
@@ -105,6 +106,7 @@ const EvOAdminHeader = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <a
             className="navbar-brand"
+
             href={getHomePath()}
             onClick={(e) => e.preventDefault() || navigate(getHomePath())}
             style={{ textDecoration: "none", color: "inherit" }}
@@ -117,6 +119,7 @@ const EvOAdminHeader = () => {
             />
           </a>
         </Typography>
+
         {profile?.role === "EVENTOPERATOR" && (
           <Button
             variant="contained"

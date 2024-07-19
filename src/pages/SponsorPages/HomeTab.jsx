@@ -208,7 +208,6 @@ const HomeTab = ({ initialProfile }) => {
                           <i className="fa-solid fa-wallet me-2" />
                           Nạp Tiền vào Ví
                         </button>
-                        
                       </div>
                     </div>
                   </div>

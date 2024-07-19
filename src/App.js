@@ -15,6 +15,7 @@ const ConditionalLayout = () => {
   const { role } = useAuth();
 
   const noHeaderFooterPaths = ["/signin", "/signup", "/transactioninfo"];
+
   const noCartPaths = [
     "/signin",
     "/signup",
@@ -25,8 +26,6 @@ const ConditionalLayout = () => {
     "/create-event",
     "/update-event/:eventId",
     "/edit-eventDetails/:eventId",
-    "/adminPages",
-    "/checkingPages",
   ];
 
   const operatorPaths = [
@@ -37,30 +36,25 @@ const ConditionalLayout = () => {
   ];
 
   const adminPaths = ["/AdminPages"];
-
-  const checkingStaffPaths = ["/checkingPages"];
-
+  
   const matchPath = (paths) => {
     return paths.some((path) => location.pathname.startsWith(path));
   };
 
-  const isSpecialRolePath =
-    matchPath(operatorPaths) ||
-    matchPath(adminPaths) ||
-    matchPath(checkingStaffPaths);
+  const isOperatorOrAdminPath =
+    matchPath(operatorPaths) || matchPath(adminPaths);
 
-  const headerComponent =
-    role === "EVENTOPERATOR" || role === "ADMIN" || role === "CHECKINGSTAFF" ? (
-      <EvOAdminHeader />
-    ) : (
-      <Header />
-    );
+  const headerComponent = role === "EVENTOPERATOR" ? (
+    <EvOAdminHeader />
+  ) : (
+    <Header />
+  );
 
-  return (
+return (
     <div>
       {!matchPath(noHeaderFooterPaths) && headerComponent}
       <AppRoutes />
-      {!matchPath(noHeaderFooterPaths) && !isSpecialRolePath && <Footer />}
+      {!matchPath(noHeaderFooterPaths) && !isOperatorOrAdminPath && <Footer />}
       {!matchPath(noCartPaths) && role === "VISITOR" && <Cart />}
     </div>
   );

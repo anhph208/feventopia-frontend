@@ -12,7 +12,7 @@ function terms_condition() {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
+                        <a href="/">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -80,214 +80,86 @@ function terms_condition() {
                     </div>
                     <div className="terms-content">
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Duis molestie purus lorem, eget facilisis augue cursus
-                        eget. Aliquam posuere vehicula dignissim. Vivamus vitae
-                        odio consectetur, pharetra tortor ac, interdum urna.
-                        Cras leo mi, tincidunt non ultrices in, finibus ac
-                        dolor. Mauris tincidunt non metus id iaculis.
+                        By using our ticketing platform to sell tickets,
+                        you agree to comply with and be bound by the following terms and conditions.
                       </p>
                       <ol>
                         <li>Who we are and what we do</li>
                       </ol>
-                      <ul>
-                        <li>
-                          Barren offers the following services to event
-                          organisers (“services”):
-                          <ul>
-                            <li>
-                              Nam consectetur felis a risus ultrices
-                              sollicitudin.
-                            </li>
-                            <li>
-                              Lorem ipsum dolor sit amet, consectetur adipiscing
-                              elit.
-                            </li>
-                            <li>
-                              In pulvinar ipsum a nisi venenatis aliquet at
-                              ullamcorper erat.
-                            </li>
-                            <li>
-                              Praesent elementum mi in finibus pellentesque.
-                            </li>
-                          </ul>
-                        </li>
-                      </ul>
+                      <p>
+                        FEventopia offers the following services to event
+                        organisers from FPT university
+                      </p>
                       <ol start={2}>
-                        <li>Your use of our Services</li>
+                        <li>Event Listings</li>
                       </ol>
                       <p>
-                        Mauris id ligula et est lacinia malesuada. Quisque leo
-                        purus, porttitor efficitur aliquet ac, dictum vitae
-                        eros. Pellentesque at nisl lorem. Aliquam pretium diam
-                        ullamcorper ullamcorper suscipit. In consectetur
-                        scelerisque odio sit amet sagittis. Nunc viverra justo
-                        vel ante placerat pharetra. Quisque eget est et tortor
-                        molestie iaculis. Proin a quam urna. Phasellus nec orci
-                        lacinia, egestas massa sed, pretium justo. Aliquam
-                        mauris arcu, rutrum vitae tortor ut, tincidunt
-                        scelerisque nisi. Suspendisse aliquam est nec malesuada
-                        rhoncus.
+                        You are responsible for providing accurate and complete information about your event,
+                        including date, time, location, and any other relevant detail
                       </p>
                       <ol start={3}>
-                        <li>Creating an account</li>
+                        <li>Ticket Pricing</li>
                       </ol>
                       <p>
-                        Phasellus faucibus eros nec quam rutrum congue. Quisque
-                        lobortis porttitor turpis, in volutpat libero accumsan
-                        eu. Sed feugiat massa sed venenatis ullamcorper. Integer
-                        sed volutpat dolor, aliquam bibendum leo. In sed eros
-                        scelerisque, tempus augue a, viverra turpis. Nam
-                        pharetra ipsum velit, sollicitudin dapibus nulla cursus
-                        ut. Nulla facilisi. Ut lacinia dui non nunc placerat,
-                        vitae tristique dui luctus. Quisque eu lorem euismod,
-                        tristique mi in, porttitor risus. Nam ut nisi quis nisi
-                        vehicula scelerisque. Vivamus vestibulum nibh cursus,
-                        commodo sem sit amet, mattis odio.
+                        You set the ticket prices for your event.
+                        However, we may charge a service fee for each ticket sold through our platform.
                       </p>
                       <ol start={4}>
-                        <li>Content of the event page</li>
+                        <li>Payment and Fees</li>
                       </ol>
                       <p>
-                        Morbi non facilisis ipsum. Mauris volutpat sagittis
-                        purus, nec mattis dui auctor quis. Maecenas interdum ex
-                        eget mauris ullamcorper, quis aliquet risus faucibus.
-                        Suspendisse posuere accumsan mi, ut accumsan elit. Duis
-                        aliquam a neque eu congue. Donec finibus felis vitae dui
-                        condimentum, sit amet placerat leo dapibus. In hac
-                        habitasse platea dictumst. Nunc tristique dolor vitae
-                        ipsum condimentum euismod. Morbi scelerisque ornare
-                        tortor in sodales. Duis ligula ex, tristique quis
-                        ultrices et, faucibus non metus.
+                        Payments for ticket sales will be processed through our secure payment system.
+                        You will receive your earnings after deducting any applicable service fees and taxes.
                       </p>
                       <ol start={5}>
-                        <li>Ownership of content</li>
+                        <li>Compliance with Laws</li>
                       </ol>
                       <p>
-                        Integer sed volutpat dolor, aliquam bibendum leo. In sed
-                        eros scelerisque, tempus augue a, viverra turpis. Nam
-                        pharetra ipsum velit, sollicitudin dapibus nulla cursus
-                        ut. Nulla facilisi. Ut lacinia dui non nunc placerat,
-                        vitae tristique dui luctus. Quisque eu lorem euismod,
-                        tristique mi in, porttitor risus. Nam ut nisi quis nisi
-                        vehicula scelerisque. Vivamus vestibulum nibh cursus,
-                        commodo sem sit amet, mattis odio.
+                        You agree to comply with all applicable laws and regulations related to your event
+                        and the sale of tickets.
                       </p>
                       <ol start={6}>
                         <li>Payment</li>
                       </ol>
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Pellentesque ut ex magna. Vivamus finibus faucibus
-                        luctus. Fusce eleifend turpis in tortor mattis
-                        tincidunt. Mauris sed eros blandit ipsum imperdiet
-                        egestas. Donec sit amet arcu at urna porttitor
-                        ullamcorper in eget mi. Cras id nisl ac elit tristique
-                        pretium. Mauris augue magna, consequat nec pharetra sed,
-                        cursus eu mauris.
+                        Payments for ticket sales will be processed through our secure payment system.
+                        You will receive your earnings after deducting any applicable service fees and taxes.<br />
+                        Payouts will be made according to the schedule specified in your account settings.
                       </p>
                       <ol start={7}>
                         <li>Cancelled, varied or postponed events</li>
                       </ol>
-                      <p>
-                        Pellentesque at nisl lorem. Aliquam pretium diam
-                        ullamcorper ullamcorper suscipit. In consectetur
-                        scelerisque odio sit amet sagittis. Nunc viverra justo
-                        vel ante placerat pharetra. Quisque eget est et tortor
-                        molestie iaculis. Proin a quam urna. Phasellus nec orci
-                        lacinia, egestas massa sed, pretium justo. Aliquam
-                        mauris arcu, rutrum vitae tortor ut, tincidunt
-                        scelerisque nisi. Suspendisse aliquam est nec malesuada
-                        rhoncus.
-                      </p>
+                      <ul>
+                        <strong>Event Cancellations</strong>
+                        <ul>
+                          <li>If you cancel an event, you are responsible for notifying all ticket buyers promptly.</li>
+                          <li>You must provide a full refund to all ticket buyers for the cancelled event, including any service fees.</li>
+                          <li>Refunds must be processed through our platform's secure payment system to ensure buyers receive their refunds in a timely manner.</li>
+                        </ul>
+                      </ul>
+                      <ul>
+                        <strong>Event Variations</strong>
+                        <ul>
+                          <li>If there are any significant changes to the event (e.g., change in venue, date, or time), you must notify all ticket buyers as soon as possible.</li>
+                          <li>Ticket buyers have the right to request a refund if they do not agree with the changes. You must honor these refund requests and process them promptly.</li>
+                          <li>Any additional costs incurred due to event variations are your responsibility.</li>
+                        </ul>
+                      </ul>
+                      <ul>
+                        <strong>Postponed Events</strong>
+                        <ul>
+                          <li>If an event is postponed, you must inform all ticket buyers immediately, providing the new date and time for the event.</li>
+                          <li>Ticket buyers may choose to keep their tickets for the rescheduled date or request a full refund. You must honor and process these refund requests promptly.</li>
+                          <li>Clear communication about the rescheduled event details is essential to minimize confusion and ensure a positive experience for ticket buyers.</li>
+                        </ul>
+                      </ul>
                       <ol start={8}>
-                        <li>Exchanges and refunds</li>
+                        <li>Contact Information</li>
                       </ol>
                       <p>
-                        In hac habitasse platea dictumst. Sed ultrices mauris
-                        quis condimentum dapibus. Orci varius natoque penatibus
-                        et magnis dis parturient montes, nascetur ridiculus mus.
-                        Fusce fermentum quis mi in vestibulum. Nullam volutpat
-                        nisl sed nibh ultricies, et lobortis mauris tristique.
-                        Cras aliquam nisi et turpis consectetur condimentum.
-                        Pellentesque sed ullamcorper sapien. Mauris nec augue
-                        eget ligula viverra aliquam. Ut a pellentesque metus.
-                        Integer ut elementum lorem. Sed bibendum fringilla orci,
-                        sed accumsan mauris egestas sed. Suspendisse elit
-                        sapien, cursus vitae congue at, hendrerit tempor nunc.
-                        Interdum et malesuada fames ac ante ipsum primis in
-                        faucibus. Nullam lacinia facilisis ligula, blandit
-                        gravida elit sodales sit amet. Orci varius natoque
-                        penatibus et magnis dis parturient montes, nascetur
-                        ridiculus mus. Curabitur volutpat imperdiet malesuada.
-                      </p>
-                      <ol start={9}>
-                        <li>Unauthorised use of the Site</li>
-                      </ol>
-                      <p>
-                        Quisque eget est et tortor molestie iaculis. Proin a
-                        quam urna. Phasellus nec orci lacinia, egestas massa
-                        sed, pretium justo. Aliquam mauris arcu, rutrum vitae
-                        tortor ut, tincidunt scelerisque nisi. Suspendisse
-                        aliquam est nec malesuada rhoncus. Duis ligula ex,
-                        tristique quis ultrices et, faucibus non metus. Aliquam
-                        auctor in erat at tempus. Mauris finibus vitae justo et
-                        auctor. Integer dignissim erat lectus, quis porta tellus
-                        pretium ac. Ut in nunc ex.
-                      </p>
-                      <ol start={10}>
-                        <li>Termination of Account</li>
-                      </ol>
-                      <p>
-                        hendrerit tempor nunc. Interdum et malesuada fames ac
-                        ante ipsum primis in faucibus. Nullam lacinia facilisis
-                        ligula, blandit gravida elit sodales sit amet. Orci
-                        varius natoque penatibus et magnis dis parturient
-                        montes, nascetur ridiculus mus. Curabitur volutpat
-                        imperdiet malesuada.
-                      </p>
-                      <ol start={11}>
-                        <li>Consequences of a breach</li>
-                      </ol>
-                      <p>
-                        In sed eros scelerisque, tempus augue a, viverra turpis.
-                        Nam pharetra ipsum velit, sollicitudin dapibus nulla
-                        cursus ut. Nulla facilisi. Ut lacinia dui non nunc
-                        placerat, vitae tristique dui luctus. Quisque eu lorem
-                        euismod, tristique mi in, porttitor risus. Nam ut nisi
-                        quis nisi vehicula scelerisque. Vivamus vestibulum nibh
-                        cursus, commodo sem sit amet, mattis odio.
-                      </p>
-                      <ol start={12}>
-                        <li>Disclaimer and Limitation of Liability</li>
-                      </ol>
-                      <p>
-                        Morbi non facilisis ipsum. Mauris volutpat sagittis
-                        purus, nec mattis dui auctor quis. Maecenas interdum ex
-                        eget mauris ullamcorper, quis aliquet risus faucibus.
-                        Suspendisse posuere accumsan mi, ut accumsan elit. Duis
-                        aliquam a neque eu congue. Donec finibus felis vitae dui
-                        condimentum, sit amet placerat leo dapibus.
-                      </p>
-                      <ol start={13}>
-                        <li>Indemnity</li>
-                      </ol>
-                      <p>
-                        Nulla facilisi. Ut lacinia dui non nunc placerat, vitae
-                        tristique dui luctus. Quisque eu lorem euismod,
-                        tristique mi in, porttitor risus. Nam ut nisi quis nisi
-                        vehicula scelerisque. Vivamus vestibulum nibh cursus,
-                        commodo sem sit amet, mattis odio.
-                      </p>
-                      <ol start={14}>
-                        <li>General Provisions</li>
-                      </ol>
-                      <p>
-                        Quisque eget est et tortor molestie iaculis. Proin a
-                        quam urna. Phasellus nec orci lacinia, egestas massa
-                        sed, pretium justo. Aliquam mauris arcu, rutrum vitae
-                        tortor ut, tincidunt scelerisque nisi. Suspendisse
-                        aliquam est nec malesuada rhoncus.
+                        For any questions or concerns regarding these terms,
+                        please contact our support team at
+                        <a href="mailto:daihoc.hcm@fpt.edu.vn"> daihoc.hcm@fpt.edu.vn</a>.
                       </p>
                     </div>
                   </div>
@@ -297,156 +169,72 @@ function terms_condition() {
                     </div>
                     <div className="terms-content">
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Duis molestie purus lorem, eget facilisis augue cursus
-                        eget. Aliquam posuere vehicula dignissim. Vivamus vitae
-                        odio consectetur, pharetra tortor ac, interdum urna.
-                        Cras leo mi, tincidunt non ultrices in, finibus ac
-                        dolor. Mauris tincidunt non metus id iaculis.
+                        By purchasing tickets through our platform,
+                        you agree to comply with and be bound by the following terms and conditions.
                       </p>
                       <ol>
-                        <li>Who we are and what we do</li>
+                        <li>Ticket Purchase</li>
                       </ol>
                       <ul>
-                        <li>
-                          Barren offers the following services to event
-                          organisers (“services”):
-                          <ul>
-                            <li>
-                              Nam consectetur felis a risus ultrices
-                              sollicitudin.
-                            </li>
-                            <li>
-                              Lorem ipsum dolor sit amet, consectetur adipiscing
-                              elit.
-                            </li>
-                            <li>
-                              In pulvinar ipsum a nisi venenatis aliquet at
-                              ullamcorper erat.
-                            </li>
-                          </ul>
-                        </li>
+                        <ul>
+                          <li>
+                            All ticket sales are final. Ensure that you review your order carefully before completing the purchase.
+                          </li>
+                          <li>
+                            Tickets may be subject to additional service fees and taxes, which will be clearly indicated during the purchase process.
+                          </li>
+                        </ul>
                       </ul>
                       <ol start={2}>
-                        <li>Purchasing tickets or registrations</li>
-                      </ol>
-                      <p>
-                        Mauris id ligula et est lacinia malesuada. Quisque leo
-                        purus, porttitor efficitur aliquet ac, dictum vitae
-                        eros. Pellentesque at nisl lorem. Aliquam pretium diam
-                        ullamcorper ullamcorper suscipit. In consectetur
-                        scelerisque odio sit amet sagittis. Nunc viverra justo
-                        vel ante placerat pharetra. Quisque eget est et tortor
-                        molestie iaculis. Proin a quam urna. Phasellus nec orci
-                        lacinia, egestas massa sed, pretium justo. Aliquam
-                        mauris arcu, rutrum vitae tortor ut, tincidunt
-                        scelerisque nisi. Suspendisse aliquam est nec malesuada
-                        rhoncus.
-                      </p>
-                      <ol start={3}>
                         <li>Payment</li>
                       </ol>
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Pellentesque ut ex magna. Vivamus finibus faucibus
-                        luctus. Fusce eleifend turpis in tortor mattis
-                        tincidunt. Mauris sed eros blandit ipsum imperdiet
-                        egestas. Donec sit amet arcu at urna porttitor
-                        ullamcorper in eget mi. Cras id nisl ac elit tristique
-                        pretium. Mauris augue magna, consequat nec pharetra sed,
-                        cursus eu mauris.
+                        Payments for tickets must be made through our secure payment system.
                       </p>
+                      <ol start={3}>
+                        <li>Refunds and Cancellations</li>
+                      </ol>
+                      <ul>
+                        <li>
+                          Refunds are subject to the event organizer's refund policy.
+                          Please review the specific refund policy for the event before making a purchase.
+                        </li>
+                        <li>
+                          In the event of an event cancellation, you will be entitled to a full refund.
+                        </li>
+                      </ul>
                       <ol start={4}>
-                        <li>Cancelled, varied or postponed events</li>
+                        <li>
+                          Event Changes
+                        </li>
                       </ol>
                       <p>
-                        Pellentesque at nisl lorem. Aliquam pretium diam
-                        ullamcorper ullamcorper suscipit. In consectetur
-                        scelerisque odio sit amet sagittis. Nunc viverra justo
-                        vel ante placerat pharetra. Quisque eget est et tortor
-                        molestie iaculis. Proin a quam urna. Phasellus nec orci
-                        lacinia, egestas massa sed, pretium justo. Aliquam
-                        mauris arcu, rutrum vitae tortor ut, tincidunt
-                        scelerisque nisi. Suspendisse aliquam est nec malesuada
-                        rhoncus.
+                        Event details, including date, time, and location, are subject to change.
+                        We will notify you of any significant changes as soon as possible.
                       </p>
                       <ol start={5}>
-                        <li>Unauthorised Use</li>
+                        <li>Limitation of Liability</li>
                       </ol>
                       <p>
-                        In hac habitasse platea dictumst. Sed ultrices mauris
-                        quis condimentum dapibus. Orci varius natoque penatibus
-                        et magnis dis parturient montes, nascetur ridiculus mus.
-                        Fusce fermentum quis mi in vestibulum. Nullam volutpat
-                        nisl sed nibh ultricies, et lobortis mauris tristique.
-                        Cras aliquam nisi et turpis consectetur condimentum.
-                        Pellentesque sed ullamcorper sapien. Mauris nec augue
-                        eget ligula viverra aliquam. Ut a pellentesque metus.
-                        Integer ut elementum lorem. Sed bibendum fringilla orci,
-                        sed accumsan mauris egestas sed. Suspendisse elit
-                        sapien, cursus vitae congue at, hendrerit tempor nunc.
-                        Interdum et malesuada fames ac ante ipsum primis in
-                        faucibus. Nullam lacinia facilisis ligula, blandit
-                        gravida elit sodales sit amet. Orci varius natoque
-                        penatibus et magnis dis parturient montes, nascetur
-                        ridiculus mus. Curabitur volutpat imperdiet malesuada.
+                        We are not liable for any damages or losses resulting from event cancellations,
+                        changes, or any issues related to the event itself.
                       </p>
                       <ol start={6}>
-                        <li>Permitted Use of the Site</li>
+                        <li>Privacy</li>
                       </ol>
                       <p>
-                        Quisque eget est et tortor molestie iaculis. Proin a
-                        quam urna. Phasellus nec orci lacinia, egestas massa
-                        sed, pretium justo. Aliquam mauris arcu, rutrum vitae
-                        tortor ut, tincidunt scelerisque nisi. Suspendisse
-                        aliquam est nec malesuada rhoncus. Duis ligula ex,
-                        tristique quis ultrices et, faucibus non metus. Aliquam
-                        auctor in erat at tempus. Mauris finibus vitae justo et
-                        auctor. Integer dignissim erat lectus, quis porta tellus
-                        pretium ac. Ut in nunc ex.
+                        We value your privacy. Please review our Privacy Policy to understand
+                        how we collect, use, and protect your personal information.
                       </p>
                       <ol start={7}>
-                        <li>Breaches of Terms</li>
+                        <li>Contact Information</li>
                       </ol>
                       <p>
-                        hendrerit tempor nunc. Interdum et malesuada fames ac
-                        ante ipsum primis in faucibus. Nullam lacinia facilisis
-                        ligula, blandit gravida elit sodales sit amet. Orci
-                        varius natoque penatibus et magnis dis parturient
-                        montes, nascetur ridiculus mus. Curabitur volutpat
-                        imperdiet malesuada.
+                        For any questions or concerns regarding these terms,
+                        please contact our support team at
+                        <a href="mailto:daihoc.hcm@fpt.edu.vn"> daihoc.hcm@fpt.edu.vn</a>.
                       </p>
-                      <ol start={8}>
-                        <li>Disclaimer and Limitation of Liability</li>
-                      </ol>
-                      <p>
-                        Morbi non facilisis ipsum. Mauris volutpat sagittis
-                        purus, nec mattis dui auctor quis. Maecenas interdum ex
-                        eget mauris ullamcorper, quis aliquet risus faucibus.
-                        Suspendisse posuere accumsan mi, ut accumsan elit. Duis
-                        aliquam a neque eu congue. Donec finibus felis vitae dui
-                        condimentum, sit amet placerat leo dapibus.
-                      </p>
-                      <ol start={9}>
-                        <li>Indemnity</li>
-                      </ol>
-                      <p>
-                        Nulla facilisi. Ut lacinia dui non nunc placerat, vitae
-                        tristique dui luctus. Quisque eu lorem euismod,
-                        tristique mi in, porttitor risus. Nam ut nisi quis nisi
-                        vehicula scelerisque. Vivamus vestibulum nibh cursus,
-                        commodo sem sit amet, mattis odio.
-                      </p>
-                      <ol start={10}>
-                        <li>General Provisions</li>
-                      </ol>
-                      <p>
-                        Quisque eget est et tortor molestie iaculis. Proin a
-                        quam urna. Phasellus nec orci lacinia, egestas massa
-                        sed, pretium justo. Aliquam mauris arcu, rutrum vitae
-                        tortor ut, tincidunt scelerisque nisi. Suspendisse
-                        aliquam est nec malesuada rhoncus.
-                      </p>
+
                     </div>
                   </div>
                 </div>

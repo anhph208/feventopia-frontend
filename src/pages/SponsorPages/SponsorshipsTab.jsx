@@ -13,12 +13,14 @@ const SponsoredEvent = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSponsoredEvents = async () => {
       try {
         setLoading(true);
+
         const response = await getSponsoredEventByUserAPI(page, 5); // Fetch 5 events per page
 
         if (response && response.data && response.pagination) {
@@ -81,10 +83,6 @@ const SponsoredEvent = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-  };
-
-  const handleViewInvoice = (eventId) => {
-    navigate(`/analysis/${eventId}`);
   };
 
   if (loading) {

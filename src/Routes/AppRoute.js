@@ -27,6 +27,9 @@ import SponsorProfile from "../pages/SponsorPages/sponsorProfile";
 import StaffProfile from "../pages/StaffPages/StaffProfile";
 import Invoice from "../pages/invoice";
 import EmailConfirmation from "../pages/confirmEmail";
+import About_us from "../pages/Help-Support/About";
+import Privacy from "../pages/Help-Support/privacy";
+import Terms_condition from "../pages/Help-Support/terms_condition";
 import AdminPages from "../pages/AdminPages/AdminMain";
 import Feedback from "../pages/eventFbDetails";
 import Analysis from "../pages/SponsorPages/EventAnalysis"
@@ -41,6 +44,8 @@ const AppRoutes = () => {
 
       {/* Public Routes */}
       <Route path="/faq" element={<FAQ />} />
+
+      <Route path="/About_us" element={<About_us />} />     
       <Route path="/helpSectionDetailView" element={<HelpSectionDetailView />} />
       <Route path="/helpCenter" element={<HelpCenter />} />
       <Route path="/helpCenterKnowledgeBase" element={<HelpCenterKnowledgeBase />} />
@@ -49,6 +54,8 @@ const AppRoutes = () => {
       <Route path="/transactioninfo" element={<TransactionInfo />} />
       <Route path="/event/:eventId" element={<EventDetails />} />
       <Route path="/Contact" element={<ContactUs />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/Terms_condition" element={<Terms_condition />} />
       <Route path="/feedback/:eventId" element={<Feedback />} />
 
       {/* Home Route with Redirection */}
@@ -83,6 +90,7 @@ const AppRoutes = () => {
       />
 
       {/* Routes for Visitors */}
+
       {(!role || role === "VISITOR" || role === "SPONSOR" || role === "ADMIN") && (
         <>
           <Route path="/userprofile" element={<UserProfile />} />
@@ -135,6 +143,7 @@ const AppRoutes = () => {
           <Route path="/*" element={<Navigate to="/AdminPages" />} />
         </>
       )}
+
 
       {/* Fallback Route */}
       <Route path="*" element={<NotFound />} />
