@@ -25,7 +25,7 @@ function FAQ() {
                         <div className="col-lg-12 col-md-12">
                             <div className="main-title checkout-title text-center">
                                 <h3>Frequently asked questions</h3>
-                                <p className="mb-0">Find answers to the common questions asked about Barren.</p>
+                                <p className="mb-0">Find answers to the common questions asked about FEventopia.</p>
                             </div>
                         </div>
                         <div className="col-lg-4 col-md-12">
@@ -55,24 +55,24 @@ function FAQ() {
                                         <div className="accordion-item">
                                             <h2 className="accordion-header" id="panelsOrgnaisersOpen-heading1">
                                                 <button className="accordion-btn pe-0 ps-0" type="button" data-bs-toggle="collapse" data-bs-target="#panelsOrgnaisersOpen-collapse1" aria-expanded="true" aria-controls="panelsOrgnaisersOpen-collapse1">
-                                                    What types of events can I set up through Barren?
+                                                    What types of events can I set up through FEventopia?
                                                 </button>
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse1" className="accordion-collapse collapse show" aria-labelledby="panelsOrgnaisersOpen-heading1" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Talkshow, âm nhạc, cuộc thi, festival.</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="accordion-item">
                                             <h2 className="accordion-header" id="panelsOrgnaisersOpen-heading2">
                                                 <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsOrgnaisersOpen-collapse2" aria-expanded="false" aria-controls="panelsOrgnaisersOpen-collapse2">
-                                                    Does Barren offer event management or customer service for my event?
+                                                    Does FEventopia offer event management or customer service for my event?
                                                 </button>
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse2" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading2" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Now we're not supported yet</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -84,7 +84,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse3" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading3" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Yes you can.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -96,19 +96,19 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse4" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading4" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>After we calculate the revenue.</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="accordion-item">
                                             <h2 className="accordion-header" id="panelsOrgnaisersOpen-heading5">
                                                 <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsOrgnaisersOpen-collapse5" aria-expanded="false" aria-controls="panelsOrgnaisersOpen-collapse5">
-                                                    Which platform will Barren use to host my online event and will I have to pay any external charges for my online event?
+                                                    Which platform will FEventopia use to host my online event and will I have to pay any external charges for my online event?
                                                 </button>
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse5" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading5" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>We refer using zoom and until use have to pay fee to unlimited the number of adtendees.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -120,7 +120,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse6" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading6" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Yes but you need to said to the system you will invite who that we can manage.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -132,7 +132,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse7" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading7" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Yes.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -144,7 +144,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse8" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading8" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Now we're not supported yet</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,7 +156,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse9" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading9" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Now we not support yet.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -168,7 +168,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse10" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading10" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Our system limit the number of ticket each person can buy at the same time 5 tickets.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -180,7 +180,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse11" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading11" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Depend on your location.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -192,19 +192,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse12" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading12" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="accordion-item">
-                                            <h2 className="accordion-header" id="panelsOrgnaisersOpen-heading13">
-                                                <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsOrgnaisersOpen-collapse13" aria-expanded="false" aria-controls="panelsOrgnaisersOpen-collapse13">
-                                                    How do I know who has arrived at my venue event?
-                                                </button>
-                                            </h2>
-                                            <div id="panelsOrgnaisersOpen-collapse13" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading13" data-bs-parent="#accordionFAQforOrganisers">
-                                                <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>No.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -216,19 +204,19 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse14" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading14" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>You can contact to our admin to adjust the information.</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="accordion-item">
                                             <h2 className="accordion-header" id="panelsOrgnaisersOpen-heading15">
                                                 <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsOrgnaisersOpen-collapse15" aria-expanded="false" aria-controls="panelsOrgnaisersOpen-collapse15">
-                                                    Does Barren charge for free events?
+                                                    Does FEventopia charge for free events?
                                                 </button>
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse15" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading15" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Yes but it depend on the sponsor and event operator.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -240,7 +228,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse16" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading16" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>You need to contact our staff to change the description.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -252,7 +240,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse17" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading17" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Now we only accepct the VNpay method.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -264,31 +252,31 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse18" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading18" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>You can go to the feedback to feedback the event.</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="accordion-item">
                                             <h2 className="accordion-header" id="panelsOrgnaisersOpen-heading19">
                                                 <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsOrgnaisersOpen-collapse19" aria-expanded="false" aria-controls="panelsOrgnaisersOpen-collapse19">
-                                                    Can I arrange printed items such as tickets and programs through Barren?
+                                                    Can I arrange printed items such as tickets and programs through FEventopia?
                                                 </button>
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse19" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading19" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Now we're not supported yet</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="accordion-item">
                                             <h2 className="accordion-header" id="panelsOrgnaisersOpen-heading20">
                                                 <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsOrgnaisersOpen-collapse20" aria-expanded="false" aria-controls="panelsOrgnaisersOpen-collapse20">
-                                                    Do my customers need to make an account with Barren?
+                                                    Do my customers need to make an account with FEventopia?
                                                 </button>
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse20" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading20" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Yes.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -300,7 +288,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsOrgnaisersOpen-collapse21" className="accordion-collapse collapse" aria-labelledby="panelsOrgnaisersOpen-heading21" data-bs-parent="#accordionFAQforOrganisers">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>You can go to the helpCenter to see more detail.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -319,31 +307,19 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse1" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading1" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>No, we will protected personal information.</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="accordion-item">
                                             <h2 className="accordionpanelsAttendeesOpen-header" id="panelsAttendeesOpen-heading2">
                                                 <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsAttendeesOpen-collapse2" aria-expanded="false" aria-controls="panelsAttendeesOpen-collapse2">
-                                                    Do I need an account to buy tickets from Barren?
+                                                    Do I need an account to buy tickets from FEventopia?
                                                 </button>
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse2" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading2" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="accordion-item">
-                                            <h2 className="accordion-header" id="panelsAttendeesOpen-heading3">
-                                                <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsAttendeesOpen-collapse3" aria-expanded="false" aria-controls="panelsAttendeesOpen-collapse3">
-                                                    How do I buy tickets for an event?
-                                                </button>
-                                            </h2>
-                                            <div id="panelsAttendeesOpen-collapse3" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading3" data-bs-parent="#accordionFAQforAttendees">
-                                                <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Yes.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -355,7 +331,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse4" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading4" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Because FEventopia limit the number of ticker each person can buy at the same time is 5.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -367,7 +343,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse5" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading5" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>You can inform when you are paticipate at the event or you can mail to staff early.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -379,31 +355,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse6" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading6" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="accordion-item">
-                                            <h2 className="accordion-header" id="panelsAttendeesOpen-heading7">
-                                                <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsAttendeesOpen-collapse7" aria-expanded="false" aria-controls="panelsAttendeesOpen-collapse7">
-                                                    How will I join my online event?
-                                                </button>
-                                            </h2>
-                                            <div id="panelsAttendeesOpen-collapse7" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading7" data-bs-parent="#accordionFAQforAttendees">
-                                                <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="accordion-item">
-                                            <h2 className="accordion-header" id="panelsAttendeesOpen-heading8">
-                                                <button className="accordion-btn pe-0 ps-0 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsAttendeesOpen-collapse8" aria-expanded="false" aria-controls="panelsAttendeesOpen-collapse8">
-                                                    Where will I get the best experience out of my online event?
-                                                </button>
-                                            </h2>
-                                            <div id="panelsAttendeesOpen-collapse8" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading8" data-bs-parent="#accordionFAQforAttendees">
-                                                <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>After you pay for that ticket successful, you can receive your ticket via email.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -415,7 +367,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse9" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading9" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>No, we will scan your ticket QR code.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -427,7 +379,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse10" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading10" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>Now we not have supported yet.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -439,7 +391,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse11" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading11" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>You need to inform the staff early, then we will send you a new mail with same QR code.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -451,7 +403,7 @@ function FAQ() {
                                             </h2>
                                             <div id="panelsAttendeesOpen-collapse12" className="accordion-collapse collapse" aria-labelledby="panelsAttendeesOpen-heading12" data-bs-parent="#accordionFAQforAttendees">
                                                 <div className="accordion-body pt-0 pe-0 ps-0">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis auctor ex. Curabitur id odio in lectus molestie porttitor ac vel turpis. Integer tincidunt non felis et tincidunt. Duis eros leo, porta a felis vitae, facilisis blandit felis. Cras auctor nisl ut sem bibendum, non auctor magna ultrices. Etiam condimentum enim eu dui pharetra, eu sagittis ante mollis. Integer porttitor ultricies bibendum. Aenean mollis odio id ultrices pharetra. Quisque vitae mi nec enim viverra pellentesque.</p>
+                                                    <p>For any question, please contact our support team at email address or phone number.</p>
                                                 </div>
                                             </div>
                                         </div>

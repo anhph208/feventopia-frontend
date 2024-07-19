@@ -183,8 +183,10 @@ export const getAllEventForOtherAPI = async (
 
 export const getEventDetailsAPI = async (eventId) => {
   try {
+
     const response = await config.get(`/event/GetEventById?id=${eventId}`
       );
+
     if (response.status === 200) {
       return response.data; // Return the event details
     } else {
@@ -1151,6 +1153,7 @@ export const reactivateAccountAPI = async (accountId) => {
 
 export const updateAllAccountlAPI = async (accountId, accountData) => {
   try {
+    
     const response = await config.put("/user/management/UpdateAllAccount", accountData, {
       params: { id: accountId },
     });

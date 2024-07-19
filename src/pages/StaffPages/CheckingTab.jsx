@@ -19,6 +19,7 @@ import QrScanner from "react-qr-scanner";
 
 function CheckingTab() {
   const [events, setEvents] = useState([]);
+
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -68,6 +69,7 @@ function CheckingTab() {
     setPage(newPage);
   };
 
+
   const handleCheckinClick = (eventDetailId) => {
     const selectedEvent = events.find((event) =>
       event.eventDetails.some((detail) => detail.id === eventDetailId)
@@ -88,6 +90,7 @@ function CheckingTab() {
     }
 
     const selectedEventData = {
+
       eventDetailId: selectedEventDetail.id,
       eventName: selectedEvent.eventName,
       startDate: selectedEventDetail.startDate,
@@ -108,6 +111,7 @@ function CheckingTab() {
 
     try {
       setLoading(true);
+
       await checkinEventAPI(ticketId, checkinEvent.eventDetailId);
       toast.success("VÉ ĐÃ CHECK-IN THÀNH CÔNG!");
       setIsDialogOpen(false);
@@ -205,7 +209,6 @@ function CheckingTab() {
                       <i className="fa-solid fa-location-dot" />
                     </div>
                     <div className="card-dt-text">
-                      
                     </div>
                   </div>
                   <div className="card-bottom-item">

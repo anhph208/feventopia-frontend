@@ -1,7 +1,14 @@
-import React from "react"
+import React from "react";
 
 const Contact_us = () => {
-    
+    const members = [
+        { name: "Phạm Ngọc Bảo (Leader)", id: "SE171066", email: "baopnse171066@fpt.edu.vn" },
+        { name: "Phạm Hoàng Anh", id: "SE160124", email: "anhphse160124@fpt.edu.vn" },
+        { name: "Nguyễn Võ Anh Kiệt", id: "SE171347", email: "kietnvase171347@fpt.edu.vn" },
+        { name: "Phạm Hoàng Thụy An", id: "SE172037", email: "anphtse172037@fpt.edu.vn" },
+        { name: "Cao Thuận Phát", id: "SE172611", email: "phatctse172611@fpt.edu.vn" }
+    ];
+
     return (
         <div className="wrapper">
             <div className="breadcrumb-block">
@@ -26,130 +33,33 @@ const Contact_us = () => {
                         <div className="col-lg-12 col-md-12">
                             <div className="main-title checkout-title text-center">
                                 <h3>Contact Us</h3>
-                                <p className="mb-0">Have any questions? We'd love to hear from you.</p>
+                                <p className="mb-0">Here are our contact details.</p>
                             </div>
                         </div>
                         <div className="col-lg-10">
                             <div className="main-card mt-5">
-                                <div className="row">
-                                    <div className="col-xl-7 col-lg-12 col-md-12 order-lg-2">
-                                        <div className="contact-form bp-form p-lg-5 ps-lg-4 pt-lg-4 pb-5 p-4">
-                                            <div className="row">
-                                                <div className="col-md-6">
-                                                    <div className="form-group mt-4">
-                                                        <label className="form-label">First Name*</label>
-                                                        <input className="form-control h_50" type="text" placeholder="" value=""/>
-                                                    </div>
+                                <div className="contact-info-section p-lg-5 ps-lg-4 pt-lg-4 pb-5 p-4">
+                                    <div className="row">
+                                        {members.map((member, index) => (
+                                            <div key={index} className="col-md-4 col-sm-6">
+                                                <div className="contact-detail mt-4">
+                                                    <label className="form-label">Name</label>
+                                                    <p>{member.name}</p>
                                                 </div>
-                                                <div className="col-md-6">
-                                                    <div className="form-group mt-4">
-                                                        <label className="form-label">Last Name*</label>
-                                                        <input className="form-control h_50" type="text" placeholder="" value=""/>
-                                                    </div>
+                                                <div className="contact-detail mt-4">
+                                                    <label className="form-label">Member ID</label>
+                                                    <p>{member.id}</p>
                                                 </div>
-                                                <div className="col-md-6">
-                                                    <div className="form-group mt-4">
-                                                        <label className="form-label">Email*</label>
-                                                        <input className="form-control h_50" type="Email" placeholder="" value=""/>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-6">
-                                                    <div className="form-group mt-4">
-                                                        <label className="form-label">Phone*</label>
-                                                        <input className="form-control h_50" type="text" placeholder="" value=""/>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-12">
-                                                    <div className="form-group mt-4">
-                                                        <label className="form-label">Message*</label>
-                                                        <textarea className="form-textarea" placeholder="About"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-12">
-                                                    <div className="text-center mt-4">
-                                                        <button className="main-btn btn-hover h_50 w-100" type="submit">Submit</button>
-                                                    </div>
+                                                <div className="contact-detail mt-4">
+                                                    <label className="form-label">Email</label>
+                                                    <p><a href={`mailto:${member.email}`}>{member.email}</a></p>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-xl-5 col-lg-12 col-md-12 order-lg-1 d-none d-xl-block">
-                                        <div className="contact-banner-block">
-                                            <div className="contact-hero-banner">
-                                                <div className="contact-hero-banner-info">
-                                                    <h3>Contact information</h3>
-                                                    <p>Fill out the form and our team will get back to you soon.</p>
-                                                    <ul>
-                                                        <li>
-                                                            <div className="contact-info d-flex align-items-center">
-                                                                <div className="contact-icon">
-                                                                    <i className="fa-solid fa-square-phone fa-beat-fade" style={{ "--fa-beat-fade-opacity": 0.67, "--fa-beat-fade-scale": 1.075 }}></i>
-                                                                </div>
-                                                                <a href="#">+1(000)00-00000</a>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="contact-info d-flex align-items-center">
-                                                                <div className="contact-icon">
-                                                                    <i className="fa-solid fa-envelope fa-beat-fade" style={{ "--fa-beat-fade-opacity": 0.67, "--fa-beat-fade-scale": 1.075 }}></i>
-                                                                </div>
-                                                                <a href="#">contact@barren.com</a>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="contact-info d-flex align-items-center">
-                                                                <div className="contact-icon">
-                                                                    <i className="fa-solid fa-life-ring fa-beat-fade" style={{ "--fa-beat-fade-opacity": 0.67, "--fa-beat-fade-scale": 1.075 }}></i>
-                                                                </div>
-                                                                <a href="/helpCenter">Help Center</a>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>	
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-10 col-md-12 d-block d-xl-none">
-                            <div className="main-card mt-4">
-                                <div className="contact-banner-block">
-                                    <div className="contact-hero-banner p_30 min-h-auto">
-                                        <div className="contact-hero-banner-info">
-                                            <h3>Contact information</h3>
-                                            <p>Fill out the form and our team will get back to you soon.</p>
-                                            <ul>
-                                                <li>
-                                                    <div className="contact-info d-flex align-items-center">
-                                                        <div className="contact-icon">
-                                                            <i className="fa-solid fa-square-phone fa-beat-fade" style={{ "--fa-beat-fade-opacity": 0.67, "--fa-beat-fade-scale": 1.075 }}></i>
-                                                        </div>
-                                                        <a href="#">+1(000)00-00000</a>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div className="contact-info d-flex align-items-center">
-                                                        <div className="contact-icon">
-                                                            <i className="fa-solid fa-envelope fa-beat-fade" style={{ "--fa-beat-fade-opacity": 0.67, "--fa-beat-fade-scale": 1.075 }}></i>
-                                                        </div>
-                                                        <a href="#">contact@barren.com</a>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div className="contact-info d-flex align-items-center">
-                                                        <div className="contact-icon">
-                                                            <i className="fa-solid fa-life-ring fa-beat-fade" style={{ "--fa-beat-fade-opacity": 0.67, "--fa-beat-fade-scale": 1.075 }}></i>
-                                                        </div>
-                                                        <a href="/helpCenter">Help Center</a>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> 
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@ function privacy() {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
+                        <a href="/">Home</a>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -42,189 +42,61 @@ function privacy() {
                     </div>
                     <div className="privacy-content">
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Mauris ullamcorper sapien enim, sed fermentum turpis
-                        pellentesque quis. Cras efficitur, felis et viverra
-                        hendrerit, leo ex tempus lectus, nec eleifend augue nibh
-                        quis tellus. Sed in dignissim ligula, nec ultricies
-                        turpis. Quisque sapien est, gravida luctus est quis,
-                        aliquet tempor eros. Nam vel mauris ex. Quisque ex nibh,
-                        sagittis vel tristique vel, iaculis non ex. Lorem ipsum
-                        dolor sit amet, consectetur adipiscing elit. Integer a
-                        urna ornare, tincidunt quam a, interdum sapien. Quisque
-                        placerat eleifend turpis, a maximus lectus imperdiet
-                        eget. Proin porta ante ut sem suscipit efficitur.
-                        Curabitur vitae quam vitae libero tristique efficitur.
-                        Nunc sagittis lobortis nisl vel condimentum.{" "}
+                      At FEventopia, we are committed to protecting your privacy and ensuring that your personal information is 
+                      handled in a safe and responsible manner. This Privacy Policy outlines the types of personal information 
+                      we collect, how we use and protect that information, and your rights regarding your personal data. 
+                      By using our services, you agree to the terms of this policy. 
+                      We encourage you to read this policy carefully and contact us if you have any questions or concerns.
+{" "}
                       </p>
                       <h5>Which entities does this privacy policy cover?</h5>
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Mauris ullamcorper sapien enim, sed fermentum turpis
-                        pellentesque quis. Cras efficitur, felis et viverra
-                        hendrerit, leo ex tempus lectus, nec eleifend augue nibh
-                        quis tellus. Sed in dignissim ligula, nec ultricies
-                        turpis. Quisque sapien est, gravida luctus est quis,
-                        aliquet tempor eros.{" "}
-                      </p>
-                      <h5>What is personal information?</h5>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Integer a urna ornare, tincidunt quam a, interdum
-                        sapien. Quisque placerat eleifend turpis, a maximus
-                        lectus imperdiet eget. Proin porta ante ut sem suscipit
-                        efficitur.
+                      This privacy policy applies to all services and products provided by these entities, both online and offline.
                       </p>
                       <h5>What personal information do we collect?</h5>
                       <p>
-                        Nunc sagittis lobortis nisl vel condimentum. Proin
-                        consequat metus mauris, et suscipit est dictum vitae.
-                        Aenean cursus, augue quis pretium iaculis, orci odio
-                        malesuada leo, ac molestie nisi risus hendrerit turpis.
-                        Nullam iaculis ante nec ex mollis, eu pulvinar elit
-                        porta. Donec feugiat enim leo, ut pulvinar ligula
-                        placerat eget.
+                      We collect various types of personal information, including but not limited to:<br/>
+                      Name and contact details (e.g., email address, phone number)
                       </p>
                       <h5>Why do we collect your personal information?</h5>
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Mauris ullamcorper sapien enim, sed fermentum turpis
-                        pellentesque quis. Cras efficitur, felis et viverra
-                        hendrerit, leo ex tempus lectus, nec eleifend augue nibh
-                        quis tellus. Sed in dignissim ligula, nec ultricies
-                        turpis. Quisque sapien est, gravida luctus est quis,
-                        aliquet tempor eros. Nam vel mauris ex. Quisque ex nibh,
-                        sagittis vel tristique vel, iaculis non ex. Lorem ipsum
-                        dolor sit amet, consectetur adipiscing elit. Integer a
-                        urna ornare, tincidunt quam a, interdum sapien. Quisque
-                        placerat eleifend turpis, a maximus lectus imperdiet
-                        eget. Proin porta ante ut sem suscipit efficitur.
-                        Curabitur vitae quam vitae libero tristique efficitur.
-                        Nunc sagittis lobortis nisl vel condimentum. Proin
-                        consequat metus mauris, et suscipit est dictum vitae.
-                        Aenean cursus, augue quis pretium iaculis, orci odio
-                        malesuada leo, ac molestie nisi risus hendrerit turpis.
-                        Nullam iaculis ante nec ex mollis, eu pulvinar elit
-                        porta. Donec feugiat enim leo, ut pulvinar ligula
-                        placerat eget.
-                      </p>
-                      <h5>
-                        When and how do we collect your personal information?
-                      </h5>
-                      <p>
-                        Fusce sit amet eros dictum velit lacinia iaculis.
-                        Suspendisse vitae neque sed enim ultricies convallis a
-                        eu ligula. Phasellus pulvinar nibh vel diam auctor, sit
-                        amet vulputate nunc convallis. Pellentesque finibus
-                        sapien pharetra, suscipit augue sit amet, pulvinar
-                        velit. In eu sollicitudin urna, eget laoreet nibh. Etiam
-                        dictum ullamcorper leo, nec congue metus. Vestibulum nec
-                        dui et enim fermentum posuere vitae vitae quam. Integer
-                        luctus lectus sit amet ornare pulvinar. Ut vitae enim
-                        massa. Curabitur non ligula at justo vulputate pretium.
-                        Cras pulvinar lacus vel tellus hendrerit, et euismod
-                        odio dictum.
-                      </p>
-                      <h5>
-                        What if you don’t want us to collect your personal
-                        information?
-                      </h5>
-                      <p>
-                        Mauris mattis lacus sit amet tincidunt laoreet. Morbi
-                        mollis eu ligula ac finibus. Suspendisse semper metus in
-                        enim varius, ut cursus nulla tristique. Etiam volutpat
-                        nibh dolor, ut dictum nibh porttitor sit amet. Nunc
-                        pellentesque dui nulla, et rhoncus massa ultricies id.
-                        Quisque leo erat, volutpat sit amet ipsum non,
-                        consectetur porttitor tortor. Aenean feugiat arcu nec
-                        nunc faucibus, dictum laoreet orci dictum.
-                      </p>
-                      <h5>
-                        What if you don’t want to receive any further
-                        communications from us?
-                      </h5>
-                      <p>
-                        Pellentesque finibus sapien pharetra, suscipit augue sit
-                        amet, pulvinar velit. In eu sollicitudin urna, eget
-                        laoreet nibh. Etiam dictum ullamcorper leo, nec congue
-                        metus. Vestibulum nec dui et enim fermentum posuere
-                        vitae vitae quam. Integer luctus lectus sit amet ornare
-                        pulvinar.{" "}
-                      </p>
-                      <h5>When do we disclose your personal information?</h5>
-                      <p>
-                        Praesent fermentum bibendum dui, eget viverra ante
-                        blandit at. Nulla ullamcorper lobortis nisl a facilisis.
-                        Nunc dolor odio, efficitur non quam quis, mollis
-                        tincidunt nisl. Sed nisl tellus, hendrerit mattis purus
-                        at, vehicula lobortis sapien. Nulla facilisi. Vestibulum
-                        quis porta orci. Mauris id tempus nunc.Praesent
-                        fermentum bibendum dui, eget viverra ante blandit at.
-                        Nulla ullamcorper lobortis nisl a facilisis. Nunc dolor
-                        odio, efficitur non quam quis, mollis tincidunt nisl.
-                        Sed nisl tellus, hendrerit mattis purus at, vehicula
-                        lobortis sapien. Nulla facilisi. Vestibulum quis porta
-                        orci. Mauris id tempus nunc.
-                      </p>
-                      <h5>
-                        How can I access, correct, update and/or delete personal
-                        information you have collected?
-                      </h5>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Mauris ullamcorper sapien enim, sed fermentum turpis
-                        pellentesque quis. Cras efficitur, felis et viverra
-                        hendrerit, leo ex tempus lectus, nec eleifend augue nibh
-                        quis tellus. Sed in dignissim ligula, nec ultricies
-                        turpis. Quisque sapien est, gravida luctus est quis,
-                        aliquet tempor eros. Nam vel mauris ex. Quisque ex nibh,
-                        sagittis vel tristique vel, iaculis non ex. Lorem ipsum
-                        dolor sit amet, consectetur adipiscing elit. Integer a
-                        urna ornare, tincidunt quam a, interdum sapien. Quisque
-                        placerat eleifend turpis, a maximus lectus imperdiet
-                        eget. Proin porta ante ut sem suscipit efficitur.
-                        Curabitur vitae quam vitae libero tristique efficitur.
-                        Nunc sagittis lobortis nisl vel condimentum. Proin
-                        consequat metus mauris, et suscipit est dictum vitae.
-                        Aenean cursus, augue quis pretium iaculis, orci odio
-                        malesuada leo, ac molestie nisi risus hendrerit turpis.
-                        Nullam iaculis ante nec ex mollis, eu pulvinar elit
-                        porta. Donec feugiat enim leo, ut pulvinar ligula
-                        placerat eget.
+                      We collect your personal information for several reasons, including:<br/>
+                      To provide and improve our services and products<br/>
+                      To communicate with you and respond to your inquiries<br/>
+                      To personalize your experience on our website<br/>
+                      To process transactions and manage your account<br/>
+                      To comply with legal obligations and enforce our policies<br/>
+                      To conduct market research and analyze trends
                       </p>
                       <h5>
                         How do we store and protect your personal information?
                       </h5>
                       <p>
-                        Praesent fermentum bibendum dui, eget viverra ante
-                        blandit at. Nulla ullamcorper lobortis nisl a facilisis.
-                        Nunc dolor odio, efficitur non quam quis, mollis
-                        tincidunt nisl. Sed nisl tellus, hendrerit mattis purus
-                        at, vehicula lobortis sapien.
+                      We store your personal information on secure servers and implement 
+                      a variety of security measures to protect your data from unauthorized access,
+                      alteration, disclosure, or destruction. 
                       </p>
                       <h5>
                         Should you wish to enquire regarding our security
                         policies and practices
                       </h5>
                       <p>
-                        Phasellus gravida arcu nec urna luctus, at sagittis nisi
-                        convallis. Aliquam sapien orci, volutpat sed porttitor
-                        eu, iaculis non ante.
+                      For any inquiries regarding our security policies and practices,
+                      please contact our support team at email address or phone number.
                       </p>
                       <span>your request within 30 days.</span>
                       <span>
                         Phone:{" "}
                         <a href="#" className="a-link">
-                          +00 0 0000 0000
+                        (028) 7300 5588
                         </a>{" "}
-                        (from within Australia)
+                        (from fpt student affairs office)
                       </span>
                       <span>
                         Email:{" "}
                         <a href="#" className="a-link">
-                          contact@barren.com
+                        daihoc.hcm@fpt.edu.vn
                         </a>{" "}
-                        (attn: Security officer)
                       </span>
                     </div>
                   </div>

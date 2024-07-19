@@ -11,22 +11,22 @@ function Footer() {
                 <h4><strong>VỀ CHÚNG TÔI</strong></h4>
                 <ul className="footer-link-list">
                   <li>
-                    <a href="about_us.html" className="footer-link">
+                    <a href="/About_us" className="footer-link">
                       Thông tin
                     </a>
                   </li>
                   <li>
-                    <a href="help_center.html" className="footer-link">
+                    <a href="/helpCenter" className="footer-link">
                       Trung tâm hỗ trợ
                     </a>
                   </li>
                   <li>
-                    <a href="faq.html" className="footer-link">
+                    <a href="/faq" className="footer-link">
                       FAQ
                     </a>
                   </li>
                   <li>
-                    <a href="contact_us.html" className="footer-link">
+                    <a href="/Contact" className="footer-link">
                       Liên Hệ FEventopia
                     </a>
                   </li>
@@ -48,12 +48,12 @@ function Footer() {
                     </a>
                   </li>
                   <li>
-                    <a href="privacy_policy.html" className="footer-link">
+                    <a href="/privacy" className="footer-link">
                       Chính sách Bảo mật
                     </a>
                   </li>
                   <li>
-                    <a href="term_and_conditions.html" className="footer-link">
+                    <a href="/Terms_condition" className="footer-link">
                       Điều khoản &amp; Dịch vụ
                     </a>
                   </li>
@@ -65,12 +65,12 @@ function Footer() {
                 <h4><strong>TRƯỜNG ĐẠI HỌC FPT</strong></h4>
                 <ul className="footer-link-list">
                   <li>
-                    <a href="pricing.html" className="footer-link">
+                    <a href="https://www.google.com/maps/place/Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+h%E1%BB%8Dc+FPT+TP.+HCM/@10.8410472,106.8073398,17.41z/data=!4m14!1m7!3m6!1s0x31752731176b07b1:0xb752b24b379bae5e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBGUFQgVFAuIEhDTQ!8m2!3d10.8411276!4d106.809883!16s%2Fg%2F11j2zx_fz_!3m5!1s0x31752731176b07b1:0xb752b24b379bae5e!8m2!3d10.8411276!4d106.809883!16s%2Fg%2F11j2zx_fz_?hl=vi-VN&entry=ttu" className="footer-link">
                     Lô E2a-7, Đường D1, Khu Công nghệ cao, P.Long Thạnh Mỹ, Tp. Thủ Đức, TP.HCM.
                     </a>
                   </li>
                   <li>
-                    <a className="phone" href="(tel):(028)73005588">
+                    <a className="phone" href="tel:(028)73005588">
                       (028) 7300 5588
                     </a>
                   </li>
