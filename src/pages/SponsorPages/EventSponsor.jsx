@@ -89,6 +89,7 @@ function EventSponsorship() {
       await postPledgeSponsoringAPI(requestBody);
       toast.success("Tạo Cam Kết Tài Trợ Thành Công!");
       setModalIsOpen(false);
+      navigate(0);
     } catch (error) {
       console.error("Error pledging sponsorship:", error);
       toast.error("Tạo Cam Kết Tài Trợ thất bại! Hãy thử lại sau.");
@@ -110,6 +111,7 @@ function EventSponsorship() {
       await postSposoringEventAPI(requestBody);
       toast.success("Tài Trợ Sự kiện thành công!");
       setSponsorModalIsOpen(false);
+      navigate(0);
     } catch (error) {
       console.error("Error sponsoring event:", error);
       toast.error("Tài Trợ Sự kiện thất bại! Hãy thử lại sau.");
@@ -270,7 +272,7 @@ function EventSponsorship() {
         <DialogTitle>TÀI TRỢ CHO SỰ KIỆN</DialogTitle>
         <DialogContent>
           <p>
-            Bạn sắp tài trợ cho sự kiện này với số tiền đã cam kết là{" "}
+            Bạn sắp tài trợ cho sự kiện này với số tiền là{" "}
             <strong><PriceFormat price={amount}/></strong>.
           </p>
           <TextField

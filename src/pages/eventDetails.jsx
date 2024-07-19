@@ -16,7 +16,7 @@ const globalSelectedStalls = {};
 function EventDetails() {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, cartItems } = useContext(CartContext);
   const { token } = useAuth();
 
   const [eventDetails, setEventDetails] = useState(null);
@@ -42,7 +42,7 @@ function EventDetails() {
 
   const handleAction = (action, eventId, additionalData = {}) => {
     if (!token) {
-      toast.error("Please log in to continue!", {
+      toast.error("Vui lòng đăng nhập để tiếp tục!", {
         onClose: () => navigate("/signin"),
       });
       return;
@@ -62,10 +62,10 @@ function EventDetails() {
 
     const ticketCount = ticketCounts[id] || 0;
     if (ticketCount === 0) {
-      toast.error("Please select at least 1 ticket!");
+      toast.error("Hãy chọn ít nhất 1 vé!");
       return;
     } else if (ticketCount > 3) {
-      toast.error("You can only buy a maximum of 3 tickets!");
+      toast.error("Bạn chỉ có thể mua tối đa 3 vé cùng lúc!");
       return;
     }
 
@@ -79,7 +79,7 @@ function EventDetails() {
       ticketPrice: selectedEventDetail.ticketPrice,
     };
 
-    toast.success("Redirecting to checkout page...", {
+    toast.success("Đang chuyển hướng tới trang thanh toán...", {
       onClose: () => {
         navigate("/checkout", {
           state: {
@@ -105,7 +105,7 @@ function EventDetails() {
 
     const selectedStall = selectedStalls[id];
     if (!selectedStall) {
-      toast.error("Please select a stall!");
+      toast.error("Hãy chọn 1 Mã gian hàng!");
       return;
     }
 
@@ -121,7 +121,7 @@ function EventDetails() {
 
     globalSelectedStalls[id] = selectedStall.value;
 
-    toast.success("Redirecting to checkout page...", {
+    toast.success("Đang chuyển hướng tới trang thanh toán...", {
       onClose: () => {
         navigate("/checkoutStall", {
           state: {
@@ -145,12 +145,19 @@ function EventDetails() {
       return;
     }
 
+    const currentTicketsInCart = cartItems.reduce((total, item) => {
+      if (item.eventId === id) {
+        return total + item.ticketCount;
+      }
+      return total;
+    }, 0);
+
     const ticketCount = ticketCounts[id] || 0;
     if (ticketCount === 0) {
-      toast.error("Please select at least 1 ticket!");
+      toast.error("Hãy chọn ít nhất 1 vé!");
       return;
-    } else if (ticketCount > 3) {
-      toast.error("You can only buy a maximum of 3 tickets!");
+    } else if (ticketCount + currentTicketsInCart > 3) {
+      toast.error("Bạn chỉ có thể thêm tối đa 3 vé cho sự kiện này!");
       return;
     }
 
@@ -166,6 +173,7 @@ function EventDetails() {
     };
 
     addToCart(cartItem);
+    toast.success("Vé đã được thêm vào giỏ hàng!");
   };
 
   useEffect(() => {
@@ -512,3 +520,4 @@ function EventDetails() {
 }
 
 export default EventDetails;
+

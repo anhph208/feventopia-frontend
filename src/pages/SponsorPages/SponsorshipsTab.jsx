@@ -47,7 +47,23 @@ const SponsoredEvent = () => {
             }))
             .filter((event) => event.event !== null);
 
-          setSponsoredEvents(combinedData || []); // Update to directly set the response data
+          // Group by event and aggregate sponsorships
+          const groupedEvents = combinedData.reduce((acc, sponsoredEvent) => {
+            const { event, transaction } = sponsoredEvent;
+            if (!acc[event.id]) {
+              acc[event.id] = {
+                event,
+                totalSponsorship: 0,
+                transactions: [],
+              };
+            }
+            acc[event.id].totalSponsorship += transaction.amount;
+            acc[event.id].transactions.push(transaction);
+            return acc;
+          }, {});
+
+          const eventsArray = Object.values(groupedEvents);
+          setSponsoredEvents(eventsArray);
           setTotalPages(pagination.TotalPages);
         } else {
           throw new Error("Invalid response format");
@@ -85,7 +101,7 @@ const SponsoredEvent = () => {
       {sponsoredEvents.length > 0 ? (
         <>
           {sponsoredEvents.map((sponsoredEvent) => (
-            <div className="main-card mt-4" key={sponsoredEvent.id}>
+            <div className="main-card mt-4" key={sponsoredEvent.event.id}>
               <div className="card-top p-4">
                 <div className="card-event-img">
                   <img
@@ -99,15 +115,15 @@ const SponsoredEvent = () => {
                 <div className="card-event-dt">
                   <h5>{sponsoredEvent.event.eventName}</h5>
                   <div className="invoice-id">
-                    Mã Hóa đơn : <span>{sponsoredEvent.transaction.id}</span>
+                    <strong>Tổng Số Tiền Tài Trợ:{" "}
+                    <span>
+                      <PriceFormat price={sponsoredEvent.totalSponsorship} />
+                    </span>
+                    </strong>
                   </div>
                   <div className="invoice-id">
-                    Ngày thực hiện:{" "}
-                    <span>
-                      {formatDateTime(
-                        sponsoredEvent.transaction.transactionDate
-                      )}
-                    </span>
+                    Số lượng giao dịch:{" "}
+                    <span>{sponsoredEvent.transactions.length}</span>
                   </div>
                 </div>
               </div>
@@ -123,17 +139,6 @@ const SponsoredEvent = () => {
                 </div>
                 <div className="card-bottom-item">
                   <div className="card-icon">
-                    <i className="fa-solid fa-money-bill" />
-                  </div>
-                  <div className="card-dt-text">
-                    <h6>Số tiền tài trợ</h6>
-                    <span>
-                      <PriceFormat price={sponsoredEvent.transaction.amount} />
-                    </span>
-                  </div>
-                </div>
-                <div className="card-bottom-item">
-                  <div className="card-icon">
                     <i className="fa-solid fa-info-circle" />
                   </div>
                   <div className="card-dt-text">
@@ -144,7 +149,7 @@ const SponsoredEvent = () => {
                 <div className="card-bottom-item">
                   <Button
                     className="btn btn-primary"
-                    onClick={() => handleViewInvoice(sponsoredEvent.id)}
+                    onClick={() => handleViewInvoice(sponsoredEvent.event.id)}
                     sx={{
                       color: "white",
                       backgroundColor: "#450b00",
@@ -156,6 +161,26 @@ const SponsoredEvent = () => {
                     Xem Thống kê Sự kiện
                   </Button>
                 </div>
+              </div>
+              <div className="card-bottom">
+                {sponsoredEvent.transactions.map((transaction, index) => (
+                  <div className="card-bottom-item" key={index}>
+                    <div className="card-icon">
+                      <i className="fa-solid fa-money-bill" />
+                    </div>
+                    <div className="card-dt-text">
+                      <h6>Số tiền tài trợ</h6>
+                      <span>
+                        <PriceFormat price={transaction.amount} />
+                      </span>
+                      <div>
+                        <span>
+                          {formatDateTime(transaction.transactionDate)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}

@@ -160,6 +160,12 @@ const HomeTab = ({ initialProfile }) => {
   };
 
   const handleFeedbackOpen = (event) => {
+    const eventEndDate = new Date(event.eventDetail.endDate);
+    const currentDate = new Date();
+    if (currentDate < eventEndDate) {
+      toast.warn("Sự kiện chưa kết thúc!!!");
+      return;
+    }
     setSelectedEvent(event);
     setFeedback({
       eventDetailID: event.eventDetail.id,
@@ -168,6 +174,16 @@ const HomeTab = ({ initialProfile }) => {
       description: "",
     });
     setFeedbackDialogOpen(true);
+  };
+
+  const handleViewFeedback = (event) => {
+    const eventEndDate = new Date(event.eventDetail.endDate);
+    const currentDate = new Date();
+    if (currentDate < eventEndDate) {
+      toast.warn("Sự kiện chưa kết thúc!!!");
+      return;
+    }
+    navigate(`/feedback/${event.event.id}`);
   };
 
   const handleFeedbackClose = () => {
@@ -199,7 +215,7 @@ const HomeTab = ({ initialProfile }) => {
     const eventEndDate = new Date(event.eventDetail.endDate);
     const currentDate = new Date();
     const fiveDaysAfterEventEnd = new Date(
-      eventEndDate.getTime() + 5 * 24 * 60 * 60 * 1000
+      eventEndDate.getTime() + 3 * 24 * 60 * 60 * 1000
     );
     return currentDate <= fiveDaysAfterEventEnd;
   };
@@ -277,7 +293,6 @@ const HomeTab = ({ initialProfile }) => {
                           <i className="fa-solid fa-wallet me-2" />
                           Nạp Tiền vào Ví
                         </button>
-                        
                       </div>
                     </div>
                   </div>
@@ -397,26 +412,47 @@ const HomeTab = ({ initialProfile }) => {
                             {formatDateTime(event.eventDetail.startDate)}
                           </div>
                           <div className="event-btn-group">
-                            <button
-                              className="esv-btn me-2"
-                              onClick={() => navigate(`/feedback/${event.id}`)}
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleViewFeedback(event)}
+                              sx={{
+                                mr: 2,
+                                color: "white",
+                                backgroundColor: "#450b00",
+                                "&:hover": {
+                                  backgroundColor: "#ff7f50",
+                                },
+                              }}
+                              startIcon={<i className="fa-solid fa-comments" />}
                             >
-                              <i className="fa-solid fa-comments me-2" />
                               Xem đánh giá
-                            </button>
+                            </Button>
                             {isFeedbackAllowed(event) ? (
-                              <button
-                                className="esv-btn"
+                              <Button
+                                variant="contained"
+                                color="secondary"
                                 onClick={() => handleFeedbackOpen(event)}
+                                startIcon={<i className="fa-solid fa-pen" />}
+                                sx={{
+                                  color: "white",
+                                  backgroundColor: "#450b00",
+                                  "&:hover": {
+                                    backgroundColor: "#ff7f50",
+                                  },
+                                }}
                               >
-                                <i className="fa-solid fa-pen me-2" />
-                                Create Feedback
-                              </button>
+                                Tạo Đánh Giá
+                              </Button>
                             ) : (
-                              <button className="esv-btn" disabled>
-                                <i className="fa-solid fa-pen me-2" />
-                                Feedback Disabled
-                              </button>
+                              <Button
+                                variant="contained"
+                                color="secondary"
+                                disabled
+                                startIcon={<i className="fa-solid fa-pen" />}
+                              >
+                                Đã kết thúc
+                              </Button>
                             )}
                           </div>
                         </div>
