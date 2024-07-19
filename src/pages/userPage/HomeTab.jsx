@@ -28,6 +28,7 @@ import {
   Rating,
 } from "@mui/material";
 import { formatDateTime, PriceFormat } from "../../utils/tools.js";
+import { Cancel, CheckCircle } from "@mui/icons-material";
 
 const HomeTab = ({ initialProfile }) => {
   const [profile, setProfile] = useState(initialProfile || {});
@@ -276,13 +277,7 @@ const HomeTab = ({ initialProfile }) => {
                           <i className="fa-solid fa-wallet me-2" />
                           Nạp Tiền vào Ví
                         </button>
-                        <button
-                          className="esv-btn me-2"
-                          onClick={handleWithdraw}
-                        >
-                          <i className="fa-solid fa-arrow-up-from-bracket me-2" />
-                          Xem Lịch sử Giao dịch
-                        </button>
+                        
                       </div>
                     </div>
                   </div>
@@ -335,9 +330,11 @@ const HomeTab = ({ initialProfile }) => {
                                     )}
                                   </TableCell>
                                   <TableCell>
-                                    {transaction.status
-                                      ? "Completed"
-                                      : "Pending"}
+                                    {transaction.status ? (
+                                      <CheckCircle style={{ color: "green" }} />
+                                    ) : (
+                                      <Cancel style={{ color: "red" }} />
+                                    )}
                                   </TableCell>
                                 </TableRow>
                               ))}

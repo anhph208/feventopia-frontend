@@ -29,6 +29,7 @@ import Invoice from "../pages/invoice";
 import EmailConfirmation from "../pages/confirmEmail";
 import AdminPages from "../pages/AdminPages/AdminMain";
 import Feedback from "../pages/eventFbDetails";
+import Analysis from "../pages/SponsorPages/EventAnalysis"
 
 const AppRoutes = () => {
   const { role } = useAuth();
@@ -97,6 +98,7 @@ const AppRoutes = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/sponsorProfile" element={<SponsorProfile />} />
           <Route path="/sponsor-event/:eventId" element={<EventSponsorship />} />
+          <Route path="/analysis/:eventId" element={<Analysis />} />
         </>
       )}
 

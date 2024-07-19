@@ -89,11 +89,14 @@ export const handleLogout = (navigate, clearCart) => {
 
 export const rankSub = (rank) => {
   if (rank === "BRONZE") {
-    return "Hạng Đồng";
-  } else if (rank === "GOLD") {
-    return "Hạng Vàng";
-  } else if (rank === "PLANTIUM") {
-    return "Hạng Bạch Kim";
+    return "Hạng ĐỒNG";
+  } 
+  else if (rank === "SILVER") {
+    return "Hạng BẠC";
+  }else if (rank === "GOLD") {
+    return "Hạng VÀNG";
+  } else if (rank === "PLATINUM") {
+    return "Hạng BẠCH KIM";
   }
 };
 
