@@ -9,19 +9,11 @@ import {
   DialogActions,
   DialogContentText,
   Button,
-  TextField,
-  Typography,
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
 
 import { toast } from "react-toastify";
-import {
-  Menu as MenuIcon,
-  AccountCircle,
-  CalendarToday,
-} from "@mui/icons-material";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
 import InsightsIcon from "@mui/icons-material/Insights";
 import {
   getAllEventForOtherAPI,
@@ -30,6 +22,7 @@ import {
   putEventNextPhaseAPI,
   CancelEventAPI,
   getTasksByEventDetailIdAPI,
+  getAllEventAssigneeAPI,
 } from "../../components/services/userServices";
 import { formatDateTime, PriceFormat, StatusSub } from "../../utils/tools";
 
@@ -128,7 +121,9 @@ const EventTab = ({ onViewChart }) => {
 
   const handleConfirmUpdateNextPhase = async () => {
     try {
+      console.log("Fetching event details for event ID:", selectedEventId);
       const eventDetails = await getEventByIdOperatorAPI(selectedEventId);
+      console.log("Event details:", eventDetails);
 
       if (eventDetails.status === "PREPARATION") {
         if (
@@ -142,18 +137,32 @@ const EventTab = ({ onViewChart }) => {
           return;
         }
 
+        console.log("Fetching tasks for each event detail...");
         const taskPromises = eventDetails.eventDetail.map((detail) =>
           getTasksByEventDetailIdAPI(detail.id)
         );
         const tasks = await Promise.all(taskPromises);
+        console.log("Tasks:", tasks);
 
         const allTasksDone = tasks.every((taskList) =>
           taskList.every((task) => task.status === "DONE")
         );
 
-        const allAssigneesExist = eventDetails.eventDetail.every(
-          (detail) => detail.assignees && detail.assignees.length > 0
+        console.log("All tasks done:", allTasksDone);
+
+        console.log("Fetching assignees for each event detail...");
+        const allAssigneesPromises = eventDetails.eventDetail.map((detail) =>
+          getAllEventAssigneeAPI(detail.id)
         );
+
+        const allAssigneesResults = await Promise.all(allAssigneesPromises);
+        console.log("All assignees results:", allAssigneesResults);
+
+        const allAssigneesExist = allAssigneesResults.every(
+          (result) => result.assignee && result.assignee.length > 0
+        );
+
+        console.log("All assignees exist:", allAssigneesExist);
 
         if (!allTasksDone) {
           toast.warn(
@@ -172,6 +181,7 @@ const EventTab = ({ onViewChart }) => {
         }
       }
 
+      console.log("Updating event to next phase...");
       await putEventNextPhaseAPI(selectedEventId);
       toast.success("Chuyển Trạng Thái Sự kiện thành công!");
       setOpen(false);
