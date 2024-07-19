@@ -110,7 +110,7 @@ export const StatusSub = (status) => {
     return "TRIỂN KHAI SỰ KIỆN";
   } else if (status === "POST") {
     return "HOÀN THÀNH";
-  } else if (status === "CANCELLED") {
+  } else if (status === "CANCELED") {
     return "ĐÃ HỦY";
   }
 };
