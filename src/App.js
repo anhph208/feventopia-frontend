@@ -10,7 +10,6 @@ import Footer from "./components/Footer";
 import Cart from "./components/Cart/Cart";
 import EvOAdminHeader from "./components/EvOAdminHeader";
 
-
 const ConditionalLayout = () => {
   const location = useLocation();
   const { role } = useAuth();
@@ -37,7 +36,7 @@ const ConditionalLayout = () => {
   ];
 
   const adminPaths = ["/AdminPages"];
-
+  
   const matchPath = (paths) => {
     return paths.some((path) => location.pathname.startsWith(path));
   };
@@ -51,7 +50,7 @@ const ConditionalLayout = () => {
     <Header />
   );
 
-  return (
+return (
     <div>
       {!matchPath(noHeaderFooterPaths) && headerComponent}
       <AppRoutes />

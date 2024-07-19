@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
   getSponsoredEventByUserAPI,
-  getEventDetailsAPI
+  getEventDetailsAPI,
 } from "../../components/services/userServices"; // Import the API service
 import { toast } from "react-toastify";
-import { Pagination, Stack } from "@mui/material";
-import { formatDateTime, PriceFormat } from "../../utils/tools";
+import { Button, Pagination, Stack } from "@mui/material";
+import { formatDateTime, PriceFormat, StatusSub } from "../../utils/tools";
+import { useNavigate } from "react-router-dom";
 
 const SponsoredEvent = () => {
   const [sponsoredEvents, setSponsoredEvents] = useState([]);
@@ -13,29 +14,51 @@ const SponsoredEvent = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchSponsoredEvents = async () => {
       try {
         setLoading(true);
-        const { data, pagination } = await getSponsoredEventByUserAPI(page, 5); // Fetch 5 events per page
-        const eventDetailsPromises = data.map((sponsoredEvent) =>
-          getEventDetailsAPI(sponsoredEvent.eventID)
-        );
-        const eventDetails = await Promise.all(eventDetailsPromises);
 
-        // Combine the event details with the sponsored event data
-        const combinedData = data.map((sponsoredEvent, index) => ({
-          ...sponsoredEvent,
-          event: eventDetails[index]
-        }));
+        const response = await getSponsoredEventByUserAPI(page, 5); // Fetch 5 events per page
 
-        setSponsoredEvents(combinedData || []); // Update to directly set the response data
-        setTotalPages(pagination.TotalPages);
-        setLoading(false);
+        if (response && response.data && response.pagination) {
+          const { data, pagination } = response;
+
+          // Handle cases where event details are already included in the initial response
+          const eventDetailsPromises = data.map((sponsoredEvent) => {
+            if (sponsoredEvent.event) {
+              return Promise.resolve(sponsoredEvent.event); // Event details already present
+            }
+            return getEventDetailsAPI(sponsoredEvent.eventID).catch((error) => {
+              if (error.response && error.response.status === 204) {
+                return null; // No content, handle gracefully
+              }
+              throw error; // Rethrow other errors
+            });
+          });
+
+          const eventDetails = await Promise.all(eventDetailsPromises);
+
+          // Combine the event details with the sponsored event data, filtering out nulls
+          const combinedData = data
+            .map((sponsoredEvent, index) => ({
+              ...sponsoredEvent,
+              event: eventDetails[index] || sponsoredEvent.event,
+            }))
+            .filter((event) => event.event !== null);
+
+          setSponsoredEvents(combinedData || []); // Update to directly set the response data
+          setTotalPages(pagination.TotalPages);
+        } else {
+          throw new Error("Invalid response format");
+        }
       } catch (error) {
         console.error("Error fetching sponsored events:", error);
-        setLoading(false);
         toast.error("Error fetching sponsored events");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -79,7 +102,9 @@ const SponsoredEvent = () => {
                   <div className="invoice-id">
                     Ngày thực hiện:{" "}
                     <span>
-                      {formatDateTime(sponsoredEvent.transaction.transactionDate)}
+                      {formatDateTime(
+                        sponsoredEvent.transaction.transactionDate
+                      )}
                     </span>
                   </div>
                 </div>
@@ -111,8 +136,23 @@ const SponsoredEvent = () => {
                   </div>
                   <div className="card-dt-text">
                     <h6>Trạng thái sự kiện</h6>
-                    <span>{sponsoredEvent.event.status}</span>
+                    <span>{StatusSub(sponsoredEvent.event.status)}</span>
                   </div>
+                </div>
+                <div className="card-bottom-item">
+                  <Button
+                    className="btn btn-primary"
+                    onClick={() => handleViewInvoice(sponsoredEvent.id)}
+                    sx={{
+                      color: "white",
+                      backgroundColor: "#450b00",
+                      "&:hover": {
+                        backgroundColor: "#ff7f50",
+                      },
+                    }}
+                  >
+                    Xem Thống kê Sự kiện
+                  </Button>
                 </div>
               </div>
             </div>

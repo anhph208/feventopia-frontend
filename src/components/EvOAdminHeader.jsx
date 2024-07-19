@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { getProfileAPI } from "../components/services/userServices";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext"; // Import the useAuth hook
-import { CartContext } from "../components/Cart/CartContext";
-import "react-toastify/dist/ReactToastify.css";
 import {
   AppBar,
   Toolbar,
@@ -55,6 +53,7 @@ const EvOAdminHeader = () => {
     toast.success("Đăng xuất thành công.");
     navigate("/signin")
   };
+
   const handleSessionExp = () => {
     logout(); // Use the logout function from AuthContext
     toast.success("Phiên đã hết hạn. Vui lòng Đăng nhập lại.")
@@ -67,6 +66,17 @@ const EvOAdminHeader = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const getHomePath = () => {
+    if (profile?.role === "ADMIN") {
+      return "/adminPages";
+    } else if (profile?.role === "EVENTOPERATOR") {
+      return "/operatorPages";
+    } else if (profile?.role === "CHECKINGSTAFF") {
+      return "/checkingPages";
+    }
+    return "/"; // Default path
   };
 
   if (loading) {
@@ -88,15 +98,17 @@ const EvOAdminHeader = () => {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
-          onClick={() => navigate("/operatorPages")}
+
+          onClick={() => navigate(getHomePath())}
         >
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <a
             className="navbar-brand"
-            href="/operatorPages"
-            onClick={(e) => e.preventDefault() || navigate("/operatorPages")}
+
+            href={getHomePath()}
+            onClick={(e) => e.preventDefault() || navigate(getHomePath())}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Box
@@ -107,22 +119,25 @@ const EvOAdminHeader = () => {
             />
           </a>
         </Typography>
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<CalendarToday />}
-          onClick={() => navigate("/create-event")}
-          sx={{
-            mr: 2,
-            color: "white",
-            backgroundColor: "#450b00",
-            "&:hover": {
-              backgroundColor: "#ff7f50",
-            },
-          }}
-        >
-          TẠO SỰ KIỆN
-        </Button>
+
+        {profile?.role === "EVENTOPERATOR" && (
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<CalendarToday />}
+            onClick={() => navigate("/create-event")}
+            sx={{
+              mr: 2,
+              color: "white",
+              backgroundColor: "#450b00",
+              "&:hover": {
+                backgroundColor: "#ff7f50",
+              },
+            }}
+          >
+            TẠO SỰ KIỆN
+          </Button>
+        )}
         {token ? (
           <div>
             <IconButton

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
-  getAllEventForVisitorAPI,
-  getEventDetailsAPI,
+  GetAllAssigneeDetailCurrentUserAPI,
   checkinEventAPI,
 } from "../../components/services/userServices";
 import {
@@ -20,7 +19,8 @@ import QrScanner from "react-qr-scanner";
 
 function CheckingTab() {
   const [events, setEvents] = useState([]);
-  const [pagination, setPagination] = useState({});
+
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -28,40 +28,52 @@ function CheckingTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [ticketId, setTicketId] = useState("");
 
-  const fetchEvents = async (page = 1, category = null, status = null) => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await getAllEventForVisitorAPI(page, 5, category, status);
-      const eventsWithDetails = await Promise.all(
-        result.events.map(async (event) => {
-          const details = await getEventDetailsAPI(event.id);
-          return { ...event, eventDetails: details.eventDetail };
-        })
-      );
+      const response = await GetAllAssigneeDetailCurrentUserAPI(page, 5);
+      const result = response.data;
+
+      if (response.pagination && response.pagination.TotalPages) {
+        setTotalPages(response.pagination.TotalPages);
+      } else {
+        setTotalPages(1);
+      }
+
+      console.log("API Result:", response); // Log the full API response
+      console.log("Events Data:", result); // Log the data array
+
+      const eventsWithDetails = result.map((item) => ({
+        ...item.event,
+        eventDetails: item.eventAssigneeModel.map((assignee) => ({
+          ...assignee.eventDetail,
+        })),
+      }));
+
+      console.log("Events with Details:", eventsWithDetails); // Log the final structure
+
       setEvents(eventsWithDetails);
-      setPagination(result.pagination);
     } catch (error) {
       setError(error);
       console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
-    fetchEvents(page);
-    const interval = setInterval(() => {
-      setEvents((prevEvents) => [...prevEvents]); // Force re-render
-    }, 60000); // Update every minute
-    return () => clearInterval(interval);
-  }, [page]);
+    fetchEvents();
+  }, [fetchEvents]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleCheckinClick = (eventId, eventDetailId) => {
-    const selectedEvent = events.find((event) => event.id === eventId);
+
+  const handleCheckinClick = (eventDetailId) => {
+    const selectedEvent = events.find((event) =>
+      event.eventDetails.some((detail) => detail.id === eventDetailId)
+    );
 
     if (!selectedEvent) {
       console.error("Không tìm thấy sự kiện.");
@@ -78,11 +90,12 @@ function CheckingTab() {
     }
 
     const selectedEventData = {
-      eventId: selectedEventDetail.id,
+
+      eventDetailId: selectedEventDetail.id,
       eventName: selectedEvent.eventName,
       startDate: selectedEventDetail.startDate,
       endDate: selectedEventDetail.endDate,
-      location: selectedEventDetail.location.locationName,
+      location: selectedEventDetail.location?.locationName,
       eventBanner: selectedEvent.banner,
     };
 
@@ -98,7 +111,8 @@ function CheckingTab() {
 
     try {
       setLoading(true);
-      await checkinEventAPI(ticketId, checkinEvent.eventId);
+
+      await checkinEventAPI(ticketId, checkinEvent.eventDetailId);
       toast.success("VÉ ĐÃ CHECK-IN THÀNH CÔNG!");
       setIsDialogOpen(false);
       setTicketId("");
@@ -195,8 +209,6 @@ function CheckingTab() {
                       <i className="fa-solid fa-location-dot" />
                     </div>
                     <div className="card-dt-text">
-                      <h6>Địa Điểm</h6>
-                      <span>{detail.location.locationName}</span>
                     </div>
                   </div>
                   <div className="card-bottom-item">
@@ -208,7 +220,7 @@ function CheckingTab() {
                       }`}
                       onClick={() => {
                         if (isEventActive(detail.startDate, detail.endDate)) {
-                          handleCheckinClick(event.id, detail.id);
+                          handleCheckinClick(detail.id);
                         }
                       }}
                       disabled={
@@ -228,9 +240,9 @@ function CheckingTab() {
             className="pagination-controls mt-3 mb-2"
           >
             <Pagination
-              count={pagination.TotalPages}
+              count={totalPages}
               page={page}
-              onChange={(event, newPage) => setPage(newPage)}
+              onChange={handleChangePage}
               variant="outlined"
               shape="rounded"
               sx={{
